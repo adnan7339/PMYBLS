@@ -1,190 +1,66 @@
-export default function handler(req, res) {
-  // Set CORS headers
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+import connectDB from '../../lib/mongodb';
+import User from '../../models/User';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
 
-  // Handle preflight request
-  if (req.method === 'OPTIONS') {
-    return res.status(200).end();
-  }
-
-  // Only allow POST requests
+export default async function handler(req, res) {
   if (req.method !== 'POST') {
-    return res.status(405).json({ 
-      success: false,
-      error: 'Method not allowed. Use POST request.' 
-    });
+    return res.status(405).json({ message: 'Method not allowed' });
   }
 
   try {
-    const { email, password, isSignUp } = req.body;
+    await connectDB();
 
-    // Validation
+    const { email, password } = req.body;
+
     if (!email || !password) {
-      return res.status(400).json({
-        success: false,
-        error: 'Email and password are required'
-      });
+      return res.status(400).json({ message: 'Email and password required' });
     }
 
-    // Email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email) && !isSignUp) {
-      return res.status(400).json({
-        success: false,
-        error: 'Invalid email format'
-      });
-    }
+    // Check if user exists
+    let user = await User.findOne({ email });
 
-    // Password validation
-    if (password.length < 6) {
-      return res.status(400).json({
-        success: false,
-        error: 'Password must be at least 6 characters'
-      });
-    }
-
-    // Mock user database (in production, use a real database)
-    const users = [
-      {
-        id: 1,
+    // If no users exist, create default admin
+    const userCount = await User.countDocuments();
+    if (userCount === 0) {
+      const hashedPassword = await bcrypt.hash('ad3115', 10);
+      user = await User.create({
         email: 'Adnan',
-        password: 'ad3115', // In production, use hashed passwords
-        name: 'Adnan',
-        role: 'admin',
-        createdAt: '2025-01-01'
-      },
-      {
-        id: 2,
-        email: 'demo@example.com',
-        password: 'demo123',
-        name: 'Demo User',
-        role: 'user',
-        createdAt: '2025-01-15'
-      }
-    ];
-
-    if (isSignUp) {
-      // Sign Up Logic
-      const existingUser = users.find(u => u.email === email);
-      
-      if (existingUser) {
-        return res.status(409).json({
-          success: false,
-          error: 'User already exists with this email'
-        });
-      }
-
-      // Create new user
-      const newUser = {
-        id: users.length + 1,
-        email,
-        name: email.split('@')[0],
-        role: 'user',
-        createdAt: new Date().toISOString()
-      };
-
-      // Generate token (in production, use JWT)
-      const token = Buffer.from(`${email}:${Date.now()}`).toString('base64');
-
-      return res.status(201).json({
-        success: true,
-        message: 'Account created successfully',
-        data: {
-          user: {
-            id: newUser.id,
-            email: newUser.email,
-            name: newUser.name,
-            role: newUser.role
-          },
-          token,
-          expiresIn: '24h'
-        }
-      });
-
-    } else {
-      // Login Logic
-      const user = users.find(u => u.email === email && u.password === password);
-
-      if (!user) {
-        return res.status(401).json({
-          success: false,
-          error: 'Invalid email or password'
-        });
-      }
-
-      // Generate token (in production, use JWT)
-      const token = Buffer.from(`${email}:${Date.now()}`).toString('base64');
-
-      // Update last login (in production, update in database)
-      const lastLogin = new Date().toISOString();
-
-      return res.status(200).json({
-        success: true,
-        message: 'Login successful',
-        data: {
-          user: {
-            id: user.id,
-            email: user.email,
-            name: user.name,
-            role: user.role,
-            lastLogin
-          },
-          token,
-          expiresIn: '24h'
-        }
+        password: hashedPassword,
+        role: 'admin'
       });
     }
+
+    // Verify user
+    if (!user) {
+      return res.status(401).json({ message: 'Invalid credentials' });
+    }
+
+    // Check password
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(401).json({ message: 'Invalid credentials' });
+    }
+
+    // Generate JWT token
+    const token = jwt.sign(
+      { userId: user._id, email: user.email, role: user.role },
+      process.env.JWT_SECRET || 'your-secret-key-change-in-production',
+      { expiresIn: '24h' }
+    );
+
+    res.status(200).json({
+      message: 'Login successful',
+      token,
+      user: {
+        id: user._id,
+        email: user.email,
+        role: user.role
+      }
+    });
 
   } catch (error) {
-    console.error('Login API Error:', error);
-    return res.status(500).json({
-      success: false,
-      error: 'Internal server error',
-      message: error.message
-    });
+    console.error('Login error:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
   }
 }
-
-// Example usage documentation
-/*
-POST /api/login
-
-Request Body (Login):
-{
-  "email": "Adnan",
-  "password": "ad3115",
-  "isSignUp": false
-}
-
-Request Body (Sign Up):
-{
-  "email": "newuser@example.com",
-  "password": "password123",
-  "isSignUp": true
-}
-
-Response (Success):
-{
-  "success": true,
-  "message": "Login successful",
-  "data": {
-    "user": {
-      "id": 1,
-      "email": "Adnan",
-      "name": "Adnan",
-      "role": "admin",
-      "lastLogin": "2025-12-26T10:30:00.000Z"
-    },
-    "token": "base64encodedtoken",
-    "expiresIn": "24h"
-  }
-}
-
-Response (Error):
-{
-  "success": false,
-  "error": "Invalid email or password"
-}
-*/
