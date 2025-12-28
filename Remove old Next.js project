@@ -1,0 +1,6 @@
+pages/
+components/
+lib/
+models/
+package.json
+next.config.js
