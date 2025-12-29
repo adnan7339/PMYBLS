@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>PMYBLS – Upgraded Admin Panel</title>
+<title>PMYBLS–Admin Panel</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
 :root{
@@ -45,15 +45,15 @@ footer{margin-top:14px;text-align:center;color:var(--muted);font-size:12px}
 <div id="login" class="container">
   <div class="card">
     <h1>PMYBLS</h1>
-    <div class="sub">Upgraded Secure Admin Login</div>
+    <div class="sub">Admin Login</div>
     <div id="loginErr" class="alert err hidden"></div>
-    <input id="email" type="email" placeholder="Email (admin@pmybls.com)">
+    <input id="email" type="email" placeholder="Email ">
     <div class="row">
       <input id="password" type="password" placeholder="Password">
       <button class="secondary" style="max-width:110px" onclick="togglePwd()">Show</button>
     </div>
     <button id="btnLogin" onclick="login()">Login</button>
-    <footer>v2.0 • HTML-only Frontend</footer>
+    <footer>v2.0</footer>
   </div>
 </div>
 
@@ -102,7 +102,7 @@ footer{margin-top:14px;text-align:center;color:var(--muted);font-size:12px}
 
 <script>
 /* ================= CONFIG ================= */
-const API_BASE = "https://pm-ybls.vercel.app";
+const API_BASE = "https://pmybls.vercel.app";
 /* ========================================= */
 
 document.getElementById('yr').innerText = new Date().getFullYear();
