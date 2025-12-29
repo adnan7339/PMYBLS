@@ -16,9 +16,8 @@ const User =
 
 function cors(req, res) {
   res.setHeader("Access-Control-Allow-Origin", "https://pmybls.vercel.app");
-  res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
+  res.setHeader("Access-Control-Allow-Methods", "POST,OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
-  res.setHeader("Access-Control-Allow-Credentials", "true");
 
   if (req.method === "OPTIONS") {
     res.status(200).end();
@@ -28,16 +27,23 @@ function cors(req, res) {
 }
 
 export default async function handler(req, res) {
-  if (cors(req, res)) return;
-
-  if (req.method !== "POST") {
-    return res.status(405).json({ message: "Method not allowed" });
-  }
-
   try {
-    await connectDB();
+    if (cors(req, res)) return;
 
-    const { email, password } = req.body;
+    if (req.method !== "POST") {
+      return res.status(405).json({ message: "Method not allowed" });
+    }
+
+    const body =
+      typeof req.body === "string" ? JSON.parse(req.body) : req.body;
+
+    if (!body || !body.email || !body.password) {
+      return res.status(400).json({ message: "Missing credentials" });
+    }
+
+    const { email, password } = body;
+
+    await connectDB();
 
     const user = await User.findOne({ email });
     if (!user) {
@@ -58,6 +64,6 @@ export default async function handler(req, res) {
     return res.status(200).json({ token });
   } catch (err) {
     console.error("LOGIN ERROR:", err);
-    return res.status(500).json({ message: "Server error" });
+    return res.status(500).json({ error: err.message });
   }
 }
