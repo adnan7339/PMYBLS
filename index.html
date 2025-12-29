@@ -1,194 +1,168 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>PMYBLS–Admin Panel</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<style>
-:root{
-  --bg:#0b1220; --card:#020617; --muted:#94a3b8; --pri:#2563eb; --ok:#16a34a; --err:#7f1d1d;
-}
-*{box-sizing:border-box}
-body{margin:0;font-family:system-ui,Arial;background:linear-gradient(135deg,#020617,#1e3a8a);color:#e5e7eb;min-height:100vh}
-.container{max-width:520px;margin:auto;padding:20px}
-.card{background:var(--card);border-radius:14px;padding:22px;box-shadow:0 20px 40px rgba(0,0,0,.6)}
-h1,h2{margin:0;text-align:center}
-.sub{color:var(--muted);text-align:center;margin:6px 0 16px}
-input,button,select{
-  width:100%;padding:12px;margin-top:10px;border-radius:10px;border:1px solid #334155;
-  background:#020617;color:#e5e7eb;font-size:15px
-}
-input:focus,select:focus{outline:2px solid var(--pri)}
-button{background:var(--pri);border:none;font-weight:700;cursor:pointer}
-button.secondary{background:#020617;border:1px solid #334155}
-button.warn{background:#7c2d12}
-button.ok{background:var(--ok)}
-button:disabled{opacity:.6;cursor:not-allowed}
-.row{display:flex;gap:10px;flex-wrap:wrap}
-.hidden{display:none}
-.alert{padding:10px;border-radius:10px;margin:10px 0}
-.alert.err{background:var(--err)}
-.alert.ok{background:#064e3b}
-.nav{display:flex;gap:8px;margin:12px 0;flex-wrap:wrap}
-.box{border:1px solid #1e293b;border-radius:12px;padding:14px;margin-top:12px}
-.stat{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.kpi{border:1px solid #334155;border-radius:12px;padding:12px;text-align:center}
-.small{font-size:12px;color:var(--muted)}
-.loader{border:3px solid #334155;border-top:3px solid #e5e7eb;border-radius:50%;width:18px;height:18px;animation:spin 1s linear infinite;display:inline-block}
-@keyframes spin{to{transform:rotate(360deg)}}
-footer{margin-top:14px;text-align:center;color:var(--muted);font-size:12px}
-</style>
+  <meta charset="UTF-8" />
+  <title>PMYBLS | Admin Login</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #020617, #0f172a);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #e5e7eb;
+    }
+
+    .card {
+      background: #020617;
+      width: 100%;
+      max-width: 420px;
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 25px 60px rgba(0,0,0,0.7);
+      border: 1px solid #1e293b;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 8px;
+      font-size: 26px;
+    }
+
+    p {
+      text-align: center;
+      margin-bottom: 25px;
+      color: #94a3b8;
+      font-size: 14px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 14px;
+      color: #cbd5f5;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 10px;
+      border: 1px solid #334155;
+      background: #020617;
+      color: #e5e7eb;
+      font-size: 15px;
+      margin-bottom: 16px;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #2563eb;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      border-radius: 12px;
+      border: none;
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      color: white;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    button:hover {
+      opacity: 0.95;
+    }
+
+    .error {
+      margin-top: 14px;
+      text-align: center;
+      color: #f87171;
+      font-size: 14px;
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 18px;
+      font-size: 12px;
+      color: #64748b;
+    }
+  </style>
 </head>
+
 <body>
 
-<!-- LOGIN -->
-<div id="login" class="container">
   <div class="card">
     <h1>PMYBLS</h1>
-    <div class="sub">Admin Login</div>
-    <div id="loginErr" class="alert err hidden"></div>
-    <input id="email" type="email" placeholder="Email ">
-    <div class="row">
-      <input id="password" type="password" placeholder="Password">
-      <button class="secondary" style="max-width:110px" onclick="togglePwd()">Show</button>
+    <p>Admin Control Panel Login</p>
+
+    <form id="loginForm">
+      <label>Email</label>
+      <input type="email" id="email" placeholder="admin@pmybls.com" required />
+
+      <label>Password</label>
+      <input type="password" id="password" placeholder="••••••••" required />
+
+      <button type="submit">Login</button>
+    </form>
+
+    <div id="error" class="error"></div>
+
+    <div class="footer">
+      © PMYBLS | Secure System
     </div>
-    <button id="btnLogin" onclick="login()">Login</button>
-    <footer>v2.0</footer>
   </div>
-</div>
 
-<!-- DASHBOARD -->
-<div id="dash" class="container hidden">
-  <div class="card">
-    <h2>Dashboard</h2>
+  <!-- LOGIN SCRIPT -->
+  <script>
+    const API_BASE = "https://pmybls.vercel.app";
 
-    <div class="stat">
-      <div class="kpi">
-        <div class="small">Total Applicants</div>
-        <h3 id="kTotal">—</h3>
-      </div>
-      <div class="kpi">
-        <div class="small">Session</div>
-        <h3>Active</h3>
-      </div>
-    </div>
+    document.getElementById("loginForm").addEventListener("submit", async function(e) {
+      e.preventDefault();
 
-    <div class="nav">
-      <button class="secondary" onclick="show('upload')">Upload Excel</button>
-      <button class="secondary" onclick="show('search')">Search CNIC</button>
-      <button class="secondary" onclick="exportExcel()">Export</button>
-      <button class="warn" onclick="logout()">Logout</button>
-    </div>
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value.trim();
+      const errorBox = document.getElementById("error");
 
-    <!-- Upload -->
-    <div id="upload" class="box hidden">
-      <h3>Upload Excel</h3>
-      <input type="file" id="excel" accept=".xlsx,.xls">
-      <button id="btnUpload" onclick="uploadExcel()">Upload</button>
-      <div id="upMsg" class="small"></div>
-    </div>
+      errorBox.innerText = "";
 
-    <!-- Search -->
-    <div id="search" class="box hidden">
-      <h3>Search by CNIC</h3>
-      <input id="cnic" placeholder="e.g. 32203-3883608-3">
-      <button onclick="searchCNIC()">Search</button>
-      <div id="res"></div>
-    </div>
+      try {
+        const res = await fetch(API_BASE + "/api/login", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ email, password })
+        });
 
-    <footer>© <span id="yr"></span> PMYBLS</footer>
-  </div>
-</div>
+        const data = await res.json();
 
-<script>
-/* ================= CONFIG ================= */
-const API_BASE = "https://pmybls.vercel.app";
-/* ========================================= */
+        if (!res.ok) {
+          errorBox.innerText = data.message || "Login failed";
+          return;
+        }
 
-document.getElementById('yr').innerText = new Date().getFullYear();
+        localStorage.setItem("token", data.token);
 
-function headers(){
-  const h = {};
-  if(localStorage.token) h['Authorization'] = 'Bearer ' + localStorage.token;
-  return h;
-}
-function show(id){
-  ['upload','search'].forEach(x=>document.getElementById(x).classList.add('hidden'));
-  document.getElementById(id).classList.remove('hidden');
-}
-function togglePwd(){
-  const p=document.getElementById('password');
-  p.type = p.type==='password'?'text':'password';
-}
-function setBusy(btn, busy){
-  btn.disabled = busy;
-  btn.innerHTML = busy ? '<span class="loader"></span> Working…' : btn.dataset.txt || btn.innerText;
-}
+        alert("Login successful");
+        // future dashboard redirect
+        // window.location.href = "dashboard.html";
 
-/* ---------- Auto session ---------- */
-if(localStorage.token){
-  document.getElementById('login').classList.add('hidden');
-  document.getElementById('dash').classList.remove('hidden');
-  loadStats();
-}
+      } catch (err) {
+        console.error(err);
+        errorBox.innerText = "Server or network error";
+      }
+    });
+  </script>
 
-/* ---------- Login ---------- */
-async function login(){
-  const btn=document.getElementById('btnLogin');
-  btn.dataset.txt = btn.innerText;
-  setBusy(btn,true);
-  const err=document.getElementById('loginErr'); err.classList.add('hidden');
-  try{
-    const r=await fetch(API_BASE+'/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:email.value,password:password.value})});
-    const d=await r.json();
-    if(!r.ok) throw new Error(d.message||'Login failed');
-    localStorage.token=d.token;
-    document.getElementById('login').classList.add('hidden');
-    document.getElementById('dash').classList.remove('hidden');
-    loadStats();
-  }catch(e){
-    err.textContent=e.message; err.classList.remove('hidden');
-  }finally{ setBusy(btn,false); }
-}
-
-/* ---------- Logout ---------- */
-function logout(){ localStorage.clear(); location.reload(); }
-
-/* ---------- Stats ---------- */
-async function loadStats(){
-  try{
-    const r=await fetch(API_BASE+'/api/stats',{headers:headers()});
-    const d=await r.json();
-    document.getElementById('kTotal').innerText=d.total||0;
-  }catch{ document.getElementById('kTotal').innerText='—'; }
-}
-
-/* ---------- Upload ---------- */
-async function uploadExcel(){
-  const btn=document.getElementById('btnUpload'); btn.dataset.txt=btn.innerText; setBusy(btn,true);
-  const f=excel.files[0]; if(!f){alert('Select Excel'); setBusy(btn,false); return;}
-  const r=await fetch(API_BASE+'/api/upload',{method:'POST',headers:headers(),body:f});
-  const d=await r.json();
-  document.getElementById('upMsg').textContent=d.message||'Done';
-  loadStats(); setBusy(btn,false);
-}
-
-/* ---------- Search ---------- */
-async function searchCNIC(){
-  const r=await fetch(API_BASE+'/api/search?cnic='+encodeURIComponent(cnic.value),{headers:headers()});
-  const d=await r.json();
-  const el=document.getElementById('res');
-  if(!r.ok){ el.innerHTML='<div class="alert err">No record found</div>'; return; }
-  el.innerHTML = `<div class="alert ok">
-    <b>${d.applicant_name}</b><br>
-    CNIC: ${d.applicant_cnic}<br>
-    Business: ${d.business_sub_sector}<br>
-    Bank: ${d.mfibankname}
-  </div>`;
-}
-
-/* ---------- Export ---------- */
-function exportExcel(){ window.open(API_BASE+'/api/export','_blank'); }
-</script>
 </body>
 </html>
