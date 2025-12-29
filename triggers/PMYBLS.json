@@ -1,0 +1,31 @@
+{
+    "name": "PMYBLS",
+    "type": "DATABASE",
+    "disabled": false,
+    "config": {
+        "collection": "",
+        "database": "pmybls",
+        "full_document": true,
+        "full_document_before_change": false,
+        "match": {},
+        "maximum_throughput": false,
+        "operation_types": [
+            "INSERT",
+            "UPDATE",
+            "DELETE",
+            "REPLACE"
+        ],
+        "project": {},
+        "service_name": "Cluster0",
+        "skip_catchup_events": false,
+        "tolerate_resume_errors": true,
+        "unordered": false
+    },
+    "event_processors": {
+        "FUNCTION": {
+            "config": {
+                "function_name": "Atlas_Triggers_PMYBLS_1766764530"
+            }
+        }
+    }
+}
