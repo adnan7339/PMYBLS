@@ -1,39 +1,41 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Applicant Portal</title>
-  <link rel="stylesheet" href="styles.css" />
+  <meta charset="UTF-8">
+  <title>PMY Applicant Portal</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
-  <header>
-    <h1>📋 Applicant Search Portal</h1>
-    <input type="text" id="searchInput" placeholder="Search by Name / CNIC / Bank..." />
-  </header>
+<header class="topbar">
+  <h1>PMY Applicant Portal</h1>
 
-  <main>
-    <table>
-      <thead>
-        <tr>
-          <th>CNIC</th>
-          <th>Name</th>
-          <th>Industry</th>
-          <th>Sector</th>
-          <th>Sub Sector</th>
-          <th>Bank</th>
-        </tr>
-      </thead>
-      <tbody id="tableBody">
-        <!-- Data injected here -->
-      </tbody>
-    </table>
-  </main>
+  <div class="actions">
+    <input type="file" id="fileInput" accept=".json">
+    <input type="text" id="searchInput" placeholder="Search CNIC / Name / Bank">
+  </div>
+</header>
 
-  <footer>
-    <p>Total Records: <span id="count">0</span></p>
-  </footer>
+<section class="container">
+  <table>
+    <thead>
+      <tr>
+        <th>CNIC</th>
+        <th>Name</th>
+        <th>Industry</th>
+        <th>Sector</th>
+        <th>Sub Sector</th>
+        <th>Bank</th>
+      </tr>
+    </thead>
+    <tbody id="tableBody"></tbody>
+  </table>
+</section>
 
-  <script src="script.js"></script>
+<footer>
+  Total Records: <span id="count">0</span>
+</footer>
+
+<script src="script.js"></script>
 </body>
 </html>
