@@ -1,0 +1,23 @@
+{
+  "name": "pmybls-dashboard",
+  "version": "1.0.0",
+  "description": "PM Youth Business Loan Scheme Dashboard - A modern, responsive dashboard for displaying applicant data",
+  "main": "index.html",
+  "scripts": {
+    "start": "npx serve .",
+    "dev": "npx serve . -p 3000"
+  },
+  "keywords": [
+    "dashboard",
+    "pmybls",
+    "youth-loan",
+    "business-loan",
+    "pakistan"
+  ],
+  "author": "PM Youth Business Loan Scheme",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "your-repository-url"
+  }
+}
