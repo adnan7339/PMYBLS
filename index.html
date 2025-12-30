@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Applicant Portal</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <header>
+    <h1>📋 Applicant Search Portal</h1>
+    <input type="text" id="searchInput" placeholder="Search by Name / CNIC / Bank..." />
+  </header>
+
+  <main>
+    <table>
+      <thead>
+        <tr>
+          <th>CNIC</th>
+          <th>Name</th>
+          <th>Industry</th>
+          <th>Sector</th>
+          <th>Sub Sector</th>
+          <th>Bank</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody">
+        <!-- Data injected here -->
+      </tbody>
+    </table>
+  </main>
+
+  <footer>
+    <p>Total Records: <span id="count">0</span></p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
