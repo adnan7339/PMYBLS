@@ -28,7 +28,7 @@ git commit -m "Initial commit: PM YBLS Dashboard"
 
 3. Push your code:
 ```bash
-git remote add origin https://github.com/YOUR_USERNAME/pmybls-dashboard.git
+git remote add origin https://github.com/adnan7339/pmybls.git
 git branch -M main
 git push -u origin main
 ```
