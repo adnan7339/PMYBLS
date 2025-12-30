@@ -60,7 +60,7 @@ git push -u origin main
    - Click "Advanced"
    - Add environment variable:
      - Key: `PM_YBLS`
-     - Value: `2ce6413f90d9ed84238852299b353926`
+     - Value: `e84b50d8176a3705676f25c1507ef27a`
 
 6. **Deploy**
    - Click "Create Static Site"
