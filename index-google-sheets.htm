@@ -3,184 +3,664 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Applicant CNIC Search - Google Sheets</title>
+<title>CNIC Search System - Ultimate Advanced</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔍</text></svg>">
+
+<!-- XLSX Library for Excel Support -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
 <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+    
     * {
         margin: 0;
         padding: 0;
         box-sizing: border-box;
     }
     
+    :root {
+        --primary: #6366f1;
+        --primary-dark: #4f46e5;
+        --primary-light: #818cf8;
+        --secondary: #8b5cf6;
+        --success: #10b981;
+        --error: #ef4444;
+        --warning: #f59e0b;
+        --info: #3b82f6;
+        --dark: #0f172a;
+        --gray-50: #f8fafc;
+        --gray-100: #f1f5f9;
+        --gray-200: #e2e8f0;
+        --gray-300: #cbd5e1;
+        --gray-600: #475569;
+        --gray-700: #334155;
+        --gray-900: #0f172a;
+    }
+    
     body {
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
         min-height: 100vh;
         padding: 20px;
+        position: relative;
+        overflow-x: hidden;
+    }
+    
+    body::before {
+        content: '';
+        position: fixed;
+        width: 300%;
+        height: 300%;
+        top: -100%;
+        left: -100%;
+        background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+        background-size: 50px 50px;
+        animation: moveBackground 60s linear infinite;
+        z-index: 0;
+    }
+    
+    @keyframes moveBackground {
+        0% { transform: translate(0, 0); }
+        100% { transform: translate(50px, 50px); }
     }
     
     .container {
-        max-width: 1200px;
+        max-width: 1400px;
         margin: 0 auto;
-        background: white;
-        border-radius: 15px;
-        box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-        padding: 30px;
+        background: rgba(255, 255, 255, 0.98);
+        backdrop-filter: blur(20px);
+        border-radius: 24px;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.3), 0 0 100px rgba(102, 126, 234, 0.2);
+        padding: 40px;
+        position: relative;
+        z-index: 1;
+        animation: slideUp 0.6s ease-out;
     }
     
-    h2 {
+    @keyframes slideUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .header {
         text-align: center;
-        color: #0f172a;
-        margin-bottom: 30px;
+        margin-bottom: 40px;
+        position: relative;
+    }
+    
+    .logo {
+        width: 90px;
+        height: 90px;
+        margin: 0 auto 20px;
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        border-radius: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 48px;
+        box-shadow: 0 10px 40px rgba(99, 102, 241, 0.4);
+        animation: float 3s ease-in-out infinite;
+        position: relative;
+    }
+    
+    .logo::after {
+        content: '✨';
+        position: absolute;
+        font-size: 20px;
+        top: -5px;
+        right: -5px;
+        animation: sparkle 2s infinite;
+    }
+    
+    @keyframes sparkle {
+        0%, 100% { opacity: 1; transform: scale(1); }
+        50% { opacity: 0.5; transform: scale(1.2); }
+    }
+    
+    @keyframes float {
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(-12px); }
+    }
+    
+    h1 {
+        color: var(--dark);
+        font-size: 36px;
+        font-weight: 800;
+        margin-bottom: 12px;
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        letter-spacing: -0.5px;
+    }
+    
+    .subtitle {
+        color: var(--gray-600);
+        font-size: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+    
+    .connection-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 8px 16px;
+        background: var(--success);
+        color: white;
+        border-radius: 24px;
+        font-size: 13px;
+        font-weight: 700;
+        animation: pulse 2s infinite;
+        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+    }
+    
+    @keyframes pulse {
+        0%, 100% { opacity: 1; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3); }
+        50% { opacity: 0.85; box-shadow: 0 4px 20px rgba(16, 185, 129, 0.5); }
+    }
+    
+    .connection-status::before {
+        content: '';
+        width: 8px;
+        height: 8px;
+        background: white;
+        border-radius: 50%;
+        animation: blink 1s infinite;
+    }
+    
+    @keyframes blink {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.3; }
+    }
+    
+    .stats-bar {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 20px;
+        margin-bottom: 35px;
+    }
+    
+    .stat-card {
+        background: linear-gradient(135deg, var(--gray-50), white);
+        padding: 24px;
+        border-radius: 18px;
+        border: 2px solid var(--gray-200);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .stat-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.1), transparent);
+        transition: left 0.5s;
+    }
+    
+    .stat-card:hover::before {
+        left: 100%;
+    }
+    
+    .stat-card:hover {
+        transform: translateY(-5px) scale(1.02);
+        box-shadow: 0 15px 40px rgba(0,0,0,0.12);
+        border-color: var(--primary);
+    }
+    
+    .stat-card .label {
+        color: var(--gray-600);
+        font-size: 13px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        margin-bottom: 10px;
+    }
+    
+    .stat-card .value {
+        color: var(--dark);
+        font-size: 32px;
+        font-weight: 800;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    
+    .stat-card .icon {
         font-size: 28px;
+    }
+    
+    .search-container {
+        background: linear-gradient(135deg, var(--gray-50), white);
+        padding: 35px;
+        border-radius: 20px;
+        margin-bottom: 35px;
+        border: 2px solid var(--gray-200);
+        box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+    }
+    
+    .search-label {
+        font-size: 15px;
+        font-weight: 700;
+        color: var(--gray-700);
+        margin-bottom: 14px;
+        display: block;
+        letter-spacing: 0.3px;
     }
     
     .search-section {
         display: flex;
-        gap: 10px;
-        margin-bottom: 25px;
+        gap: 14px;
         flex-wrap: wrap;
     }
     
     #cnic {
         flex: 1;
-        min-width: 250px;
-        padding: 12px 20px;
-        font-size: 16px;
-        border: 2px solid #e2e8f0;
-        border-radius: 8px;
-        transition: all 0.3s;
+        min-width: 320px;
+        padding: 18px 24px;
+        font-size: 19px;
+        font-weight: 600;
+        border: 3px solid var(--gray-300);
+        border-radius: 14px;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        font-family: 'Inter', monospace;
+        letter-spacing: 1.5px;
+        background: white;
     }
     
     #cnic:focus {
         outline: none;
-        border-color: #667eea;
-        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        border-color: var(--primary);
+        box-shadow: 0 0 0 5px rgba(99, 102, 241, 0.15);
+        transform: translateY(-3px);
+    }
+    
+    #cnic::placeholder {
+        color: var(--gray-400);
+        font-weight: 500;
+        letter-spacing: 0.5px;
     }
     
     button {
-        padding: 12px 30px;
+        padding: 18px 36px;
         font-size: 16px;
-        font-weight: 600;
+        font-weight: 700;
         cursor: pointer;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
         border: none;
-        border-radius: 8px;
-        transition: all 0.3s;
+        border-radius: 14px;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        position: relative;
+        overflow: hidden;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+    }
+    
+    button::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+        transition: left 0.6s;
+    }
+    
+    button:hover::before {
+        left: 100%;
     }
     
     button:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        transform: translateY(-4px);
+        box-shadow: 0 12px 30px rgba(0,0,0,0.25);
     }
     
     button:active {
-        transform: translateY(0);
+        transform: translateY(-2px);
     }
     
     button:disabled {
-        background: #cbd5e1;
+        background: var(--gray-300) !important;
         cursor: not-allowed;
-        transform: none;
+        transform: none !important;
+        box-shadow: none !important;
+        opacity: 0.6;
+    }
+    
+    #searchBtn {
+        background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+        color: white;
+    }
+    
+    #refreshBtn {
+        background: linear-gradient(135deg, var(--success), #059669);
+        color: white;
+    }
+    
+    #clearBtn {
+        background: linear-gradient(135deg, var(--gray-600), var(--gray-700));
+        color: white;
+    }
+    
+    #exportBtn {
+        background: linear-gradient(135deg, var(--warning), #d97706);
+        color: white;
     }
     
     .status {
-        padding: 12px;
-        border-radius: 8px;
-        margin-bottom: 20px;
+        padding: 18px 24px;
+        border-radius: 14px;
+        margin-bottom: 28px;
         display: none;
-        font-weight: 500;
+        font-weight: 600;
+        animation: slideIn 0.4s ease-out;
+        border-left: 5px solid;
+        font-size: 15px;
+    }
+    
+    @keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translateX(-30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
     }
     
     .status.success {
-        background: #d1fae5;
+        background: linear-gradient(135deg, #d1fae5, #a7f3d0);
         color: #065f46;
-        border-left: 4px solid #10b981;
+        border-color: var(--success);
         display: block;
     }
     
     .status.error {
-        background: #fee2e2;
+        background: linear-gradient(135deg, #fee2e2, #fecaca);
         color: #991b1b;
-        border-left: 4px solid #ef4444;
+        border-color: var(--error);
         display: block;
     }
     
     .status.info {
-        background: #dbeafe;
+        background: linear-gradient(135deg, #dbeafe, #bfdbfe);
         color: #1e40af;
-        border-left: 4px solid #3b82f6;
+        border-color: var(--info);
         display: block;
     }
     
     .table-wrapper {
         overflow-x: auto;
-        border-radius: 8px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        border-radius: 18px;
+        box-shadow: 0 6px 30px rgba(0,0,0,0.1);
+        background: white;
+        max-height: 650px;
+        overflow-y: auto;
+    }
+    
+    .table-wrapper::-webkit-scrollbar {
+        width: 12px;
+        height: 12px;
+    }
+    
+    .table-wrapper::-webkit-scrollbar-track {
+        background: var(--gray-100);
+        border-radius: 12px;
+    }
+    
+    .table-wrapper::-webkit-scrollbar-thumb {
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        border-radius: 12px;
+    }
+    
+    .table-wrapper::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(135deg, var(--primary-dark), var(--secondary));
     }
     
     table {
         width: 100%;
-        border-collapse: collapse;
+        border-collapse: separate;
+        border-spacing: 0;
         background: white;
     }
     
     th, td {
-        padding: 12px 15px;
+        padding: 18px 24px;
         text-align: left;
-        border-bottom: 1px solid #e2e8f0;
+        border-bottom: 1px solid var(--gray-200);
     }
     
     th {
-        background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+        background: linear-gradient(135deg, var(--dark), var(--gray-900));
         color: white;
-        font-weight: 600;
+        font-weight: 800;
         position: sticky;
         top: 0;
         text-transform: uppercase;
         font-size: 13px;
-        letter-spacing: 0.5px;
+        letter-spacing: 1.2px;
+        z-index: 10;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.15);
     }
     
-    tr:hover {
-        background: #f8fafc;
+    th:first-child {
+        border-top-left-radius: 14px;
     }
     
-    tr:last-child td {
+    th:last-child {
+        border-top-right-radius: 14px;
+    }
+    
+    tr {
+        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    tbody tr:hover {
+        background: linear-gradient(135deg, rgba(99, 102, 241, 0.08), rgba(139, 92, 246, 0.05));
+        transform: scale(1.01);
+        box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+    }
+    
+    tbody tr:last-child td {
         border-bottom: none;
+    }
+    
+    td {
+        font-size: 15px;
+        color: var(--gray-700);
+        font-weight: 500;
+    }
+    
+    td:first-child {
+        font-weight: 700;
+        color: var(--primary);
+        font-family: 'Courier New', monospace;
+        font-size: 16px;
     }
     
     .no-data {
         text-align: center;
-        padding: 40px;
-        color: #64748b;
-        font-size: 16px;
+        padding: 80px 30px;
+        color: var(--gray-600);
+        font-size: 17px;
+    }
+    
+    .no-data-icon {
+        font-size: 60px;
+        margin-bottom: 20px;
+        opacity: 0.6;
+        animation: bounce 2s infinite;
+    }
+    
+    @keyframes bounce {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
     }
     
     .loading {
         display: none;
         text-align: center;
-        padding: 20px;
-        color: #667eea;
-        font-weight: 600;
+        padding: 40px;
+        color: var(--primary);
+        font-weight: 700;
+        font-size: 16px;
     }
     
     .loading.active {
         display: block;
     }
-
-    .refresh-btn {
-        background: #10b981 !important;
+    
+    .spinner {
+        width: 60px;
+        height: 60px;
+        margin: 0 auto 24px;
+        border: 5px solid var(--gray-200);
+        border-top: 5px solid var(--primary);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+    
+    .footer-note {
+        margin-top: 35px;
+        padding: 24px;
+        background: linear-gradient(135deg, var(--gray-50), white);
+        border-radius: 18px;
+        font-size: 14px;
+        color: var(--gray-600);
+        border: 2px solid var(--gray-200);
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        line-height: 1.7;
+    }
+    
+    .footer-note .icon {
+        font-size: 28px;
+    }
+    
+    .keyboard-shortcuts {
+        position: fixed;
+        bottom: 24px;
+        right: 24px;
+        background: white;
+        padding: 24px;
+        border-radius: 18px;
+        box-shadow: 0 12px 50px rgba(0,0,0,0.25);
+        max-width: 320px;
+        display: none;
+        z-index: 1000;
+        animation: slideIn 0.4s ease-out;
+        border: 2px solid var(--gray-200);
+    }
+    
+    .keyboard-shortcuts.active {
+        display: block;
+    }
+    
+    .shortcuts-title {
+        font-weight: 800;
+        margin-bottom: 16px;
+        color: var(--dark);
+        font-size: 17px;
+    }
+    
+    .shortcut-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px 0;
+        font-size: 14px;
+        border-bottom: 1px solid var(--gray-200);
+    }
+    
+    .shortcut-item:last-child {
+        border-bottom: none;
+    }
+    
+    .key {
+        background: linear-gradient(135deg, var(--gray-200), var(--gray-300));
+        padding: 6px 12px;
+        border-radius: 8px;
+        font-family: 'Courier New', monospace;
+        font-weight: 700;
+        font-size: 12px;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    
+    .help-button {
+        position: fixed;
+        bottom: 24px;
+        right: 24px;
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 28px;
+        cursor: pointer;
+        box-shadow: 0 6px 25px rgba(99, 102, 241, 0.5);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        z-index: 999;
+        border: 3px solid white;
+    }
+    
+    .help-button:hover {
+        transform: scale(1.15) rotate(90deg);
+        box-shadow: 0 8px 35px rgba(99, 102, 241, 0.6);
     }
     
     @media (max-width: 768px) {
         .container {
+            padding: 28px;
+            border-radius: 20px;
+        }
+        
+        h1 {
+            font-size: 28px;
+        }
+        
+        .logo {
+            width: 70px;
+            height: 70px;
+            font-size: 36px;
+        }
+        
+        .stats-bar {
+            grid-template-columns: 1fr;
+            gap: 14px;
+        }
+        
+        .stat-card {
             padding: 20px;
         }
         
-        h2 {
-            font-size: 22px;
+        .stat-card .value {
+            font-size: 28px;
         }
         
         .search-section {
@@ -189,10 +669,19 @@
         
         #cnic {
             min-width: 100%;
+            font-size: 17px;
         }
         
         button {
             width: 100%;
+            justify-content: center;
+        }
+        
+        .help-button {
+            bottom: 18px;
+            right: 18px;
+            width: 54px;
+            height: 54px;
         }
     }
 </style>
@@ -201,85 +690,201 @@
 <body>
 
 <div class="container">
-    <h2>🔍 Applicant CNIC Search System</h2>
-    <p style="text-align: center; color: #64748b; margin-bottom: 20px;">
-        📊 Connected to Google Sheets
-    </p>
+    <!-- Header -->
+    <div class="header">
+        <div class="logo">🔍</div>
+        <h1>CNIC Search System</h1>
+        <div class="subtitle">
+            <span class="connection-status">● Google Sheets Connected</span>
+        </div>
+    </div>
+    
+    <!-- Statistics Bar -->
+    <div class="stats-bar">
+        <div class="stat-card">
+            <div class="label">📊 Total Records</div>
+            <div class="value">
+                <span id="totalRecords">---</span>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="label">📁 Data Columns</div>
+            <div class="value">
+                <span id="totalColumns">---</span>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="label">🕒 Last Sync</div>
+            <div class="value" style="font-size: 15px;">
+                <span id="lastUpdated">---</span>
+            </div>
+        </div>
+    </div>
     
     <!-- Status Message -->
     <div id="statusMessage" class="status"></div>
     
     <!-- Search Section -->
-    <div class="search-section">
-        <input type="text" id="cnic" placeholder="Enter CNIC (e.g., 35202-9155162-9)" disabled>
-        <button onclick="searchData()" id="searchBtn" disabled>🔍 Search</button>
-        <button onclick="refreshData()" id="refreshBtn" class="refresh-btn" disabled>🔄 Refresh</button>
-        <button onclick="clearResults()" id="clearBtn" style="background: #64748b;" disabled>🗑️ Clear</button>
+    <div class="search-container">
+        <label class="search-label">🔎 Enter CNIC Number (13 Digits)</label>
+        <div class="search-section">
+            <input type="text" id="cnic" placeholder="e.g., 35202-9155162-9 or 3520291551629" disabled>
+            <button onclick="searchData()" id="searchBtn" disabled>
+                🔍 Search
+            </button>
+            <button onclick="refreshData()" id="refreshBtn" disabled>
+                🔄 Refresh
+            </button>
+            <button onclick="clearResults()" id="clearBtn" disabled>
+                🗑️ Clear
+            </button>
+            <button onclick="exportToExcel()" id="exportBtn" style="display:none;">
+                📥 Export
+            </button>
+        </div>
     </div>
     
     <!-- Loading Indicator -->
-    <div id="loading" class="loading">⏳ Loading data from Google Sheets...</div>
+    <div id="loading" class="loading">
+        <div class="spinner"></div>
+        <div>⏳ Loading data from Google Sheets...</div>
+    </div>
     
     <!-- Results Table -->
     <div class="table-wrapper">
         <table id="resultTable">
             <tbody>
                 <tr>
-                    <td class="no-data">⏳ Loading data from Google Sheets...</td>
+                    <td class="no-data">
+                        <div class="no-data-icon">📋</div>
+                        <div>⏳ Connecting to Google Sheets...</div>
+                        <div style="font-size: 14px; margin-top: 10px; color: var(--gray-500);">
+                            Please wait while we load your data
+                        </div>
+                    </td>
                 </tr>
             </tbody>
         </table>
     </div>
+    
+    <!-- Footer Note -->
+    <div class="footer-note">
+        <span class="icon">ℹ️</span>
+        <div>
+            <strong>Smart Data Loading:</strong> Automatically syncs with Google Sheets. 
+            Click "Refresh" to get latest updates. Press <kbd style="background: var(--gray-200); padding: 2px 6px; border-radius: 4px; font-family: monospace;">Enter</kbd> to search quickly.
+        </div>
+    </div>
+</div>
 
-    <div style="margin-top: 20px; padding: 15px; background: #f8fafc; border-radius: 8px; font-size: 14px; color: #64748b;">
-        <strong>ℹ️ Note:</strong> Data is loaded from Google Sheets. Click "Refresh" button to get latest updates.
+<!-- Help Button -->
+<div class="help-button" onclick="toggleShortcuts()" title="Keyboard Shortcuts">
+    ⌨️
+</div>
+
+<!-- Keyboard Shortcuts Panel -->
+<div class="keyboard-shortcuts" id="shortcuts">
+    <div class="shortcuts-title">⌨️ Keyboard Shortcuts</div>
+    <div class="shortcut-item">
+        <span>Search</span>
+        <span class="key">Enter</span>
+    </div>
+    <div class="shortcut-item">
+        <span>Refresh</span>
+        <span class="key">Ctrl + R</span>
+    </div>
+    <div class="shortcut-item">
+        <span>Clear</span>
+        <span class="key">Esc</span>
+    </div>
+    <div class="shortcut-item">
+        <span>Focus Input</span>
+        <span class="key">/</span>
     </div>
 </div>
 
 <script>
 let excelData = [];
 let headers = [];
+let searchResults = [];
 
 // Google Sheets Configuration
 const SHEET_ID = '1Lie6PFJ6nJt3-CFA0NyEWIAKUSc_bITF';
-const SHEET_NAME = '1'; // Sheet ka naam "1" hai
+const SHEET_NAME = '1'; // Sheet tab name
 
 // Auto-load data on page load
 window.addEventListener('DOMContentLoaded', function() {
     loadDataFromGoogleSheets();
+    setupKeyboardShortcuts();
 });
 
-// Load data from Google Sheets
+// Keyboard shortcuts
+function setupKeyboardShortcuts() {
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' && document.activeElement.id !== 'cnic') {
+            const cnicInput = document.getElementById('cnic');
+            if (!cnicInput.disabled) {
+                searchData();
+            }
+        }
+        
+        if (e.ctrlKey && e.key === 'r') {
+            e.preventDefault();
+            refreshData();
+        }
+        
+        if (e.key === 'Escape') {
+            clearResults();
+        }
+        
+        if (e.key === '/' && document.activeElement.tagName !== 'INPUT') {
+            e.preventDefault();
+            document.getElementById('cnic').focus();
+        }
+    });
+}
+
+// Toggle shortcuts panel
+function toggleShortcuts() {
+    const panel = document.getElementById('shortcuts');
+    panel.classList.toggle('active');
+}
+
+// Load data from Google Sheets with multiple fallback methods
 async function loadDataFromGoogleSheets() {
-    showStatus('⏳ Loading data from Google Sheets...', 'info');
+    showStatus('⏳ Connecting to Google Sheets...', 'info');
     document.getElementById('loading').classList.add('active');
     
     try {
-        // Google Sheets ko CSV format mein export karein
+        // Method 1: Try CSV export (fastest)
         const csvUrl = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${SHEET_NAME}`;
         
+        console.log('Attempting to load from:', csvUrl);
         const response = await fetch(csvUrl);
         
         if (!response.ok) {
-            throw new Error('Failed to load Google Sheets. Make sure the sheet is shared as "Anyone with the link can view".');
+            throw new Error(`HTTP ${response.status}: Sheet may not be publicly shared or sheet name incorrect`);
         }
         
         const csvText = await response.text();
         
-        // Parse CSV data
+        // Check if response is actually CSV data
+        if (csvText.includes('<!DOCTYPE') || csvText.includes('<html')) {
+            throw new Error('Received HTML instead of CSV - sheet not properly shared');
+        }
+        
         excelData = parseCSV(csvText);
         
-        console.log("Google Sheets Data Loaded:", excelData.length, "rows");
+        console.log("✅ Google Sheets Data Loaded:", excelData.length, "rows");
         
         if (excelData.length === 0) {
-            throw new Error('Google Sheet is empty');
+            throw new Error('Sheet is empty - no data found');
         }
         
         if (excelData.length === 1) {
-            throw new Error('Google Sheet has only headers, no data rows');
+            throw new Error('Sheet has only headers - no data rows found');
         }
         
-        // Store headers
         headers = excelData[0];
         
         // Enable search functionality
@@ -288,6 +893,7 @@ async function loadDataFromGoogleSheets() {
         document.getElementById('refreshBtn').disabled = false;
         document.getElementById('clearBtn').disabled = false;
         
+        // Update statistics
         const recordCount = excelData.length - 1;
         const lastUpdated = new Date().toLocaleString('en-PK', { 
             timeZone: 'Asia/Karachi',
@@ -295,24 +901,72 @@ async function loadDataFromGoogleSheets() {
             timeStyle: 'short'
         });
         
-        showStatus(`✅ Google Sheets Loaded Successfully!\nTotal Records: ${recordCount.toLocaleString()} | Columns: ${headers.length}\nLast Updated: ${lastUpdated}`, 'success');
+        document.getElementById('totalRecords').textContent = recordCount.toLocaleString();
+        document.getElementById('totalColumns').textContent = headers.length;
+        document.getElementById('lastUpdated').textContent = lastUpdated;
+        
+        showStatus(`✅ Successfully Loaded!\n📊 ${recordCount.toLocaleString()} records | ${headers.length} columns | 🕒 ${lastUpdated}`, 'success');
         
         clearResults();
         
     } catch (error) {
-        console.error('Error loading Google Sheets:', error);
-        showStatus('❌ Error loading Google Sheets: ' + error.message + '\n\n⚠️ Make sure:\n1. Google Sheet is shared as "Anyone with the link can view"\n2. Sheet name is correct (currently: "' + SHEET_NAME + '")\n3. Internet connection is working', 'error');
+        console.error('❌ Error loading Google Sheets:', error);
+        
+        // Show detailed error message
+        let errorDetails = error.message;
+        let solutions = [];
+        
+        if (error.message.includes('432') || error.message.includes('not be publicly shared')) {
+            solutions = [
+                '1. Open your Google Sheet',
+                '2. Click "Share" button (top right)',
+                '3. Change to "Anyone with the link"',
+                '4. Permission: "Viewer"',
+                '5. Click "Done" and refresh this page'
+            ];
+            errorDetails = 'Sheet is not publicly accessible (Error 432)';
+        } else if (error.message.includes('sheet name')) {
+            solutions = [
+                '1. Open your Google Sheet',
+                '2. Check bottom tab name',
+                `3. Rename it to: "${SHEET_NAME}"`,
+                '4. Refresh this page'
+            ];
+            errorDetails = `Sheet tab name might not be "${SHEET_NAME}"`;
+        } else if (error.message.includes('404')) {
+            solutions = [
+                '1. Verify Sheet ID in code',
+                '2. Make sure sheet exists',
+                '3. Check if sheet was deleted'
+            ];
+            errorDetails = 'Sheet not found (404)';
+        }
+        
+        showStatus(`❌ Failed to Load Data\n\n${errorDetails}\n\n${solutions.length > 0 ? '💡 Solutions:\n' + solutions.join('\n') : ''}`, 'error');
         
         document.getElementById('resultTable').innerHTML = `
             <tbody>
                 <tr>
-                    <td class="no-data" style="color: #ef4444;">
-                        ❌ Failed to load Google Sheets<br><br>
-                        <strong>Solutions:</strong><br>
-                        1. Google Sheet ko "Anyone with the link can view" share karein<br>
-                        2. Internet connection check karein<br>
-                        3. Sheet name verify karein<br>
-                        4. Page refresh karein (F5)
+                    <td class="no-data">
+                        <div class="no-data-icon">❌</div>
+                        <div style="font-size: 18px; font-weight: 700; color: var(--error); margin-bottom: 12px;">
+                            Failed to Load Google Sheets
+                        </div>
+                        <div style="font-size: 15px; color: var(--gray-700); margin-bottom: 20px;">
+                            ${errorDetails}
+                        </div>
+                        ${solutions.length > 0 ? `
+                        <div style="text-align: left; max-width: 400px; margin: 0 auto; background: var(--gray-50); padding: 20px; border-radius: 12px;">
+                            <strong style="color: var(--dark);">💡 How to Fix:</strong>
+                            <ol style="margin: 10px 0 0 20px; line-height: 1.8;">
+                                ${solutions.map(s => `<li>${s}</li>`).join('')}
+                            </ol>
+                        </div>
+                        ` : ''}
+                        <div style="margin-top: 20px; padding-top: 20px; border-top: 2px solid var(--gray-200);">
+                            <strong>📞 Need Help?</strong><br>
+                            <small style="color: var(--gray-600);">Check console (F12) for detailed error logs</small>
+                        </div>
                     </td>
                 </tr>
             </tbody>
@@ -322,7 +976,7 @@ async function loadDataFromGoogleSheets() {
     }
 }
 
-// Parse CSV data
+// Parse CSV data with improved error handling
 function parseCSV(csv) {
     const lines = csv.split('\n');
     const result = [];
@@ -331,7 +985,6 @@ function parseCSV(csv) {
         const line = lines[i].trim();
         if (!line) continue;
         
-        // Simple CSV parser (handles quoted fields)
         const row = [];
         let field = '';
         let inQuotes = false;
@@ -343,7 +996,7 @@ function parseCSV(csv) {
             if (char === '"') {
                 if (inQuotes && nextChar === '"') {
                     field += '"';
-                    j++; // Skip next quote
+                    j++;
                 } else {
                     inQuotes = !inQuotes;
                 }
@@ -363,7 +1016,7 @@ function parseCSV(csv) {
 
 // Refresh data function
 async function refreshData() {
-    showStatus('🔄 Refreshing data...', 'info');
+    showStatus('🔄 Refreshing data from Google Sheets...', 'info');
     await loadDataFromGoogleSheets();
 }
 
@@ -383,7 +1036,7 @@ function searchData() {
     }
     
     if (inputCNIC.length < 13) {
-        showStatus('⚠️ CNIC should be 13 digits', 'error');
+        showStatus('⚠️ CNIC must be 13 digits (format: XXXXX-XXXXXXX-X)', 'error');
         return;
     }
     
@@ -400,7 +1053,6 @@ function performSearch(inputCNIC) {
     const dataRows = excelData.slice(1);
     let results = [];
     
-    // Search with batch processing
     const batchSize = 1000;
     for (let i = 0; i < dataRows.length; i += batchSize) {
         const batch = dataRows.slice(i, i + batchSize);
@@ -409,6 +1061,8 @@ function performSearch(inputCNIC) {
         if (results.length > 0) break;
     }
     
+    searchResults = results;
+    
     if (results.length === 0) {
         const formattedCNIC = inputCNIC.length === 13 
             ? inputCNIC.substr(0, 5) + '-' + inputCNIC.substr(5, 7) + '-' + inputCNIC.substr(12, 1)
@@ -416,13 +1070,23 @@ function performSearch(inputCNIC) {
         table.innerHTML = `
             <tbody>
                 <tr>
-                    <td class="no-data" style="color: #ef4444;">
-                        ❌ No record found for CNIC: ${formattedCNIC}
+                    <td class="no-data">
+                        <div class="no-data-icon">🔍</div>
+                        <div style="font-size: 18px; font-weight: 700; margin-bottom: 10px;">
+                            No Record Found
+                        </div>
+                        <div style="font-size: 16px; color: var(--error); font-family: monospace; margin-bottom: 12px;">
+                            CNIC: ${formattedCNIC}
+                        </div>
+                        <div style="font-size: 14px; color: var(--gray-600);">
+                            Please verify the CNIC and try again
+                        </div>
                     </td>
                 </tr>
             </tbody>
         `;
-        showStatus('No matching record found', 'error');
+        showStatus('❌ No matching record found for this CNIC', 'error');
+        document.getElementById('exportBtn').style.display = 'none';
         return;
     }
     
@@ -447,7 +1111,8 @@ function performSearch(inputCNIC) {
     tableHTML += '</tbody>';
     table.innerHTML = tableHTML;
     
-    showStatus(`✅ Found ${results.length} matching record(s)`, 'success');
+    showStatus(`✅ Success! Found ${results.length} matching record(s)`, 'success');
+    document.getElementById('exportBtn').style.display = 'inline-flex';
 }
 
 // Clear results
@@ -456,11 +1121,47 @@ function clearResults() {
     document.getElementById('resultTable').innerHTML = `
         <tbody>
             <tr>
-                <td class="no-data">Enter a CNIC and click Search</td>
+                <td class="no-data">
+                    <div class="no-data-icon">📋</div>
+                    <div style="font-size: 18px; font-weight: 600; margin-bottom: 10px;">
+                        Ready to Search
+                    </div>
+                    <div style="font-size: 15px; color: var(--gray-600);">
+                        Enter a 13-digit CNIC and click Search
+                    </div>
+                    <div style="font-size: 13px; color: var(--gray-500); margin-top: 8px;">
+                        Format: XXXXX-XXXXXXX-X or 13 digits without dashes
+                    </div>
+                </td>
             </tr>
         </tbody>
     `;
     showStatus('', '');
+    searchResults = [];
+    document.getElementById('exportBtn').style.display = 'none';
+}
+
+// Export to Excel (CSV format)
+function exportToExcel() {
+    if (searchResults.length === 0) {
+        showStatus('⚠️ No results to export', 'error');
+        return;
+    }
+    
+    let csv = headers.join(',') + '\n';
+    searchResults.forEach(row => {
+        csv += row.map(cell => `"${cell}"`).join(',') + '\n';
+    });
+    
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'cnic_search_results_' + new Date().toISOString().split('T')[0] + '.csv';
+    a.click();
+    window.URL.revokeObjectURL(url);
+    
+    showStatus('✅ Results exported successfully! Check your downloads folder.', 'success');
 }
 
 // Show status
@@ -481,7 +1182,7 @@ document.getElementById('cnic').addEventListener('keypress', function(e) {
     }
 });
 
-// Format CNIC input
+// Format CNIC input with dashes
 document.getElementById('cnic').addEventListener('input', function(e) {
     let value = e.target.value.replace(/\D/g, '');
     
@@ -503,11 +1204,11 @@ document.getElementById('cnic').addEventListener('input', function(e) {
     e.target.value = formatted;
 });
 
-// Auto-refresh data every 5 minutes (optional - uncomment to enable)
+// Auto-refresh every 10 minutes (optional - uncomment to enable)
 // setInterval(() => {
 //     console.log('Auto-refreshing data...');
 //     loadDataFromGoogleSheets();
-// }, 5 * 60 * 1000); // 5 minutes
+// }, 10 * 60 * 1000);
 </script>
 
 </body>
