@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Applicant CNIC Search</title>
+
+<!-- CDN se XLSX library load karein (CORS issue fix) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: 20px;
+    }
+    
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        padding: 30px;
+    }
+    
+    h2 {
+        text-align: center;
+        color: #0f172a;
+        margin-bottom: 30px;
+        font-size: 28px;
+    }
+    
+    .upload-section {
+        background: #f8fafc;
+        padding: 20px;
+        border-radius: 10px;
+        margin-bottom: 25px;
+        border: 2px dashed #cbd5e1;
+    }
+    
+    .file-input-wrapper {
+        position: relative;
+        display: inline-block;
+        width: 100%;
+    }
+    
+    #fileInput {
+        width: 100%;
+        padding: 12px;
+        font-size: 16px;
+        border: 2px solid #e2e8f0;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+    
+    #fileInput:hover {
+        border-color: #667eea;
+    }
+    
+    .search-section {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 25px;
+        flex-wrap: wrap;
+    }
+    
+    #cnic {
+        flex: 1;
+        min-width: 250px;
+        padding: 12px 20px;
+        font-size: 16px;
+        border: 2px solid #e2e8f0;
+        border-radius: 8px;
+        transition: all 0.3s;
+    }
+    
+    #cnic:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+    
+    button {
+        padding: 12px 30px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        transition: all 0.3s;
+    }
+    
+    button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    }
+    
+    button:active {
+        transform: translateY(0);
+    }
+    
+    button:disabled {
+        background: #cbd5e1;
+        cursor: not-allowed;
+        transform: none;
+    }
+    
+    .status {
+        padding: 12px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        display: none;
+        font-weight: 500;
+    }
+    
+    .status.success {
+        background: #d1fae5;
+        color: #065f46;
+        border-left: 4px solid #10b981;
+        display: block;
+    }
+    
+    .status.error {
+        background: #fee2e2;
+        color: #991b1b;
+        border-left: 4px solid #ef4444;
+        display: block;
+    }
+    
+    .status.info {
+        background: #dbeafe;
+        color: #1e40af;
+        border-left: 4px solid #3b82f6;
+        display: block;
+    }
+    
+    .table-wrapper {
+        overflow-x: auto;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        background: white;
+    }
+    
+    th, td {
+        padding: 12px 15px;
+        text-align: left;
+        border-bottom: 1px solid #e2e8f0;
+    }
+    
+    th {
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+        color: white;
+        font-weight: 600;
+        position: sticky;
+        top: 0;
+        text-transform: uppercase;
+        font-size: 13px;
+        letter-spacing: 0.5px;
+    }
+    
+    tr:hover {
+        background: #f8fafc;
+    }
+    
+    tr:last-child td {
+        border-bottom: none;
+    }
+    
+    .no-data {
+        text-align: center;
+        padding: 40px;
+        color: #64748b;
+        font-size: 16px;
+    }
+    
+    .loading {
+        display: none;
+        text-align: center;
+        padding: 20px;
+        color: #667eea;
+        font-weight: 600;
+    }
+    
+    .loading.active {
+        display: block;
+    }
+    
+    @media (max-width: 768px) {
+        .container {
+            padding: 20px;
+        }
+        
+        h2 {
+            font-size: 22px;
+        }
+        
+        .search-section {
+            flex-direction: column;
+        }
+        
+        #cnic {
+            min-width: 100%;
+        }
+        
+        button {
+            width: 100%;
+        }
+    }
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <h2>🔍 Applicant CNIC Search System</h2>
+    
+    <!-- File Upload Section -->
+    <div class="upload-section">
+        <label for="fileInput" style="display: block; margin-bottom: 10px; font-weight: 600; color: #0f172a;">
+            📁 Step 1: Excel File Upload Karein (.xlsx)
+        </label>
+        <input type="file" id="fileInput" accept=".xlsx,.xls" />
+    </div>
+    
+    <!-- Status Message -->
+    <div id="statusMessage" class="status"></div>
+    
+    <!-- Search Section -->
+    <div class="search-section">
+        <input type="text" id="cnic" placeholder="Enter CNIC (e.g., 35202-9155162-9 or 3520291551629)" disabled>
+        <button onclick="searchData()" id="searchBtn" disabled>🔍 Search</button>
+        <button onclick="clearResults()" id="clearBtn" style="background: #64748b;" disabled>🗑️ Clear</button>
+    </div>
+    
+    <!-- Loading Indicator -->
+    <div id="loading" class="loading">⏳ Searching...</div>
+    
+    <!-- Results Table -->
+    <div class="table-wrapper">
+        <table id="resultTable">
+            <tbody>
+                <tr>
+                    <td class="no-data">👆 Please upload an Excel file to begin</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+let excelData = [];
+let headers = [];
+
+// File input change event
+document.getElementById('fileInput').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    
+    if (!file) {
+        showStatus('Please select a file', 'error');
+        return;
+    }
+    
+    // Check file size (warn if > 10MB)
+    const fileSizeMB = (file.size / (1024 * 1024)).toFixed(2);
+    if (file.size > 10 * 1024 * 1024) {
+        showStatus(`⚠️ Large file detected (${fileSizeMB} MB). Processing may take a moment...`, 'info');
+    }
+    
+    // Check file extension
+    const fileName = file.name;
+    const fileExt = fileName.split('.').pop().toLowerCase();
+    
+    if (fileExt !== 'xlsx' && fileExt !== 'xls') {
+        showStatus('❌ Invalid file type. Please select .xlsx or .xls file', 'error');
+        return;
+    }
+    
+    showStatus(`⏳ Loading Excel file (${fileSizeMB} MB)...`, 'info');
+    
+    const reader = new FileReader();
+    
+    reader.onload = function(e) {
+        try {
+            showStatus('⏳ Processing Excel file...', 'info');
+            
+            // Use setTimeout to prevent UI freeze
+            setTimeout(() => {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    
+                    // Read with optimized settings
+                    const workbook = XLSX.read(data, { 
+                        type: 'array',
+                        cellDates: false,
+                        cellNF: false,
+                        cellStyles: false
+                    });
+                    
+                    // Get first sheet
+                    const firstSheetName = workbook.SheetNames[0];
+                    const sheet = workbook.Sheets[firstSheetName];
+                    
+                    // Read Excel as rows (header: 1 means array of arrays)
+                    excelData = XLSX.utils.sheet_to_json(sheet, {
+                        header: 1,
+                        defval: "",
+                        raw: false,  // Convert all values to strings
+                        blankrows: false  // Skip blank rows
+                    });
+                    
+                    console.log("Excel Raw Data (first 5 rows):", excelData.slice(0, 5));
+                    console.log("Total Rows:", excelData.length);
+                    
+                    // Validate data
+                    if (excelData.length === 0) {
+                        showStatus('❌ Excel file is empty', 'error');
+                        disableSearch();
+                        return;
+                    }
+                    
+                    if (excelData.length === 1) {
+                        showStatus('❌ Excel loaded but no data rows found (only headers)', 'error');
+                        disableSearch();
+                        return;
+                    }
+                    
+                    // Store headers
+                    headers = excelData[0];
+                    
+                    // Enable search functionality
+                    document.getElementById('cnic').disabled = false;
+                    document.getElementById('searchBtn').disabled = false;
+                    document.getElementById('clearBtn').disabled = false;
+                    
+                    const recordCount = excelData.length - 1;
+                    showStatus(`✅ Excel Loaded Successfully!\nTotal Records: ${recordCount.toLocaleString()} | Columns: ${headers.length}`, 'success');
+                    
+                    // Clear previous results
+                    clearResults();
+                    
+                } catch (error) {
+                    console.error('Error reading Excel:', error);
+                    showStatus('❌ Error reading Excel file: ' + error.message, 'error');
+                    disableSearch();
+                }
+            }, 100); // Small delay to allow UI to update
+            
+        } catch (error) {
+            console.error('Error reading Excel:', error);
+            showStatus('❌ Error reading Excel file: ' + error.message, 'error');
+            disableSearch();
+        }
+    };
+    
+    reader.onerror = function() {
+        showStatus('❌ Error reading file', 'error');
+        disableSearch();
+    };
+    
+    reader.readAsArrayBuffer(file);
+});
+
+// Normalize function - remove all non-numeric characters (handles both formats)
+function normalize(val) {
+    if (val === null || val === undefined) return "";
+    return String(val).replace(/\D/g, ""); // Removes dashes and keeps only numbers
+}
+
+// Search function
+function searchData() {
+    const inputCNIC = normalize(document.getElementById("cnic").value.trim());
+    
+    if (!inputCNIC) {
+        showStatus('⚠️ Please enter a CNIC number', 'error');
+        return;
+    }
+    
+    if (inputCNIC.length < 13) {
+        showStatus('⚠️ CNIC should be 13 digits (format: XXXXX-XXXXXXX-X)', 'error');
+        return;
+    }
+    
+    // Show loading
+    document.getElementById('loading').classList.add('active');
+    
+    // Simulate slight delay for better UX
+    setTimeout(() => {
+        performSearch(inputCNIC);
+        document.getElementById('loading').classList.remove('active');
+    }, 300);
+}
+
+function performSearch(inputCNIC) {
+    const table = document.getElementById("resultTable");
+    
+    // For large datasets, use optimized search
+    const dataRows = excelData.slice(1);
+    let results = [];
+    
+    // Batch processing for better performance
+    const batchSize = 1000;
+    for (let i = 0; i < dataRows.length; i += batchSize) {
+        const batch = dataRows.slice(i, i + batchSize);
+        const batchResults = batch.filter(row => normalize(row[0]) === inputCNIC);
+        results = results.concat(batchResults);
+        
+        // If found, break early
+        if (results.length > 0) break;
+    }
+    
+    if (results.length === 0) {
+        // Format CNIC for display with dashes
+        const formattedCNIC = inputCNIC.length === 13 
+            ? inputCNIC.substr(0, 5) + '-' + inputCNIC.substr(5, 7) + '-' + inputCNIC.substr(12, 1)
+            : inputCNIC;
+        table.innerHTML = `
+            <tbody>
+                <tr>
+                    <td class="no-data" style="color: #ef4444;">
+                        ❌ No record found for CNIC: ${formattedCNIC}
+                    </td>
+                </tr>
+            </tbody>
+        `;
+        showStatus('No matching record found', 'error');
+        return;
+    }
+    
+    // Build table efficiently
+    let tableHTML = '<thead><tr>';
+    headers.forEach(header => {
+        tableHTML += `<th>${header || 'N/A'}</th>`;
+    });
+    tableHTML += '</tr></thead><tbody>';
+    
+    // Add data rows
+    results.forEach(row => {
+        tableHTML += '<tr>';
+        headers.forEach((_, index) => {
+            const cellValue = row[index] !== undefined && row[index] !== null && row[index] !== '' 
+                ? row[index] 
+                : '-';
+            tableHTML += `<td>${cellValue}</td>`;
+        });
+        tableHTML += '</tr>';
+    });
+    
+    tableHTML += '</tbody>';
+    table.innerHTML = tableHTML;
+    
+    showStatus(`✅ Found ${results.length} matching record(s)`, 'success');
+}
+
+// Clear results function
+function clearResults() {
+    document.getElementById('cnic').value = '';
+    document.getElementById('resultTable').innerHTML = `
+        <tbody>
+            <tr>
+                <td class="no-data">Enter a CNIC and click Search</td>
+            </tr>
+        </tbody>
+    `;
+    showStatus('', '');
+}
+
+// Show status message
+function showStatus(message, type) {
+    const statusDiv = document.getElementById('statusMessage');
+    statusDiv.textContent = message;
+    statusDiv.className = 'status ' + type;
+    
+    if (!message) {
+        statusDiv.style.display = 'none';
+    }
+}
+
+// Disable search functionality
+function disableSearch() {
+    document.getElementById('cnic').disabled = true;
+    document.getElementById('searchBtn').disabled = true;
+    document.getElementById('clearBtn').disabled = true;
+    excelData = [];
+    headers = [];
+}
+
+// Allow Enter key to search
+document.getElementById('cnic').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter' && !this.disabled) {
+        searchData();
+    }
+});
+
+// Format CNIC input (add dashes automatically in format: XXXXX-XXXXXXX-X)
+document.getElementById('cnic').addEventListener('input', function(e) {
+    let value = e.target.value.replace(/\D/g, ''); // Remove all non-digits
+    
+    if (value.length > 13) {
+        value = value.substr(0, 13);
+    }
+    
+    // Format: XXXXX-XXXXXXX-X
+    let formatted = '';
+    if (value.length > 0) {
+        formatted = value.substr(0, 5);
+        if (value.length > 5) {
+            formatted += '-' + value.substr(5, 7);
+        }
+        if (value.length > 12) {
+            formatted += '-' + value.substr(12, 1);
+        }
+    }
+    
+    e.target.value = formatted;
+});
+</script>
+
+</body>
+</html>
