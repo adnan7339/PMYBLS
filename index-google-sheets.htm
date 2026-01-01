@@ -3,11 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CNIC Search System - Ultimate Advanced</title>
+<title>PMYBLS - Applicant CNIC Search</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔍</text></svg>">
-
-<!-- XLSX Library for Excel Support -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
@@ -132,12 +129,19 @@
         color: var(--dark);
         font-size: 36px;
         font-weight: 800;
-        margin-bottom: 12px;
+        margin-bottom: 8px;
         background: linear-gradient(135deg, var(--primary), var(--secondary));
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
         letter-spacing: -0.5px;
+    }
+    
+    .tagline {
+        color: var(--gray-600);
+        font-size: 15px;
+        font-weight: 500;
+        margin-bottom: 16px;
     }
     
     .subtitle {
@@ -373,6 +377,7 @@
         animation: slideIn 0.4s ease-out;
         border-left: 5px solid;
         font-size: 15px;
+        line-height: 1.6;
     }
     
     @keyframes slideIn {
@@ -443,7 +448,7 @@
     }
     
     th, td {
-        padding: 18px 24px;
+        padding: 20px 24px;
         text-align: left;
         border-bottom: 1px solid var(--gray-200);
     }
@@ -475,7 +480,7 @@
     
     tbody tr:hover {
         background: linear-gradient(135deg, rgba(99, 102, 241, 0.08), rgba(139, 92, 246, 0.05));
-        transform: scale(1.01);
+        transform: scale(1.005);
         box-shadow: 0 6px 16px rgba(0,0,0,0.08);
     }
     
@@ -561,79 +566,6 @@
         font-size: 28px;
     }
     
-    .keyboard-shortcuts {
-        position: fixed;
-        bottom: 24px;
-        right: 24px;
-        background: white;
-        padding: 24px;
-        border-radius: 18px;
-        box-shadow: 0 12px 50px rgba(0,0,0,0.25);
-        max-width: 320px;
-        display: none;
-        z-index: 1000;
-        animation: slideIn 0.4s ease-out;
-        border: 2px solid var(--gray-200);
-    }
-    
-    .keyboard-shortcuts.active {
-        display: block;
-    }
-    
-    .shortcuts-title {
-        font-weight: 800;
-        margin-bottom: 16px;
-        color: var(--dark);
-        font-size: 17px;
-    }
-    
-    .shortcut-item {
-        display: flex;
-        justify-content: space-between;
-        padding: 10px 0;
-        font-size: 14px;
-        border-bottom: 1px solid var(--gray-200);
-    }
-    
-    .shortcut-item:last-child {
-        border-bottom: none;
-    }
-    
-    .key {
-        background: linear-gradient(135deg, var(--gray-200), var(--gray-300));
-        padding: 6px 12px;
-        border-radius: 8px;
-        font-family: 'Courier New', monospace;
-        font-weight: 700;
-        font-size: 12px;
-        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-    }
-    
-    .help-button {
-        position: fixed;
-        bottom: 24px;
-        right: 24px;
-        width: 60px;
-        height: 60px;
-        background: linear-gradient(135deg, var(--primary), var(--secondary));
-        color: white;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 28px;
-        cursor: pointer;
-        box-shadow: 0 6px 25px rgba(99, 102, 241, 0.5);
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        z-index: 999;
-        border: 3px solid white;
-    }
-    
-    .help-button:hover {
-        transform: scale(1.15) rotate(90deg);
-        box-shadow: 0 8px 35px rgba(99, 102, 241, 0.6);
-    }
-    
     @media (max-width: 768px) {
         .container {
             padding: 28px;
@@ -677,11 +609,9 @@
             justify-content: center;
         }
         
-        .help-button {
-            bottom: 18px;
-            right: 18px;
-            width: 54px;
-            height: 54px;
+        th, td {
+            padding: 16px 18px;
+            font-size: 14px;
         }
     }
 </style>
@@ -693,7 +623,8 @@
     <!-- Header -->
     <div class="header">
         <div class="logo">🔍</div>
-        <h1>CNIC Search System</h1>
+        <h1>PMYBLS Search System</h1>
+        <div class="tagline">Prime Minister Youth Business & Agriculture Loan Scheme</div>
         <div class="subtitle">
             <span class="connection-status">● Google Sheets Connected</span>
         </div>
@@ -702,20 +633,14 @@
     <!-- Statistics Bar -->
     <div class="stats-bar">
         <div class="stat-card">
-            <div class="label">📊 Total Records</div>
+            <div class="label">📊 Total Applicants</div>
             <div class="value">
                 <span id="totalRecords">---</span>
             </div>
         </div>
         <div class="stat-card">
-            <div class="label">📁 Data Columns</div>
-            <div class="value">
-                <span id="totalColumns">---</span>
-            </div>
-        </div>
-        <div class="stat-card">
-            <div class="label">🕒 Last Sync</div>
-            <div class="value" style="font-size: 15px;">
+            <div class="label">🕒 Last Updated</div>
+            <div class="value" style="font-size: 16px;">
                 <span id="lastUpdated">---</span>
             </div>
         </div>
@@ -726,9 +651,9 @@
     
     <!-- Search Section -->
     <div class="search-container">
-        <label class="search-label">🔎 Enter CNIC Number (13 Digits)</label>
+        <label class="search-label">🔎 Search by Applicant CNIC (13 Digits)</label>
         <div class="search-section">
-            <input type="text" id="cnic" placeholder="e.g., 35202-9155162-9 or 3520291551629" disabled>
+            <input type="text" id="cnic" placeholder="Enter CNIC e.g., 35202-9155162-9" disabled>
             <button onclick="searchData()" id="searchBtn" disabled>
                 🔍 Search
             </button>
@@ -747,7 +672,7 @@
     <!-- Loading Indicator -->
     <div id="loading" class="loading">
         <div class="spinner"></div>
-        <div>⏳ Loading data from Google Sheets...</div>
+        <div>⏳ Loading applicant data from Google Sheets...</div>
     </div>
     
     <!-- Results Table -->
@@ -757,9 +682,9 @@
                 <tr>
                     <td class="no-data">
                         <div class="no-data-icon">📋</div>
-                        <div>⏳ Connecting to Google Sheets...</div>
+                        <div>⏳ Connecting to database...</div>
                         <div style="font-size: 14px; margin-top: 10px; color: var(--gray-500);">
-                            Please wait while we load your data
+                            Loading PMYBLS applicant records
                         </div>
                     </td>
                 </tr>
@@ -771,35 +696,9 @@
     <div class="footer-note">
         <span class="icon">ℹ️</span>
         <div>
-            <strong>Smart Data Loading:</strong> Automatically syncs with Google Sheets. 
-            Click "Refresh" to get latest updates. Press <kbd style="background: var(--gray-200); padding: 2px 6px; border-radius: 4px; font-family: monospace;">Enter</kbd> to search quickly.
+            <strong>PMYBLS Data:</strong> Displays 4 key fields - Applicant CNIC, Name, Business Sub Sector, and MFI/Bank Name. 
+            Click "Refresh" to sync with latest updates. Press <kbd style="background: var(--gray-200); padding: 2px 6px; border-radius: 4px; font-family: monospace;">Enter</kbd> for quick search.
         </div>
-    </div>
-</div>
-
-<!-- Help Button -->
-<div class="help-button" onclick="toggleShortcuts()" title="Keyboard Shortcuts">
-    ⌨️
-</div>
-
-<!-- Keyboard Shortcuts Panel -->
-<div class="keyboard-shortcuts" id="shortcuts">
-    <div class="shortcuts-title">⌨️ Keyboard Shortcuts</div>
-    <div class="shortcut-item">
-        <span>Search</span>
-        <span class="key">Enter</span>
-    </div>
-    <div class="shortcut-item">
-        <span>Refresh</span>
-        <span class="key">Ctrl + R</span>
-    </div>
-    <div class="shortcut-item">
-        <span>Clear</span>
-        <span class="key">Esc</span>
-    </div>
-    <div class="shortcut-item">
-        <span>Focus Input</span>
-        <span class="key">/</span>
     </div>
 </div>
 
@@ -808,9 +707,17 @@ let excelData = [];
 let headers = [];
 let searchResults = [];
 
-// Google Sheets Configuration
-const SHEET_ID = '1Lie6PFJ6nJt3-CFA0NyEWIAKUSc_bITF';
-const SHEET_NAME = '1'; // Sheet tab name
+// Google Sheets Configuration - UPDATED
+const SHEET_ID = '1n2_6Oewp88igcRv5H7vKYpYH-jHmnTus';
+const SHEET_NAME = 'Sheet1'; // Update if your sheet name is different
+
+// Column mapping for the 4 specific columns
+const COLUMNS_TO_DISPLAY = {
+    'Applicant CNIC': 'Applicant CNIC',
+    'Applicant Name': 'Applicant Name',
+    'Business Sub Sector': 'Business Sub Sector',
+    'MFIBankName': 'MFI/Bank Name'
+};
 
 // Auto-load data on page load
 window.addEventListener('DOMContentLoaded', function() {
@@ -844,50 +751,42 @@ function setupKeyboardShortcuts() {
     });
 }
 
-// Toggle shortcuts panel
-function toggleShortcuts() {
-    const panel = document.getElementById('shortcuts');
-    panel.classList.toggle('active');
-}
-
-// Load data from Google Sheets with multiple fallback methods
+// Load data from Google Sheets
 async function loadDataFromGoogleSheets() {
-    showStatus('⏳ Connecting to Google Sheets...', 'info');
+    showStatus('⏳ Connecting to PMYBLS database...', 'info');
     document.getElementById('loading').classList.add('active');
     
     try {
-        // Method 1: Try CSV export (fastest)
         const csvUrl = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${SHEET_NAME}`;
         
-        console.log('Attempting to load from:', csvUrl);
+        console.log('Loading from:', csvUrl);
         const response = await fetch(csvUrl);
         
         if (!response.ok) {
-            throw new Error(`HTTP ${response.status}: Sheet may not be publicly shared or sheet name incorrect`);
+            throw new Error(`HTTP ${response.status}: Sheet may not be publicly shared`);
         }
         
         const csvText = await response.text();
         
-        // Check if response is actually CSV data
         if (csvText.includes('<!DOCTYPE') || csvText.includes('<html')) {
-            throw new Error('Received HTML instead of CSV - sheet not properly shared');
+            throw new Error('Sheet not properly shared - received HTML instead of data');
         }
         
         excelData = parseCSV(csvText);
         
-        console.log("✅ Google Sheets Data Loaded:", excelData.length, "rows");
+        console.log("✅ Data Loaded:", excelData.length, "rows");
         
         if (excelData.length === 0) {
-            throw new Error('Sheet is empty - no data found');
+            throw new Error('Sheet is empty');
         }
         
         if (excelData.length === 1) {
-            throw new Error('Sheet has only headers - no data rows found');
+            throw new Error('Sheet has only headers');
         }
         
         headers = excelData[0];
         
-        // Enable search functionality
+        // Enable functionality
         document.getElementById('cnic').disabled = false;
         document.getElementById('searchBtn').disabled = false;
         document.getElementById('refreshBtn').disabled = false;
@@ -902,47 +801,39 @@ async function loadDataFromGoogleSheets() {
         });
         
         document.getElementById('totalRecords').textContent = recordCount.toLocaleString();
-        document.getElementById('totalColumns').textContent = headers.length;
         document.getElementById('lastUpdated').textContent = lastUpdated;
         
-        showStatus(`✅ Successfully Loaded!\n📊 ${recordCount.toLocaleString()} records | ${headers.length} columns | 🕒 ${lastUpdated}`, 'success');
+        showStatus(`✅ Successfully Loaded!\n📊 ${recordCount.toLocaleString()} applicant records | 🕒 ${lastUpdated}`, 'success');
         
         clearResults();
         
     } catch (error) {
-        console.error('❌ Error loading Google Sheets:', error);
+        console.error('❌ Error:', error);
         
-        // Show detailed error message
         let errorDetails = error.message;
         let solutions = [];
         
         if (error.message.includes('432') || error.message.includes('not be publicly shared')) {
             solutions = [
-                '1. Open your Google Sheet',
-                '2. Click "Share" button (top right)',
-                '3. Change to "Anyone with the link"',
+                '1. Open Google Sheet',
+                '2. Click "Share" (top right)',
+                '3. Select "Anyone with the link"',
                 '4. Permission: "Viewer"',
-                '5. Click "Done" and refresh this page'
+                '5. Click "Done" and refresh'
             ];
             errorDetails = 'Sheet is not publicly accessible (Error 432)';
-        } else if (error.message.includes('sheet name')) {
+        } else if (error.message.includes('sheet name') || error.message.includes('404')) {
             solutions = [
                 '1. Open your Google Sheet',
                 '2. Check bottom tab name',
-                `3. Rename it to: "${SHEET_NAME}"`,
-                '4. Refresh this page'
+                `3. Should be: "${SHEET_NAME}"`,
+                '4. Or update SHEET_NAME in code',
+                '5. Refresh page'
             ];
             errorDetails = `Sheet tab name might not be "${SHEET_NAME}"`;
-        } else if (error.message.includes('404')) {
-            solutions = [
-                '1. Verify Sheet ID in code',
-                '2. Make sure sheet exists',
-                '3. Check if sheet was deleted'
-            ];
-            errorDetails = 'Sheet not found (404)';
         }
         
-        showStatus(`❌ Failed to Load Data\n\n${errorDetails}\n\n${solutions.length > 0 ? '💡 Solutions:\n' + solutions.join('\n') : ''}`, 'error');
+        showStatus(`❌ Failed to Load\n\n${errorDetails}\n\n${solutions.length > 0 ? '💡 Solutions:\n' + solutions.join('\n') : ''}`, 'error');
         
         document.getElementById('resultTable').innerHTML = `
             <tbody>
@@ -950,23 +841,19 @@ async function loadDataFromGoogleSheets() {
                     <td class="no-data">
                         <div class="no-data-icon">❌</div>
                         <div style="font-size: 18px; font-weight: 700; color: var(--error); margin-bottom: 12px;">
-                            Failed to Load Google Sheets
+                            Failed to Load PMYBLS Data
                         </div>
                         <div style="font-size: 15px; color: var(--gray-700); margin-bottom: 20px;">
                             ${errorDetails}
                         </div>
                         ${solutions.length > 0 ? `
-                        <div style="text-align: left; max-width: 400px; margin: 0 auto; background: var(--gray-50); padding: 20px; border-radius: 12px;">
+                        <div style="text-align: left; max-width: 450px; margin: 0 auto; background: var(--gray-50); padding: 20px; border-radius: 12px;">
                             <strong style="color: var(--dark);">💡 How to Fix:</strong>
-                            <ol style="margin: 10px 0 0 20px; line-height: 1.8;">
+                            <ol style="margin: 10px 0 0 20px; line-height: 1.9;">
                                 ${solutions.map(s => `<li>${s}</li>`).join('')}
                             </ol>
                         </div>
                         ` : ''}
-                        <div style="margin-top: 20px; padding-top: 20px; border-top: 2px solid var(--gray-200);">
-                            <strong>📞 Need Help?</strong><br>
-                            <small style="color: var(--gray-600);">Check console (F12) for detailed error logs</small>
-                        </div>
                     </td>
                 </tr>
             </tbody>
@@ -976,7 +863,7 @@ async function loadDataFromGoogleSheets() {
     }
 }
 
-// Parse CSV data with improved error handling
+// Parse CSV
 function parseCSV(csv) {
     const lines = csv.split('\n');
     const result = [];
@@ -1014,9 +901,9 @@ function parseCSV(csv) {
     return result;
 }
 
-// Refresh data function
+// Refresh data
 async function refreshData() {
-    showStatus('🔄 Refreshing data from Google Sheets...', 'info');
+    showStatus('🔄 Refreshing PMYBLS data...', 'info');
     await loadDataFromGoogleSheets();
 }
 
@@ -1026,17 +913,24 @@ function normalize(val) {
     return String(val).replace(/\D/g, "");
 }
 
+// Find column index by name
+function getColumnIndex(columnName) {
+    return headers.findIndex(h => 
+        h && h.toLowerCase().trim() === columnName.toLowerCase().trim()
+    );
+}
+
 // Search function
 function searchData() {
     const inputCNIC = normalize(document.getElementById("cnic").value.trim());
     
     if (!inputCNIC) {
-        showStatus('⚠️ Please enter a CNIC number', 'error');
+        showStatus('⚠️ Please enter an Applicant CNIC', 'error');
         return;
     }
     
     if (inputCNIC.length < 13) {
-        showStatus('⚠️ CNIC must be 13 digits (format: XXXXX-XXXXXXX-X)', 'error');
+        showStatus('⚠️ CNIC must be 13 digits', 'error');
         return;
     }
     
@@ -1051,12 +945,21 @@ function searchData() {
 function performSearch(inputCNIC) {
     const table = document.getElementById("resultTable");
     const dataRows = excelData.slice(1);
-    let results = [];
     
+    // Find CNIC column index
+    const cnicColIndex = getColumnIndex('Applicant CNIC');
+    
+    if (cnicColIndex === -1) {
+        showStatus('❌ "Applicant CNIC" column not found in sheet', 'error');
+        return;
+    }
+    
+    // Search for matching CNIC
+    let results = [];
     const batchSize = 1000;
     for (let i = 0; i < dataRows.length; i += batchSize) {
         const batch = dataRows.slice(i, i + batchSize);
-        const batchResults = batch.filter(row => normalize(row[0]) === inputCNIC);
+        const batchResults = batch.filter(row => normalize(row[cnicColIndex]) === inputCNIC);
         results = results.concat(batchResults);
         if (results.length > 0) break;
     }
@@ -1073,45 +976,59 @@ function performSearch(inputCNIC) {
                     <td class="no-data">
                         <div class="no-data-icon">🔍</div>
                         <div style="font-size: 18px; font-weight: 700; margin-bottom: 10px;">
-                            No Record Found
+                            No Applicant Found
                         </div>
                         <div style="font-size: 16px; color: var(--error); font-family: monospace; margin-bottom: 12px;">
                             CNIC: ${formattedCNIC}
                         </div>
                         <div style="font-size: 14px; color: var(--gray-600);">
-                            Please verify the CNIC and try again
+                            This CNIC is not in the PMYBLS database
                         </div>
                     </td>
                 </tr>
             </tbody>
         `;
-        showStatus('❌ No matching record found for this CNIC', 'error');
+        showStatus('❌ No applicant found with this CNIC', 'error');
         document.getElementById('exportBtn').style.display = 'none';
         return;
     }
     
-    // Build table
+    // Get column indices for the 4 specific columns
+    const columnIndices = {};
+    for (const [key, displayName] of Object.entries(COLUMNS_TO_DISPLAY)) {
+        const index = getColumnIndex(key);
+        if (index !== -1) {
+            columnIndices[displayName] = index;
+        }
+    }
+    
+    // Build table with only the 4 columns
     let tableHTML = '<thead><tr>';
-    headers.forEach(header => {
-        tableHTML += `<th>${header || 'N/A'}</th>`;
-    });
+    for (const displayName of Object.values(COLUMNS_TO_DISPLAY)) {
+        if (columnIndices[displayName] !== undefined) {
+            tableHTML += `<th>${displayName}</th>`;
+        }
+    }
     tableHTML += '</tr></thead><tbody>';
     
     results.forEach(row => {
         tableHTML += '<tr>';
-        headers.forEach((_, index) => {
-            const cellValue = row[index] !== undefined && row[index] !== null && row[index] !== '' 
-                ? row[index] 
-                : '-';
-            tableHTML += `<td>${cellValue}</td>`;
-        });
+        for (const displayName of Object.values(COLUMNS_TO_DISPLAY)) {
+            const colIndex = columnIndices[displayName];
+            if (colIndex !== undefined) {
+                const cellValue = row[colIndex] !== undefined && row[colIndex] !== null && row[colIndex] !== '' 
+                    ? row[colIndex] 
+                    : '-';
+                tableHTML += `<td>${cellValue}</td>`;
+            }
+        }
         tableHTML += '</tr>';
     });
     
     tableHTML += '</tbody>';
     table.innerHTML = tableHTML;
     
-    showStatus(`✅ Success! Found ${results.length} matching record(s)`, 'success');
+    showStatus(`✅ Found ${results.length} applicant record(s)`, 'success');
     document.getElementById('exportBtn').style.display = 'inline-flex';
 }
 
@@ -1124,13 +1041,13 @@ function clearResults() {
                 <td class="no-data">
                     <div class="no-data-icon">📋</div>
                     <div style="font-size: 18px; font-weight: 600; margin-bottom: 10px;">
-                        Ready to Search
+                        Ready to Search PMYBLS Records
                     </div>
                     <div style="font-size: 15px; color: var(--gray-600);">
-                        Enter a 13-digit CNIC and click Search
+                        Enter Applicant CNIC to view details
                     </div>
                     <div style="font-size: 13px; color: var(--gray-500); margin-top: 8px;">
-                        Format: XXXXX-XXXXXXX-X or 13 digits without dashes
+                        Format: XXXXX-XXXXXXX-X (13 digits)
                     </div>
                 </td>
             </tr>
@@ -1141,27 +1058,46 @@ function clearResults() {
     document.getElementById('exportBtn').style.display = 'none';
 }
 
-// Export to Excel (CSV format)
+// Export to Excel
 function exportToExcel() {
     if (searchResults.length === 0) {
         showStatus('⚠️ No results to export', 'error');
         return;
     }
     
-    let csv = headers.join(',') + '\n';
+    // Get column indices
+    const columnIndices = {};
+    for (const [key, displayName] of Object.entries(COLUMNS_TO_DISPLAY)) {
+        const index = getColumnIndex(key);
+        if (index !== -1) {
+            columnIndices[displayName] = index;
+        }
+    }
+    
+    // Build CSV with only 4 columns
+    let csv = Object.values(COLUMNS_TO_DISPLAY).filter(name => columnIndices[name] !== undefined).join(',') + '\n';
+    
     searchResults.forEach(row => {
-        csv += row.map(cell => `"${cell}"`).join(',') + '\n';
+        const rowData = [];
+        for (const displayName of Object.values(COLUMNS_TO_DISPLAY)) {
+            const colIndex = columnIndices[displayName];
+            if (colIndex !== undefined) {
+                const cell = row[colIndex] || '';
+                rowData.push(`"${cell}"`);
+            }
+        }
+        csv += rowData.join(',') + '\n';
     });
     
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'cnic_search_results_' + new Date().toISOString().split('T')[0] + '.csv';
+    a.download = 'pmybls_applicant_' + new Date().toISOString().split('T')[0] + '.csv';
     a.click();
     window.URL.revokeObjectURL(url);
     
-    showStatus('✅ Results exported successfully! Check your downloads folder.', 'success');
+    showStatus('✅ Applicant data exported successfully!', 'success');
 }
 
 // Show status
@@ -1182,7 +1118,7 @@ document.getElementById('cnic').addEventListener('keypress', function(e) {
     }
 });
 
-// Format CNIC input with dashes
+// Format CNIC input
 document.getElementById('cnic').addEventListener('input', function(e) {
     let value = e.target.value.replace(/\D/g, '');
     
@@ -1203,12 +1139,6 @@ document.getElementById('cnic').addEventListener('input', function(e) {
     
     e.target.value = formatted;
 });
-
-// Auto-refresh every 10 minutes (optional - uncomment to enable)
-// setInterval(() => {
-//     console.log('Auto-refreshing data...');
-//     loadDataFromGoogleSheets();
-// }, 10 * 60 * 1000);
 </script>
 
 </body>
