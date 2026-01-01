@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Applicant CNIC Search - Google Sheets</title>
+
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: 20px;
+    }
+    
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        padding: 30px;
+    }
+    
+    h2 {
+        text-align: center;
+        color: #0f172a;
+        margin-bottom: 30px;
+        font-size: 28px;
+    }
+    
+    .search-section {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 25px;
+        flex-wrap: wrap;
+    }
+    
+    #cnic {
+        flex: 1;
+        min-width: 250px;
+        padding: 12px 20px;
+        font-size: 16px;
+        border: 2px solid #e2e8f0;
+        border-radius: 8px;
+        transition: all 0.3s;
+    }
+    
+    #cnic:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+    
+    button {
+        padding: 12px 30px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        transition: all 0.3s;
+    }
+    
+    button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    }
+    
+    button:active {
+        transform: translateY(0);
+    }
+    
+    button:disabled {
+        background: #cbd5e1;
+        cursor: not-allowed;
+        transform: none;
+    }
+    
+    .status {
+        padding: 12px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        display: none;
+        font-weight: 500;
+    }
+    
+    .status.success {
+        background: #d1fae5;
+        color: #065f46;
+        border-left: 4px solid #10b981;
+        display: block;
+    }
+    
+    .status.error {
+        background: #fee2e2;
+        color: #991b1b;
+        border-left: 4px solid #ef4444;
+        display: block;
+    }
+    
+    .status.info {
+        background: #dbeafe;
+        color: #1e40af;
+        border-left: 4px solid #3b82f6;
+        display: block;
+    }
+    
+    .table-wrapper {
+        overflow-x: auto;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        background: white;
+    }
+    
+    th, td {
+        padding: 12px 15px;
+        text-align: left;
+        border-bottom: 1px solid #e2e8f0;
+    }
+    
+    th {
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+        color: white;
+        font-weight: 600;
+        position: sticky;
+        top: 0;
+        text-transform: uppercase;
+        font-size: 13px;
+        letter-spacing: 0.5px;
+    }
+    
+    tr:hover {
+        background: #f8fafc;
+    }
+    
+    tr:last-child td {
+        border-bottom: none;
+    }
+    
+    .no-data {
+        text-align: center;
+        padding: 40px;
+        color: #64748b;
+        font-size: 16px;
+    }
+    
+    .loading {
+        display: none;
+        text-align: center;
+        padding: 20px;
+        color: #667eea;
+        font-weight: 600;
+    }
+    
+    .loading.active {
+        display: block;
+    }
+
+    .refresh-btn {
+        background: #10b981 !important;
+    }
+    
+    @media (max-width: 768px) {
+        .container {
+            padding: 20px;
+        }
+        
+        h2 {
+            font-size: 22px;
+        }
+        
+        .search-section {
+            flex-direction: column;
+        }
+        
+        #cnic {
+            min-width: 100%;
+        }
+        
+        button {
+            width: 100%;
+        }
+    }
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <h2>🔍 Applicant CNIC Search System</h2>
+    <p style="text-align: center; color: #64748b; margin-bottom: 20px;">
+        📊 Connected to Google Sheets
+    </p>
+    
+    <!-- Status Message -->
+    <div id="statusMessage" class="status"></div>
+    
+    <!-- Search Section -->
+    <div class="search-section">
+        <input type="text" id="cnic" placeholder="Enter CNIC (e.g., 35202-9155162-9)" disabled>
+        <button onclick="searchData()" id="searchBtn" disabled>🔍 Search</button>
+        <button onclick="refreshData()" id="refreshBtn" class="refresh-btn" disabled>🔄 Refresh</button>
+        <button onclick="clearResults()" id="clearBtn" style="background: #64748b;" disabled>🗑️ Clear</button>
+    </div>
+    
+    <!-- Loading Indicator -->
+    <div id="loading" class="loading">⏳ Loading data from Google Sheets...</div>
+    
+    <!-- Results Table -->
+    <div class="table-wrapper">
+        <table id="resultTable">
+            <tbody>
+                <tr>
+                    <td class="no-data">⏳ Loading data from Google Sheets...</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div style="margin-top: 20px; padding: 15px; background: #f8fafc; border-radius: 8px; font-size: 14px; color: #64748b;">
+        <strong>ℹ️ Note:</strong> Data is loaded from Google Sheets. Click "Refresh" button to get latest updates.
+    </div>
+</div>
+
+<script>
+let excelData = [];
+let headers = [];
+
+// Google Sheets Configuration
+const SHEET_ID = '1Lie6PFJ6nJt3-CFA0NyEWIAKUSc_bITF';
+const SHEET_NAME = '1'; // Sheet ka naam "1" hai
+
+// Auto-load data on page load
+window.addEventListener('DOMContentLoaded', function() {
+    loadDataFromGoogleSheets();
+});
+
+// Load data from Google Sheets
+async function loadDataFromGoogleSheets() {
+    showStatus('⏳ Loading data from Google Sheets...', 'info');
+    document.getElementById('loading').classList.add('active');
+    
+    try {
+        // Google Sheets ko CSV format mein export karein
+        const csvUrl = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${SHEET_NAME}`;
+        
+        const response = await fetch(csvUrl);
+        
+        if (!response.ok) {
+            throw new Error('Failed to load Google Sheets. Make sure the sheet is shared as "Anyone with the link can view".');
+        }
+        
+        const csvText = await response.text();
+        
+        // Parse CSV data
+        excelData = parseCSV(csvText);
+        
+        console.log("Google Sheets Data Loaded:", excelData.length, "rows");
+        
+        if (excelData.length === 0) {
+            throw new Error('Google Sheet is empty');
+        }
+        
+        if (excelData.length === 1) {
+            throw new Error('Google Sheet has only headers, no data rows');
+        }
+        
+        // Store headers
+        headers = excelData[0];
+        
+        // Enable search functionality
+        document.getElementById('cnic').disabled = false;
+        document.getElementById('searchBtn').disabled = false;
+        document.getElementById('refreshBtn').disabled = false;
+        document.getElementById('clearBtn').disabled = false;
+        
+        const recordCount = excelData.length - 1;
+        const lastUpdated = new Date().toLocaleString('en-PK', { 
+            timeZone: 'Asia/Karachi',
+            dateStyle: 'medium',
+            timeStyle: 'short'
+        });
+        
+        showStatus(`✅ Google Sheets Loaded Successfully!\nTotal Records: ${recordCount.toLocaleString()} | Columns: ${headers.length}\nLast Updated: ${lastUpdated}`, 'success');
+        
+        clearResults();
+        
+    } catch (error) {
+        console.error('Error loading Google Sheets:', error);
+        showStatus('❌ Error loading Google Sheets: ' + error.message + '\n\n⚠️ Make sure:\n1. Google Sheet is shared as "Anyone with the link can view"\n2. Sheet name is correct (currently: "' + SHEET_NAME + '")\n3. Internet connection is working', 'error');
+        
+        document.getElementById('resultTable').innerHTML = `
+            <tbody>
+                <tr>
+                    <td class="no-data" style="color: #ef4444;">
+                        ❌ Failed to load Google Sheets<br><br>
+                        <strong>Solutions:</strong><br>
+                        1. Google Sheet ko "Anyone with the link can view" share karein<br>
+                        2. Internet connection check karein<br>
+                        3. Sheet name verify karein<br>
+                        4. Page refresh karein (F5)
+                    </td>
+                </tr>
+            </tbody>
+        `;
+    } finally {
+        document.getElementById('loading').classList.remove('active');
+    }
+}
+
+// Parse CSV data
+function parseCSV(csv) {
+    const lines = csv.split('\n');
+    const result = [];
+    
+    for (let i = 0; i < lines.length; i++) {
+        const line = lines[i].trim();
+        if (!line) continue;
+        
+        // Simple CSV parser (handles quoted fields)
+        const row = [];
+        let field = '';
+        let inQuotes = false;
+        
+        for (let j = 0; j < line.length; j++) {
+            const char = line[j];
+            const nextChar = line[j + 1];
+            
+            if (char === '"') {
+                if (inQuotes && nextChar === '"') {
+                    field += '"';
+                    j++; // Skip next quote
+                } else {
+                    inQuotes = !inQuotes;
+                }
+            } else if (char === ',' && !inQuotes) {
+                row.push(field.trim());
+                field = '';
+            } else {
+                field += char;
+            }
+        }
+        row.push(field.trim());
+        result.push(row);
+    }
+    
+    return result;
+}
+
+// Refresh data function
+async function refreshData() {
+    showStatus('🔄 Refreshing data...', 'info');
+    await loadDataFromGoogleSheets();
+}
+
+// Normalize CNIC
+function normalize(val) {
+    if (val === null || val === undefined) return "";
+    return String(val).replace(/\D/g, "");
+}
+
+// Search function
+function searchData() {
+    const inputCNIC = normalize(document.getElementById("cnic").value.trim());
+    
+    if (!inputCNIC) {
+        showStatus('⚠️ Please enter a CNIC number', 'error');
+        return;
+    }
+    
+    if (inputCNIC.length < 13) {
+        showStatus('⚠️ CNIC should be 13 digits', 'error');
+        return;
+    }
+    
+    document.getElementById('loading').classList.add('active');
+    
+    setTimeout(() => {
+        performSearch(inputCNIC);
+        document.getElementById('loading').classList.remove('active');
+    }, 300);
+}
+
+function performSearch(inputCNIC) {
+    const table = document.getElementById("resultTable");
+    const dataRows = excelData.slice(1);
+    let results = [];
+    
+    // Search with batch processing
+    const batchSize = 1000;
+    for (let i = 0; i < dataRows.length; i += batchSize) {
+        const batch = dataRows.slice(i, i + batchSize);
+        const batchResults = batch.filter(row => normalize(row[0]) === inputCNIC);
+        results = results.concat(batchResults);
+        if (results.length > 0) break;
+    }
+    
+    if (results.length === 0) {
+        const formattedCNIC = inputCNIC.length === 13 
+            ? inputCNIC.substr(0, 5) + '-' + inputCNIC.substr(5, 7) + '-' + inputCNIC.substr(12, 1)
+            : inputCNIC;
+        table.innerHTML = `
+            <tbody>
+                <tr>
+                    <td class="no-data" style="color: #ef4444;">
+                        ❌ No record found for CNIC: ${formattedCNIC}
+                    </td>
+                </tr>
+            </tbody>
+        `;
+        showStatus('No matching record found', 'error');
+        return;
+    }
+    
+    // Build table
+    let tableHTML = '<thead><tr>';
+    headers.forEach(header => {
+        tableHTML += `<th>${header || 'N/A'}</th>`;
+    });
+    tableHTML += '</tr></thead><tbody>';
+    
+    results.forEach(row => {
+        tableHTML += '<tr>';
+        headers.forEach((_, index) => {
+            const cellValue = row[index] !== undefined && row[index] !== null && row[index] !== '' 
+                ? row[index] 
+                : '-';
+            tableHTML += `<td>${cellValue}</td>`;
+        });
+        tableHTML += '</tr>';
+    });
+    
+    tableHTML += '</tbody>';
+    table.innerHTML = tableHTML;
+    
+    showStatus(`✅ Found ${results.length} matching record(s)`, 'success');
+}
+
+// Clear results
+function clearResults() {
+    document.getElementById('cnic').value = '';
+    document.getElementById('resultTable').innerHTML = `
+        <tbody>
+            <tr>
+                <td class="no-data">Enter a CNIC and click Search</td>
+            </tr>
+        </tbody>
+    `;
+    showStatus('', '');
+}
+
+// Show status
+function showStatus(message, type) {
+    const statusDiv = document.getElementById('statusMessage');
+    statusDiv.textContent = message;
+    statusDiv.className = 'status ' + type;
+    
+    if (!message) {
+        statusDiv.style.display = 'none';
+    }
+}
+
+// Enter key search
+document.getElementById('cnic').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter' && !this.disabled) {
+        searchData();
+    }
+});
+
+// Format CNIC input
+document.getElementById('cnic').addEventListener('input', function(e) {
+    let value = e.target.value.replace(/\D/g, '');
+    
+    if (value.length > 13) {
+        value = value.substr(0, 13);
+    }
+    
+    let formatted = '';
+    if (value.length > 0) {
+        formatted = value.substr(0, 5);
+        if (value.length > 5) {
+            formatted += '-' + value.substr(5, 7);
+        }
+        if (value.length > 12) {
+            formatted += '-' + value.substr(12, 1);
+        }
+    }
+    
+    e.target.value = formatted;
+});
+
+// Auto-refresh data every 5 minutes (optional - uncomment to enable)
+// setInterval(() => {
+//     console.log('Auto-refreshing data...');
+//     loadDataFromGoogleSheets();
+// }, 5 * 60 * 1000); // 5 minutes
+</script>
+
+</body>
+</html>
