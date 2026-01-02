@@ -1493,7 +1493,11 @@ function performSearch(inputCNIC) {
     const dataRows = excelData.slice(1);
     
     // Debug: Show all column headers
-    console.log('Available columns in sheet:', headers);
+    console.log('=== DEBUGGING COLUMN HEADERS ===');
+    console.log('Total headers:', headers.length);
+    headers.forEach((header, idx) => {
+        console.log(`Column ${idx}: "${header}"`);
+    });
     
     const cnicColIndex = getColumnIndex('Applicant CNIC');
     
@@ -1540,15 +1544,26 @@ function performSearch(inputCNIC) {
         return;
     }
     
+    // Get column indices
     const columnIndices = {};
+    console.log('=== SEARCHING FOR COLUMNS ===');
     for (const [key, displayName] of Object.entries(COLUMNS_TO_DISPLAY)) {
         const index = getColumnIndex(key);
-        console.log(`Looking for column "${key}": ${index !== -1 ? 'Found at index ' + index : 'Not found'}`);
+        console.log(`Column "${key}" -> Index: ${index}`);
         if (index !== -1) {
             columnIndices[displayName] = index;
         }
     }
     
+    console.log('=== FINAL COLUMN INDICES ===');
+    console.log(columnIndices);
+    
+    console.log('=== SAMPLE ROW DATA ===');
+    if (results.length > 0) {
+        console.log('First result row:', results[0]);
+    }
+    
+    // Build table header
     let tableHTML = '<thead><tr>';
     for (const displayName of Object.values(COLUMNS_TO_DISPLAY)) {
         if (columnIndices[displayName] !== undefined) {
@@ -1557,6 +1572,7 @@ function performSearch(inputCNIC) {
     }
     tableHTML += '</tr></thead><tbody>';
     
+    // Build table rows
     results.forEach((row, index) => {
         tableHTML += `<tr style="animation: fadeInUp 0.5s ease-out ${index * 0.1}s both;">`;
         for (const displayName of Object.values(COLUMNS_TO_DISPLAY)) {
