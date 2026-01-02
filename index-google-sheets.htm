@@ -1390,6 +1390,14 @@ async function loadDataFromGoogleSheets() {
         
         if (excelData.length > 0) {
             headers = excelData[0];
+            
+            // Debug: Log the first 3 rows to see structure
+            console.log('=== DATA STRUCTURE DEBUG ===');
+            console.log('Headers:', headers);
+            console.log('First data row:', excelData[1]);
+            console.log('Second data row:', excelData[2]);
+            console.log('Total rows:', excelData.length);
+            
             document.getElementById('totalRecords').textContent = (excelData.length - 1).toLocaleString();
             document.getElementById('connectionText').textContent = 'Connected to Google Sheets';
             showStatus('✅ Data loaded successfully! Ready to search.', 'success');
@@ -1492,16 +1500,13 @@ function performSearch(inputCNIC) {
     const table = document.getElementById("resultTable");
     const dataRows = excelData.slice(1);
     
-    // Use first column (index 0) for CNIC search
-    const cnicColIndex = 0;
-    
+    // Search in first column (index 0) for CNIC
     let results = [];
-    const batchSize = 1000;
-    for (let i = 0; i < dataRows.length; i += batchSize) {
-        const batch = dataRows.slice(i, i + batchSize);
-        const batchResults = batch.filter(row => normalize(row[cnicColIndex]) === inputCNIC);
-        results = results.concat(batchResults);
-        if (results.length > 0) break;
+    for (let i = 0; i < dataRows.length; i++) {
+        const row = dataRows[i];
+        if (row && row.length > 0 && normalize(row[0]) === inputCNIC) {
+            results.push(row);
+        }
     }
     
     searchResults = results;
@@ -1533,23 +1538,33 @@ function performSearch(inputCNIC) {
         return;
     }
     
-    // Build table header using direct indices
-    let tableHTML = '<thead><tr>';
-    COLUMNS_TO_DISPLAY.forEach(col => {
-        tableHTML += `<th>${col.display}</th>`;
-    });
-    tableHTML += '</tr></thead><tbody>';
+    // Build table with direct column access
+    let tableHTML = `
+        <thead>
+            <tr>
+                <th>APPLICANT CNIC</th>
+                <th>APPLICANT NAME</th>
+                <th>BUSINESS SUB SECTOR</th>
+                <th>MFIBANKNAME</th>
+            </tr>
+        </thead>
+        <tbody>
+    `;
     
-    // Build table rows using direct indices
-    results.forEach((row, rowIndex) => {
-        tableHTML += `<tr style="animation: fadeInUp 0.5s ease-out ${rowIndex * 0.1}s both;">`;
-        COLUMNS_TO_DISPLAY.forEach(col => {
-            const cellValue = row[col.index] !== undefined && row[col.index] !== null && row[col.index] !== '' 
-                ? row[col.index] 
-                : '-';
-            tableHTML += `<td>${cellValue}</td>`;
-        });
-        tableHTML += '</tr>';
+    results.forEach((row, index) => {
+        const cnic = row[0] || '-';
+        const name = row[1] || '-';
+        const sector = row[2] || '-';
+        const bank = row[3] || '-';
+        
+        tableHTML += `
+            <tr style="animation: fadeInUp 0.5s ease-out ${index * 0.1}s both;">
+                <td>${cnic}</td>
+                <td>${name}</td>
+                <td>${sector}</td>
+                <td>${bank}</td>
+            </tr>
+        `;
     });
     
     tableHTML += '</tbody>';
@@ -1592,16 +1607,15 @@ function exportToExcel() {
         return;
     }
     
-    // Build CSV header
-    let csv = COLUMNS_TO_DISPLAY.map(col => col.display).join(',') + '\n';
+    // Build CSV
+    let csv = 'APPLICANT CNIC,APPLICANT NAME,BUSINESS SUB SECTOR,MFIBANKNAME\n';
     
-    // Build CSV rows using direct indices
     searchResults.forEach(row => {
-        const rowData = COLUMNS_TO_DISPLAY.map(col => {
-            const cell = row[col.index] || '';
-            return `"${cell}"`;
-        });
-        csv += rowData.join(',') + '\n';
+        const cnic = row[0] || '';
+        const name = row[1] || '';
+        const sector = row[2] || '';
+        const bank = row[3] || '';
+        csv += `"${cnic}","${name}","${sector}","${bank}"\n`;
     });
     
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
