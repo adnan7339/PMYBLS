@@ -1203,7 +1203,7 @@ function performSearch(inputCNIC) {
         }
     }
     
-    searchResults = results;
+   searchResults = results;
     
     if (results.length === 0) {
         const formattedCNIC = inputCNIC.length === 13 
@@ -1212,15 +1212,15 @@ function performSearch(inputCNIC) {
         table.innerHTML = `
             <tbody>
                 <tr>
-                    <td class="no-data" colspan="4">
-                        <div class="no-data-icon">❌</div>
-                        <div style="font-size: 28px; font-weight: 800; margin-bottom: 20px;">
+                    <td class="no-data">
+                        <div class="no-data-icon">🔍</div>
+                        <div style="font-size: 18px; font-weight: 700; margin-bottom: 10px;">
                             No Applicant Found
                         </div>
-                        <div style="font-size: 20px; color: #ff4757; font-family: 'JetBrains Mono', monospace; margin-bottom: 20px;">
+                        <div style="font-size: 16px; color: var(--error); font-family: monospace; margin-bottom: 12px;">
                             CNIC: ${formattedCNIC}
                         </div>
-                        <div style="font-size: 18px; color: rgba(255, 255, 255, 0.5);">
+                        <div style="font-size: 14px; color: var(--gray-600);">
                             This CNIC is not in the PMYBLS database
                         </div>
                     </td>
@@ -1232,46 +1232,36 @@ function performSearch(inputCNIC) {
         return;
     }
     
-    console.log('=== FOUND RESULTS ===');
-    console.log('Total results:', results.length);
-    results.forEach((row, idx) => {
-        console.log(`Result ${idx}:`, row);
-        console.log(`  [0] CNIC: "${row[0]}"`);
-        console.log(`  [1] Name: "${row[1]}"`);
-        console.log(`  [2] Sector: "${row[2]}"`);
-        console.log(`  [3] Bank: "${row[3]}"`);
-    });
+    // Get column indices for the 4 specific columns
+    const columnIndices = {};
+    for (const [key, displayName] of Object.entries(COLUMNS_TO_DISPLAY)) {
+        const index = getColumnIndex(key);
+        if (index !== -1) {
+            columnIndices[displayName] = index;
+        }
+    }
     
-    // Build table with exact column names from Google Sheet
-    let tableHTML = `
-        <thead>
-            <tr>
-                <th>Applicant CNIC</th>
-                <th>Applicant Name</th>
-                <th>Business Sub Sector</th>
-                <th>MFIBankName</th>
-            </tr>
-        </thead>
-        <tbody>
-    `;
+    // Build table with only the 4 columns
+    let tableHTML = '<thead><tr>';
+    for (const displayName of Object.values(COLUMNS_TO_DISPLAY)) {
+        if (columnIndices[displayName] !== undefined) {
+            tableHTML += `<th>${displayName}</th>`;
+        }
+    }
+    tableHTML += '</tr></thead><tbody>';
     
-    results.forEach((row, index) => {
-        // Direct access to columns 1, 2, 3, 4
-        const cnic = row[1] || '-';
-        const name = row[2] || '-';
-        const sector = row[3] || '-';
-        const bank = row[4] || '-';
-        
-        console.log(`Building table row ${index}:`, { cnic, name, sector, bank });
-        
-        tableHTML += `
-            <tr style="animation: fadeInUp 0.6s ease-out ${index * 0.1}s both;">
-                <td>${cnic}</td>
-                <td>${name}</td>
-                <td>${sector}</td>
-                <td>${bank}</td>
-            </tr>
-        `;
+    results.forEach(row => {
+        tableHTML += '<tr>';
+        for (const displayName of Object.values(COLUMNS_TO_DISPLAY)) {
+            const colIndex = columnIndices[displayName];
+            if (colIndex !== undefined) {
+                const cellValue = row[colIndex] !== undefined && row[colIndex] !== null && row[colIndex] !== '' 
+                    ? row[colIndex] 
+                    : '-';
+                tableHTML += `<td>${cellValue}</td>`;
+            }
+        }
+        tableHTML += '</tr>';
     });
     
     tableHTML += '</tbody>';
@@ -1287,22 +1277,22 @@ function clearResults() {
     document.getElementById('resultTable').innerHTML = `
         <tbody>
             <tr>
-                <td class="no-data" colspan="4">
-                    <div class="no-data-icon">🎯</div>
-                    <div style="font-size: 28px; font-weight: 800; margin-bottom: 20px;">
-                        Ready to Search
+                <td class="no-data">
+                    <div class="no-data-icon">📋</div>
+                    <div style="font-size: 18px; font-weight: 600; margin-bottom: 10px;">
+                        Ready to Search PMYBLS Records
                     </div>
-                    <div style="font-size: 18px; color: rgba(255, 255, 255, 0.5);">
+                    <div style="font-size: 15px; color: var(--gray-600);">
                         Enter Applicant CNIC to view details
                     </div>
-                    <div style="font-size: 16px; color: rgba(255, 255, 255, 0.3); margin-top: 18px;">
+                    <div style="font-size: 13px; color: var(--gray-500); margin-top: 8px;">
                         Format: XXXXX-XXXXXXX-X (13 digits)
                     </div>
                 </td>
             </tr>
         </tbody>
     `;
-    document.getElementById('statusMessage').style.display = 'none';
+    showStatus('', '');
     searchResults = [];
     document.getElementById('exportBtn').style.display = 'none';
 }
@@ -1314,15 +1304,28 @@ function exportToExcel() {
         return;
     }
     
-    // Build CSV with exact column names
-    let csv = 'Applicant CNIC,Applicant Name,Business Sub Sector,MFIBankName\n';
+    // Get column indices
+    const columnIndices = {};
+    for (const [key, displayName] of Object.entries(COLUMNS_TO_DISPLAY)) {
+        const index = getColumnIndex(key);
+        if (index !== -1) {
+            columnIndices[displayName] = index;
+        }
+    }
+    
+    // Build CSV with only 4 columns
+    let csv = Object.values(COLUMNS_TO_DISPLAY).filter(name => columnIndices[name] !== undefined).join(',') + '\n';
     
     searchResults.forEach(row => {
-        const cnic = row[1] || '';
-        const name = row[2] || '';
-        const sector = row[3] || '';
-        const bank = row[4] || '';
-        csv += `"${cnic}","${name}","${sector}","${bank}"\n`;
+        const rowData = [];
+        for (const displayName of Object.values(COLUMNS_TO_DISPLAY)) {
+            const colIndex = columnIndices[displayName];
+            if (colIndex !== undefined) {
+                const cell = row[colIndex] || '';
+                rowData.push(`"${cell}"`);
+            }
+        }
+        csv += rowData.join(',') + '\n';
     });
     
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
@@ -1340,12 +1343,41 @@ function exportToExcel() {
 function showStatus(message, type) {
     const statusDiv = document.getElementById('statusMessage');
     statusDiv.textContent = message;
-    statusDiv.className = 'status-message ' + type;
+    statusDiv.className = 'status ' + type;
     
     if (!message) {
         statusDiv.style.display = 'none';
     }
 }
+
+// Enter key search
+document.getElementById('cnic').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter' && !this.disabled) {
+        searchData();
+    }
+});
+
+// Format CNIC input
+document.getElementById('cnic').addEventListener('input', function(e) {
+    let value = e.target.value.replace(/\D/g, '');
+    
+    if (value.length > 13) {
+        value = value.substr(0, 13);
+    }
+    
+    let formatted = '';
+    if (value.length > 0) {
+        formatted = value.substr(0, 5);
+        if (value.length > 5) {
+            formatted += '-' + value.substr(5, 7);
+        }
+        if (value.length > 12) {
+            formatted += '-' + value.substr(12, 1);
+        }
+    }
+    
+    e.target.value = formatted;
+});
 
 // Update search count
 function updateSearchCount() {
