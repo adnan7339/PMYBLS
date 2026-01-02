@@ -3,1425 +3,156 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PMYBLS Search System</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔍</text></svg>">
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<title>PMYBLS Search</title>
 
 <style>
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-    }
-    
-    :root {
-        --neon-cyan: #00ffff;
-        --neon-magenta: #ff00ff;
-        --neon-yellow: #ffff00;
-        --electric-blue: #0080ff;
-        --deep-purple: #8000ff;
-        --dark-bg: #0a0014;
-        --dark-card: #150025;
-        --dark-elevated: #1f0035;
-    }
-    
-    body {
-        font-family: 'Space Grotesk', sans-serif;
-        background: var(--dark-bg);
-        color: #fff;
-        min-height: 100vh;
-        overflow-x: hidden;
-        position: relative;
-    }
-    
-    /* Animated Cyber Grid Background */
-    .cyber-grid {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-image: 
-            linear-gradient(rgba(0, 255, 255, 0.03) 2px, transparent 2px),
-            linear-gradient(90deg, rgba(0, 255, 255, 0.03) 2px, transparent 2px);
-        background-size: 60px 60px;
-        animation: gridMove 20s linear infinite;
-        z-index: 0;
-    }
-    
-    @keyframes gridMove {
-        0% { transform: translate(0, 0); }
-        100% { transform: translate(60px, 60px); }
-    }
-    
-    /* Glowing Orbs */
-    .glow-orb {
-        position: fixed;
-        border-radius: 50%;
-        filter: blur(80px);
-        opacity: 0.3;
-        animation: orbFloat 20s ease-in-out infinite;
-        pointer-events: none;
-        z-index: 0;
-    }
-    
-    .orb-1 {
-        width: 400px;
-        height: 400px;
-        background: var(--neon-cyan);
-        top: -10%;
-        left: 10%;
-        animation-delay: 0s;
-    }
-    
-    .orb-2 {
-        width: 500px;
-        height: 500px;
-        background: var(--neon-magenta);
-        bottom: -10%;
-        right: 10%;
-        animation-delay: 5s;
-    }
-    
-    .orb-3 {
-        width: 350px;
-        height: 350px;
-        background: var(--electric-blue);
-        top: 40%;
-        right: 20%;
-        animation-delay: 10s;
-    }
-    
-    @keyframes orbFloat {
-        0%, 100% { transform: translate(0, 0) scale(1); }
-        33% { transform: translate(50px, -60px) scale(1.2); }
-        66% { transform: translate(-40px, 40px) scale(0.9); }
-    }
-    
-    /* Scanline Effect */
-    .scanline {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(
-            to bottom,
-            transparent 50%,
-            rgba(0, 255, 255, 0.02) 50%
-        );
-        background-size: 100% 4px;
-        animation: scan 8s linear infinite;
-        pointer-events: none;
-        z-index: 10;
-    }
-    
-    @keyframes scan {
-        0% { background-position: 0 0; }
-        100% { background-position: 0 100%; }
-    }
-    
-    /* Container */
-    .container {
-        position: relative;
-        z-index: 1;
-        max-width: 1800px;
-        margin: 0 auto;
-        padding: 50px 30px;
-        animation: fadeInUp 0.8s ease-out;
-    }
-    
-    @keyframes fadeInUp {
-        from { opacity: 0; transform: translateY(40px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-    
-    /* Header */
-    .header {
-        text-align: center;
-        margin-bottom: 60px;
-        position: relative;
-    }
-    
-    .logo-cyber {
-        width: 120px;
-        height: 120px;
-        margin: 0 auto 30px;
-        background: linear-gradient(135deg, var(--neon-cyan), var(--neon-magenta));
-        border-radius: 30px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 60px;
-        position: relative;
-        animation: logoGlow 2s ease-in-out infinite;
-        box-shadow: 0 0 50px rgba(0, 255, 255, 0.5),
-                    inset 0 0 30px rgba(255, 0, 255, 0.3);
-    }
-    
-    @keyframes logoGlow {
-        0%, 100% { 
-            box-shadow: 0 0 50px rgba(0, 255, 255, 0.5),
-                        inset 0 0 30px rgba(255, 0, 255, 0.3);
-            transform: scale(1);
-        }
-        50% { 
-            box-shadow: 0 0 80px rgba(0, 255, 255, 0.8),
-                        inset 0 0 50px rgba(255, 0, 255, 0.5);
-            transform: scale(1.05);
-        }
-    }
-    
-    h1 {
-        font-family: 'Orbitron', sans-serif;
-        font-size: 64px;
-        font-weight: 900;
-        background: linear-gradient(45deg, var(--neon-cyan), var(--neon-magenta), var(--neon-yellow));
-        background-size: 200% 200%;
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        margin-bottom: 15px;
-        letter-spacing: 3px;
-        text-transform: uppercase;
-        animation: gradientShift 5s ease infinite;
-        text-shadow: 0 0 30px rgba(0, 255, 255, 0.5);
-    }
-    
-    @keyframes gradientShift {
-        0%, 100% { background-position: 0% 50%; }
-        50% { background-position: 100% 50%; }
-    }
-    
-    .subtitle {
-        font-size: 22px;
-        color: rgba(255, 255, 255, 0.7);
-        font-weight: 400;
-        letter-spacing: 3px;
-        margin-bottom: 30px;
-        text-transform: uppercase;
-    }
-    
-    .status-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 12px;
-        padding: 14px 32px;
-        background: rgba(0, 255, 255, 0.1);
-        border: 2px solid var(--neon-cyan);
-        border-radius: 50px;
-        font-size: 15px;
-        font-weight: 700;
-        box-shadow: 0 0 30px rgba(0, 255, 255, 0.3),
-                    inset 0 0 20px rgba(0, 255, 255, 0.1);
-        animation: badgePulse 2s ease-in-out infinite;
-    }
-    
-    @keyframes badgePulse {
-        0%, 100% { 
-            box-shadow: 0 0 30px rgba(0, 255, 255, 0.3),
-                        inset 0 0 20px rgba(0, 255, 255, 0.1);
-        }
-        50% { 
-            box-shadow: 0 0 50px rgba(0, 255, 255, 0.6),
-                        inset 0 0 30px rgba(0, 255, 255, 0.2);
-        }
-    }
-    
-    .status-dot {
-        width: 12px;
-        height: 12px;
-        background: var(--neon-cyan);
-        border-radius: 50%;
-        box-shadow: 0 0 20px var(--neon-cyan);
-        animation: dotBlink 1.5s ease-in-out infinite;
-    }
-    
-    @keyframes dotBlink {
-        0%, 100% { opacity: 1; transform: scale(1); }
-        50% { opacity: 0.4; transform: scale(1.2); }
-    }
-    
-    /* Stats Grid */
-    .stats-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-        gap: 30px;
-        margin-bottom: 60px;
-        animation: statsReveal 1s ease-out 0.3s both;
-    }
-    
-    @keyframes statsReveal {
-        from { opacity: 0; transform: translateY(30px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-    
-    .stat-card {
-        background: rgba(15, 0, 30, 0.8);
-        border: 2px solid rgba(0, 255, 255, 0.2);
-        border-radius: 25px;
-        padding: 40px;
-        position: relative;
-        overflow: hidden;
-        transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-        backdrop-filter: blur(20px);
-    }
-    
-    .stat-card::before {
-        content: '';
-        position: absolute;
-        top: -50%;
-        left: -50%;
-        width: 200%;
-        height: 200%;
-        background: radial-gradient(circle, rgba(0, 255, 255, 0.1) 0%, transparent 70%);
-        animation: cardGlow 3s ease-in-out infinite;
-    }
-    
-    @keyframes cardGlow {
-        0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.5; }
-        50% { transform: translate(20px, 20px) scale(1.1); opacity: 0.8; }
-    }
-    
-    .stat-card::after {
-        content: '';
-        position: absolute;
-        inset: 0;
-        border-radius: 25px;
-        padding: 2px;
-        background: linear-gradient(45deg, var(--neon-cyan), var(--neon-magenta), var(--electric-blue));
-        -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-        -webkit-mask-composite: xor;
-        mask-composite: exclude;
-        opacity: 0;
-        transition: opacity 0.5s;
-    }
-    
-    .stat-card:hover {
-        transform: translateY(-15px) scale(1.03);
-        border-color: var(--neon-cyan);
-        box-shadow: 0 30px 80px rgba(0, 255, 255, 0.4),
-                    0 0 50px rgba(0, 255, 255, 0.3);
-    }
-    
-    .stat-card:hover::after {
-        opacity: 1;
-    }
-    
-    .stat-icon {
-        font-size: 56px;
-        margin-bottom: 25px;
-        display: inline-block;
-        filter: drop-shadow(0 0 30px currentColor);
-        animation: iconFloat 3s ease-in-out infinite;
-        position: relative;
-        z-index: 1;
-    }
-    
-    @keyframes iconFloat {
-        0%, 100% { transform: translateY(0) rotate(0deg); }
-        50% { transform: translateY(-10px) rotate(5deg); }
-    }
-    
-    .stat-label {
-        font-size: 14px;
-        color: rgba(255, 255, 255, 0.6);
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 2.5px;
-        margin-bottom: 18px;
-        position: relative;
-        z-index: 1;
-    }
-    
-    .stat-value {
-        font-family: 'Orbitron', monospace;
-        font-size: 54px;
-        font-weight: 900;
-        background: linear-gradient(135deg, #fff, var(--neon-cyan));
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        line-height: 1;
-        position: relative;
-        z-index: 1;
-        transition: all 0.4s ease;
-    }
-    
-    .stat-card:hover .stat-value {
-        background: linear-gradient(135deg, var(--neon-cyan), var(--neon-magenta));
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        transform: scale(1.1);
-    }
-    
-    /* Search Section */
-    .search-section {
-        background: rgba(15, 0, 30, 0.8);
-        border: 2px solid rgba(0, 255, 255, 0.2);
-        border-radius: 30px;
-        padding: 50px;
-        backdrop-filter: blur(20px);
-        margin-bottom: 60px;
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
-        animation: searchReveal 1s ease-out 0.5s both;
-        position: relative;
-        overflow: hidden;
-    }
-    
-    .search-section::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.1), transparent);
-        animation: scanEffect 3s linear infinite;
-    }
-    
-    @keyframes scanEffect {
-        0% { left: -100%; }
-        100% { left: 100%; }
-    }
-    
-    @keyframes searchReveal {
-        from { opacity: 0; transform: translateY(30px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-    
-    .search-label {
-        font-family: 'Orbitron', sans-serif;
-        font-size: 18px;
-        font-weight: 700;
-        color: var(--neon-cyan);
-        margin-bottom: 25px;
-        display: block;
-        letter-spacing: 2px;
-        text-transform: uppercase;
-        position: relative;
-        z-index: 1;
-    }
-    
-    .search-wrapper {
-        display: flex;
-        gap: 20px;
-        flex-wrap: wrap;
-        align-items: stretch;
-        position: relative;
-        z-index: 1;
-    }
-    
-    #cnic {
-        flex: 1;
-        min-width: 300px;
-        padding: 22px 32px;
-        font-size: 24px;
-        font-weight: 700;
-        font-family: 'JetBrains Mono', monospace;
-        background: rgba(0, 0, 0, 0.6);
-        border: 3px solid rgba(0, 255, 255, 0.3);
-        border-radius: 18px;
-        color: #fff;
-        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        letter-spacing: 3px;
-    }
-    
-    #cnic:focus {
-        outline: none;
-        border-color: var(--neon-cyan);
-        box-shadow: 0 0 0 5px rgba(0, 255, 255, 0.2),
-                    0 0 60px rgba(0, 255, 255, 0.4),
-                    inset 0 0 20px rgba(0, 255, 255, 0.1);
-        transform: translateY(-5px) scale(1.01);
-        background: rgba(0, 20, 40, 0.8);
-    }
-    
-    #cnic::placeholder {
-        color: rgba(0, 255, 255, 0.3);
-        font-weight: 400;
-    }
-    
-    .btn {
-        padding: 22px 40px;
-        font-size: 17px;
-        font-weight: 800;
-        font-family: 'Orbitron', sans-serif;
-        border: none;
-        border-radius: 18px;
-        cursor: pointer;
-        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        text-transform: uppercase;
-        letter-spacing: 2px;
-        position: relative;
-        overflow: hidden;
-    }
-    
-    .btn::before {
-        content: '';
-        position: absolute;
-        inset: 0;
-        background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-        transform: translateX(-100%);
-        transition: transform 0.6s;
-    }
-    
-    .btn:hover::before {
-        transform: translateX(100%);
-    }
-    
-    .btn span {
-        position: relative;
-        z-index: 1;
-    }
-    
-    .btn-primary {
-        background: linear-gradient(135deg, var(--neon-cyan), var(--electric-blue));
-        color: #000;
-        box-shadow: 0 10px 40px rgba(0, 255, 255, 0.4);
-    }
-    
-    .btn-primary:hover {
-        transform: translateY(-5px) scale(1.05);
-        box-shadow: 0 20px 60px rgba(0, 255, 255, 0.6);
-    }
-    
-    .btn-secondary {
-        background: rgba(0, 0, 0, 0.6);
-        color: var(--neon-cyan);
-        border: 2px solid var(--neon-cyan);
-    }
-    
-    .btn-secondary:hover {
-        background: rgba(0, 255, 255, 0.2);
-        transform: translateY(-5px) scale(1.05);
-        box-shadow: 0 10px 40px rgba(0, 255, 255, 0.3);
-    }
-    
-    .btn-success {
-        background: linear-gradient(135deg, #00ff88, #00cc70);
-        color: #000;
-        box-shadow: 0 10px 40px rgba(0, 255, 136, 0.4);
-    }
-    
-    .btn-success:hover {
-        transform: translateY(-5px) scale(1.05);
-        box-shadow: 0 20px 60px rgba(0, 255, 136, 0.6);
-    }
-    
-    /* Loading Overlay */
-    .loading-overlay {
-        position: fixed;
-        inset: 0;
-        background: rgba(10, 0, 20, 0.98);
-        backdrop-filter: blur(20px);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 9999;
-        opacity: 0;
-        pointer-events: none;
-        transition: opacity 0.4s ease;
-    }
-    
-    .loading-overlay.active {
-        opacity: 1;
-        pointer-events: all;
-    }
-    
-    .loading-content {
-        text-align: center;
-    }
-    
-    .spinner {
-        width: 120px;
-        height: 120px;
-        margin: 0 auto 40px;
-        border: 6px solid rgba(0, 255, 255, 0.1);
-        border-top: 6px solid var(--neon-cyan);
-        border-right: 6px solid var(--neon-magenta);
-        border-radius: 50%;
-        animation: spin 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
-        box-shadow: 0 0 60px rgba(0, 255, 255, 0.5);
-        position: relative;
-    }
-    
-    .spinner::before {
-        content: '';
-        position: absolute;
-        inset: 15px;
-        border: 4px solid transparent;
-        border-top: 4px solid var(--electric-blue);
-        border-radius: 50%;
-        animation: spin 2s cubic-bezier(0.5, 0, 0.5, 1) infinite reverse;
-    }
-    
-    @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-    }
-    
-    .loading-text {
-        font-family: 'Orbitron', sans-serif;
-        font-size: 24px;
-        font-weight: 700;
-        background: linear-gradient(135deg, var(--neon-cyan), var(--neon-magenta));
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        animation: textPulse 2s ease-in-out infinite;
-        text-transform: uppercase;
-        letter-spacing: 3px;
-    }
-    
-    @keyframes textPulse {
-        0%, 100% { opacity: 0.7; transform: scale(1); }
-        50% { opacity: 1; transform: scale(1.05); }
-    }
-    
-    /* Status Message */
-    .status-message {
-        padding: 25px 35px;
-        border-radius: 18px;
-        margin-bottom: 35px;
-        font-weight: 700;
-        display: none;
-        align-items: center;
-        gap: 18px;
-        backdrop-filter: blur(10px);
-        animation: slideDown 0.5s ease-out;
-        font-size: 16px;
-    }
-    
-    @keyframes slideDown {
-        from { opacity: 0; transform: translateY(-30px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-    
-    .status-message.success {
-        background: rgba(0, 255, 136, 0.2);
-        border: 2px solid rgba(0, 255, 136, 0.5);
-        color: #00ff88;
-        box-shadow: 0 0 30px rgba(0, 255, 136, 0.3);
-        display: flex;
-    }
-    
-    .status-message.error {
-        background: rgba(255, 71, 87, 0.2);
-        border: 2px solid rgba(255, 71, 87, 0.5);
-        color: #ff4757;
-        box-shadow: 0 0 30px rgba(255, 71, 87, 0.3);
-        display: flex;
-    }
-    
-    .status-message.info {
-        background: rgba(0, 245, 255, 0.2);
-        border: 2px solid rgba(0, 245, 255, 0.5);
-        color: var(--neon-cyan);
-        box-shadow: 0 0 30px rgba(0, 245, 255, 0.3);
-        display: flex;
-    }
-    
-    /* Results Section */
-    .results-section {
-        background: rgba(15, 0, 30, 0.8);
-        border: 2px solid rgba(0, 255, 255, 0.2);
-        border-radius: 30px;
-        padding: 50px;
-        backdrop-filter: blur(20px);
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
-        animation: resultsReveal 1s ease-out 0.7s both;
-        position: relative;
-        overflow: hidden;
-    }
-    
-    .results-section::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 4px;
-        background: linear-gradient(90deg, var(--neon-cyan), var(--neon-magenta), var(--electric-blue), var(--neon-cyan));
-        background-size: 200% 100%;
-        animation: borderFlow 3s linear infinite;
-    }
-    
-    @keyframes borderFlow {
-        0% { background-position: 0% 0%; }
-        100% { background-position: 200% 0%; }
-    }
-    
-    @keyframes resultsReveal {
-        from { opacity: 0; transform: translateY(30px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-    
-    .results-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 40px;
-        flex-wrap: wrap;
-        gap: 25px;
-    }
-    
-    .results-title {
-        font-family: 'Orbitron', sans-serif;
-        font-size: 32px;
-        font-weight: 900;
-        background: linear-gradient(135deg, #fff, var(--neon-cyan));
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        text-transform: uppercase;
-        letter-spacing: 2px;
-        filter: drop-shadow(0 0 20px rgba(0, 255, 255, 0.5));
-    }
-    
-    .table-wrapper {
-        overflow-x: auto;
-        border-radius: 25px;
-        background: rgba(0, 0, 0, 0.6);
-        box-shadow: inset 0 2px 20px rgba(0, 0, 0, 0.6);
-        position: relative;
-    }
-    
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        position: relative;
-    }
-    
-    thead {
-        background: linear-gradient(135deg, rgba(0, 255, 255, 0.2), rgba(128, 0, 255, 0.2));
-        position: relative;
-    }
-    
-    thead::after {
-        content: '';
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        height: 3px;
-        background: linear-gradient(90deg, transparent, var(--neon-cyan), transparent);
-    }
-    
-    th {
-        padding: 32px 28px;
-        text-align: left;
-        font-family: 'Orbitron', sans-serif;
-        font-size: 14px;
-        font-weight: 900;
-        text-transform: uppercase;
-        letter-spacing: 2.5px;
-        color: var(--neon-cyan);
-        border-bottom: 2px solid rgba(0, 255, 255, 0.3);
-        position: relative;
-        background: linear-gradient(135deg, rgba(0, 255, 255, 0.15), transparent);
-    }
-    
-    td {
-        padding: 32px 28px;
-        font-size: 17px;
-        color: rgba(255, 255, 255, 0.95);
-        border-bottom: 1px solid rgba(0, 255, 255, 0.1);
-        font-weight: 500;
-        transition: all 0.3s ease;
-    }
-    
-    tbody tr {
-        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        position: relative;
-    }
-    
-    tbody tr::before {
-        content: '';
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 6px;
-        height: 100%;
-        background: linear-gradient(180deg, var(--neon-cyan), var(--neon-magenta));
-        transform: scaleY(0);
-        transition: transform 0.4s ease;
-        box-shadow: 0 0 25px var(--neon-cyan);
-    }
-    
-    tbody tr::after {
-        content: '';
-        position: absolute;
-        inset: 0;
-        background: linear-gradient(90deg, rgba(0, 255, 255, 0.15), transparent);
-        opacity: 0;
-        transition: opacity 0.4s ease;
-    }
-    
-    tbody tr:hover::before {
-        transform: scaleY(1);
-    }
-    
-    tbody tr:hover::after {
-        opacity: 1;
-    }
-    
-    tbody tr:hover {
-        background: rgba(0, 255, 255, 0.1);
-        transform: translateX(10px);
-    }
-    
-    tbody tr:hover td {
-        color: #fff;
-    }
-    
-    .no-data {
-        text-align: center;
-        padding: 120px 50px;
-        color: rgba(255, 255, 255, 0.5);
-    }
-    
-    .no-data-icon {
-        font-size: 100px;
-        margin-bottom: 35px;
-        filter: drop-shadow(0 0 50px currentColor);
-        animation: iconFloat 4s ease-in-out infinite;
-    }
-    
-    #exportBtn {
-        display: none;
-    }
-    
-    /* Mobile Responsive */
-    @media (max-width: 1024px) {
-        .container {
-            padding: 40px 25px;
-        }
-        
-        .stats-grid {
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-        }
-    }
-    
-    @media (max-width: 768px) {
-        body {
-            padding: 10px;
-        }
-        
-        .container {
-            padding: 30px 20px;
-        }
-        
-        .logo-cyber {
-            width: 90px;
-            height: 90px;
-            font-size: 45px;
-        }
-        
-        h1 {
-            font-size: 42px;
-            letter-spacing: 1px;
-        }
-        
-        .subtitle {
-            font-size: 16px;
-            letter-spacing: 2px;
-        }
-        
-        .stats-grid {
-            grid-template-columns: 1fr;
-            gap: 20px;
-        }
-        
-        .stat-card {
-            padding: 30px;
-        }
-        
-        .stat-icon {
-            font-size: 42px;
-        }
-        
-        .stat-value {
-            font-size: 42px;
-        }
-        
-        .search-section {
-            padding: 35px 25px;
-        }
-        
-        .search-wrapper {
-            flex-direction: column;
-        }
-        
-        #cnic {
-            min-width: 100%;
-            font-size: 20px;
-            padding: 18px 24px;
-        }
-        
-        .btn {
-            width: 100%;
-            padding: 18px 30px;
-            font-size: 15px;
-        }
-        
-        .results-section {
-            padding: 35px 20px;
-        }
-        
-        .results-title {
-            font-size: 24px;
-        }
-        
-        .table-wrapper {
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-        }
-        
-        table {
-            min-width: 700px;
-        }
-        
-        th {
-            padding: 20px 15px;
-            font-size: 11px;
-        }
-        
-        td {
-            padding: 20px 15px;
-            font-size: 15px;
-        }
-    }
-    
-    @media (max-width: 480px) {
-        h1 {
-            font-size: 32px;
-        }
-        
-        .subtitle {
-            font-size: 14px;
-        }
-        
-        .logo-cyber {
-            width: 80px;
-            height: 80px;
-            font-size: 40px;
-        }
-        
-        .stat-value {
-            font-size: 36px;
-        }
-        
-        #cnic {
-            font-size: 18px;
-        }
-    }
-    
-    /* Scrollbar */
-    ::-webkit-scrollbar {
-        width: 14px;
-        height: 14px;
-    }
-    
-    ::-webkit-scrollbar-track {
-        background: var(--dark-bg);
-    }
-    
-    ::-webkit-scrollbar-thumb {
-        background: linear-gradient(135deg, var(--neon-cyan), var(--electric-blue));
-        border-radius: 10px;
-        box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
-    }
-    
-    ::-webkit-scrollbar-thumb:hover {
-        background: linear-gradient(135deg, var(--electric-blue), var(--neon-magenta));
-    }
+body{
+    background:#0b1220;
+    color:#fff;
+    font-family:Arial, Helvetica, sans-serif;
+}
+.container{
+    max-width:1100px;
+    margin:auto;
+    padding:30px;
+}
+h2{
+    margin-bottom:20px;
+}
+input{
+    padding:12px;
+    width:260px;
+    font-size:16px;
+}
+button{
+    padding:12px 18px;
+    font-size:16px;
+    cursor:pointer;
+}
+table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:25px;
+}
+th,td{
+    border:1px solid #333;
+    padding:12px;
+}
+th{
+    background:#111827;
+}
+.no-data{
+    text-align:center;
+    padding:40px;
+    color:#aaa;
+}
 </style>
 </head>
+
 <body>
-
-<!-- Background Effects -->
-<div class="cyber-grid"></div>
-<div class="glow-orb orb-1"></div>
-<div class="glow-orb orb-2"></div>
-<div class="glow-orb orb-3"></div>
-<div class="scanline"></div>
-
-<!-- Loading Overlay -->
-<div class="loading-overlay" id="loading">
-    <div class="loading-content">
-        <div class="spinner"></div>
-        <div class="loading-text">Processing Request...</div>
-    </div>
-</div>
-
-<!-- Main Container -->
 <div class="container">
-    <!-- Header -->
-    <div class="header">
-        <div class="logo-cyber">🔍</div>
-        <h1>PMYBLS Search System</h1>
-        <p class="subtitle">Prime Minister Youth Business & Agriculture Loan Scheme</p>
-        <div class="status-badge">
-            <div class="status-dot"></div>
-            <span id="connectionText">Connected to Google Sheets</span>
-        </div>
-    </div>
 
-    <!-- Stats Grid -->
-    <div class="stats-grid">
-        <div class="stat-card">
-            <div class="stat-icon">📊</div>
-            <div class="stat-label">Total Records</div>
-            <div class="stat-value" id="totalRecords">0</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-icon">🔍</div>
-            <div class="stat-label">Searches Today</div>
-            <div class="stat-value" id="searchCount">0</div>
-        </div>
-    </div>
+<h2>PMYBLS Applicant Search</h2>
 
-    <!-- Search Section -->
-    <div class="search-section">
-        <label class="search-label">🔎 Enter Applicant CNIC</label>
-        <div class="search-wrapper">
-            <input 
-                type="text" 
-                id="cnic" 
-                placeholder="XXXXX-XXXXXXX-X"
-                maxlength="15"
-                autocomplete="off"
-            >
-            <button class="btn btn-primary" onclick="searchData()">
-                <span>🚀 Search</span>
-            </button>
-            <button class="btn btn-secondary" onclick="clearResults()">
-                <span>🔄 Clear</span>
-            </button>
-            <button class="btn btn-secondary" onclick="refreshData()">
-                <span>♻️ Refresh Data</span>
-            </button>
-        </div>
-    </div>
+<input type="text" id="cnic" placeholder="XXXXX-XXXXXXX-X" maxlength="15">
+<button onclick="searchData()">Search</button>
 
-    <!-- Status Message -->
-    <div class="status-message" id="statusMessage"></div>
+<table id="resultTable">
+<tbody>
+<tr>
+<td class="no-data" colspan="4">Enter CNIC and click Search</td>
+</tr>
+</tbody>
+</table>
 
-    <!-- Results Section -->
-    <div class="results-section">
-        <div class="results-header">
-            <h2 class="results-title">📋 Search Results</h2>
-            <button class="btn btn-success" id="exportBtn" onclick="exportToExcel()">
-                <span>📥 Export to Excel</span>
-            </button>
-        </div>
-        <div class="table-wrapper">
-            <table id="resultTable">
-                <tbody>
-                    <tr>
-                        <td class="no-data" colspan="4">
-                            <div class="no-data-icon">🎯</div>
-                            <div style="font-size: 28px; font-weight: 800; margin-bottom: 20px;">
-                                Ready to Search
-                            </div>
-                            <div style="font-size: 18px; color: rgba(255, 255, 255, 0.5);">
-                                Enter Applicant CNIC to view details
-                            </div>
-                            <div style="font-size: 16px; color: rgba(255, 255, 255, 0.3); margin-top: 18px;">
-                                Format: XXXXX-XXXXXXX-X (13 digits)
-                            </div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
 </div>
 
 <script>
-// Google Sheets Configuration
-const SHEET_ID = '1n2_6Oewp88igcRv5H7vKYpYH-jHmnTus';
-const SHEET_NAME = 'Sheet1';
+// ================== GOOGLE SHEET CONFIG ==================
+const SHEET_ID   = "1n2_6Oewp88igcRv5H7vKYpYH-jHmnTus";
+const SHEET_NAME = "Sheet1";
 
-// Global variables
+// ================== GLOBAL DATA ==================
 let excelData = [];
-let headers = [];
-let searchResults = [];
-let searchCount = 0;
 
-// Initialize
-window.addEventListener('DOMContentLoaded', function() {
-    loadDataFromGoogleSheets();
-    updateSearchCount();
-});
+// ================== LOAD DATA ==================
+window.onload = loadData;
 
-// Load data from Google Sheets
-async function loadDataFromGoogleSheets() {
-    try {
-        showStatus('🔄 Loading data from Google Sheets...', 'info');
-        document.getElementById('connectionText').textContent = 'Connecting...';
-        
-        const csvUrl = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${SHEET_NAME}`;
-        const response = await fetch(csvUrl);
-        
-        if (!response.ok) {
-            throw new Error('Failed to fetch data');
-        }
-        
-        const csvText = await response.text();
-        excelData = parseCSV(csvText);
-        
-        if (excelData.length > 0) {
-            headers = excelData[0];
-            document.getElementById('totalRecords').textContent = (excelData.length - 1).toLocaleString();
-            document.getElementById('connectionText').textContent = 'Connected to Google Sheets';
-            showStatus('✅ Data loaded successfully! Ready to search.', 'success');
-            
-            setTimeout(() => {
-                document.getElementById('statusMessage').style.display = 'none';
-            }, 3000);
-        } else {
-            throw new Error('No data found');
-        }
-    } catch (error) {
-        console.error('Error loading data:', error);
-        showStatus('❌ Failed to load data. Please check connection and try again.', 'error');
-        document.getElementById('connectionText').textContent = 'Connection Error';
-    }
+async function loadData(){
+    const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${SHEET_NAME}`;
+    const res = await fetch(url);
+    const text = await res.text();
+    excelData = parseCSV(text);
 }
 
-// Parse CSV
-function parseCSV(csv) {
-    const lines = csv.split('\n');
-    const result = [];
-    
-    for (let i = 0; i < lines.length; i++) {
-        const line = lines[i].trim();
-        if (!line) continue;
-        
-        const row = [];
-        let field = '';
-        let inQuotes = false;
-        
-        for (let j = 0; j < line.length; j++) {
-            const char = line[j];
-            const nextChar = line[j + 1];
-            
-            if (char === '"') {
-                if (inQuotes && nextChar === '"') {
-                    field += '"';
-                    j++;
-                } else {
-                    inQuotes = !inQuotes;
-                }
-            } else if (char === ',' && !inQuotes) {
-                row.push(field.trim());
-                field = '';
-            } else {
-                field += char;
-            }
-        }
-        row.push(field.trim());
-        result.push(row);
-    }
-    
-    return result;
+// ================== CSV PARSER ==================
+function parseCSV(csv){
+    const lines = csv.split("\n");
+    return lines.map(line =>
+        line.split(",").map(cell => cell.replace(/^"|"$/g,"").trim())
+    );
 }
 
-// Refresh data
-async function refreshData() {
-    showStatus('🔄 Refreshing PMYBLS data...', 'info');
-    await loadDataFromGoogleSheets();
+// ================== NORMALIZE CNIC ==================
+function normalize(val){
+    return String(val || "").replace(/\D/g,"");
 }
 
-// Normalize CNIC
-function normalize(val) {
-    if (val === null || val === undefined) return "";
-    return String(val).replace(/\D/g, "");
-}
-
-// Search function
-function searchData() {
-    const inputCNIC = normalize(document.getElementById("cnic").value.trim());
-    
-    if (!inputCNIC) {
-        showStatus('⚠️ Please enter an Applicant CNIC', 'error');
-        return;
-    }
-    
-    if (inputCNIC.length < 13) {
-        showStatus('⚠️ CNIC must be 13 digits', 'error');
-        return;
-    }
-    
-    document.getElementById('loading').classList.add('active');
-    
-    setTimeout(() => {
-        performSearch(inputCNIC);
-        document.getElementById('loading').classList.remove('active');
-        searchCount++;
-        updateSearchCount();
-    }, 600);
-}
-
-function performSearch(inputCNIC) {
+// ================== SEARCH ==================
+function searchData(){
+    const input = normalize(document.getElementById("cnic").value);
     const table = document.getElementById("resultTable");
-    const dataRows = excelData.slice(1);
-    
-    // DETAILED DEBUG - Check data structure
-    console.log('=== COMPLETE DEBUG INFO ===');
-    console.log('Total rows in excelData:', excelData.length);
-    console.log('Headers row:', excelData[0]);
-    console.log('Headers length:', excelData[0] ? excelData[0].length : 0);
-    
-    if (excelData.length > 1) {
-        console.log('First data row:', excelData[1]);
-        console.log('First data row length:', excelData[1] ? excelData[1].length : 0);
-        console.log('First data row by index:');
-        if (excelData[1]) {
-            excelData[1].forEach((cell, idx) => {
-                console.log(`  Index ${idx}: "${cell}"`);
-            });
-        }
+
+    if(input.length !== 13){
+        alert("Please enter valid 13 digit CNIC");
+        return;
     }
-    
-    // Search in first column (index 0) for CNIC
-    let results = [];
-    for (let i = 0; i < dataRows.length; i++) {
-        const row = dataRows[i];
-        if (row && row.length >= 4) {
-            const normalizedRowCNIC = normalize(row[0]);
-            console.log(`Row ${i}: Checking "${row[0]}" (normalized: "${normalizedRowCNIC}") against "${inputCNIC}"`);
-            
-            if (normalizedRowCNIC === inputCNIC) {
-                results.push(row);
-                console.log('  ✓ MATCH FOUND!');
-            }
-        }
-    }
-    
-   searchResults = results;
-    
-    if (results.length === 0) {
-        const formattedCNIC = inputCNIC.length === 13 
-            ? inputCNIC.substr(0, 5) + '-' + inputCNIC.substr(5, 7) + '-' + inputCNIC.substr(12, 1)
-            : inputCNIC;
+
+    const rows = excelData.slice(1); // skip header
+    const results = rows.filter(r => normalize(r[0]) === input);
+
+    if(results.length === 0){
         table.innerHTML = `
-            <tbody>
-                <tr>
-                    <td class="no-data">
-                        <div class="no-data-icon">🔍</div>
-                        <div style="font-size: 18px; font-weight: 700; margin-bottom: 10px;">
-                            No Applicant Found
-                        </div>
-                        <div style="font-size: 16px; color: var(--error); font-family: monospace; margin-bottom: 12px;">
-                            CNIC: ${formattedCNIC}
-                        </div>
-                        <div style="font-size: 14px; color: var(--gray-600);">
-                            This CNIC is not in the PMYBLS database
-                        </div>
-                    </td>
-                </tr>
-            </tbody>
-        `;
-        showStatus('❌ No applicant found with this CNIC', 'error');
-        document.getElementById('exportBtn').style.display = 'none';
-        return;
-    }
-    
-    // Get column indices for the 4 specific columns
-    const columnIndices = {};
-    for (const [key, displayName] of Object.entries(COLUMNS_TO_DISPLAY)) {
-        const index = getColumnIndex(key);
-        if (index !== -1) {
-            columnIndices[displayName] = index;
-        }
-    }
-    
-    // Build table with only the 4 columns
-    let tableHTML = '<thead><tr>';
-    for (const displayName of Object.values(COLUMNS_TO_DISPLAY)) {
-        if (columnIndices[displayName] !== undefined) {
-            tableHTML += `<th>${displayName}</th>`;
-        }
-    }
-    tableHTML += '</tr></thead><tbody>';
-    
-    results.forEach(row => {
-        tableHTML += '<tr>';
-        for (const displayName of Object.values(COLUMNS_TO_DISPLAY)) {
-            const colIndex = columnIndices[displayName];
-            if (colIndex !== undefined) {
-                const cellValue = row[colIndex] !== undefined && row[colIndex] !== null && row[colIndex] !== '' 
-                    ? row[colIndex] 
-                    : '-';
-                tableHTML += `<td>${cellValue}</td>`;
-            }
-        }
-        tableHTML += '</tr>';
-    });
-    
-    tableHTML += '</tbody>';
-    table.innerHTML = tableHTML;
-    
-    showStatus(`✅ Found ${results.length} applicant record(s)`, 'success');
-    document.getElementById('exportBtn').style.display = 'inline-flex';
-}
-
-// Clear results
-function clearResults() {
-    document.getElementById('cnic').value = '';
-    document.getElementById('resultTable').innerHTML = `
         <tbody>
-            <tr>
-                <td class="no-data">
-                    <div class="no-data-icon">📋</div>
-                    <div style="font-size: 18px; font-weight: 600; margin-bottom: 10px;">
-                        Ready to Search PMYBLS Records
-                    </div>
-                    <div style="font-size: 15px; color: var(--gray-600);">
-                        Enter Applicant CNIC to view details
-                    </div>
-                    <div style="font-size: 13px; color: var(--gray-500); margin-top: 8px;">
-                        Format: XXXXX-XXXXXXX-X (13 digits)
-                    </div>
-                </td>
-            </tr>
-        </tbody>
-    `;
-    showStatus('', '');
-    searchResults = [];
-    document.getElementById('exportBtn').style.display = 'none';
-}
-
-// Export to Excel
-function exportToExcel() {
-    if (searchResults.length === 0) {
-        showStatus('⚠️ No results to export', 'error');
+        <tr>
+            <td class="no-data" colspan="4">No record found</td>
+        </tr>
+        </tbody>`;
         return;
     }
-    
-    // Get column indices
-    const columnIndices = {};
-    for (const [key, displayName] of Object.entries(COLUMNS_TO_DISPLAY)) {
-        const index = getColumnIndex(key);
-        if (index !== -1) {
-            columnIndices[displayName] = index;
-        }
-    }
-    
-    // Build CSV with only 4 columns
-    let csv = Object.values(COLUMNS_TO_DISPLAY).filter(name => columnIndices[name] !== undefined).join(',') + '\n';
-    
-    searchResults.forEach(row => {
-        const rowData = [];
-        for (const displayName of Object.values(COLUMNS_TO_DISPLAY)) {
-            const colIndex = columnIndices[displayName];
-            if (colIndex !== undefined) {
-                const cell = row[colIndex] || '';
-                rowData.push(`"${cell}"`);
-            }
-        }
-        csv += rowData.join(',') + '\n';
+
+    let html = `
+    <thead>
+    <tr>
+        <th>Applicant CNIC</th>
+        <th>Applicant Name</th>
+        <th>Business Sub Sector</th>
+        <th>MFIBankName</th>
+    </tr>
+    </thead>
+    <tbody>`;
+
+    results.forEach(r=>{
+        html += `
+        <tr>
+            <td>${r[0] || "-"}</td>
+            <td>${r[1] || "-"}</td>
+            <td>${r[2] || "-"}</td>
+            <td>${r[3] || "-"}</td>
+        </tr>`;
     });
-    
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'pmybls_applicant_' + new Date().toISOString().split('T')[0] + '.csv';
-    a.click();
-    window.URL.revokeObjectURL(url);
-    
-    showStatus('✅ Applicant data exported successfully!', 'success');
+
+    html += "</tbody>";
+    table.innerHTML = html;
 }
 
-// Show status
-function showStatus(message, type) {
-    const statusDiv = document.getElementById('statusMessage');
-    statusDiv.textContent = message;
-    statusDiv.className = 'status ' + type;
-    
-    if (!message) {
-        statusDiv.style.display = 'none';
-    }
-}
-
-// Enter key search
-document.getElementById('cnic').addEventListener('keypress', function(e) {
-    if (e.key === 'Enter' && !this.disabled) {
-        searchData();
-    }
+// ================== CNIC FORMAT ==================
+document.getElementById("cnic").addEventListener("input", e=>{
+    let v = e.target.value.replace(/\D/g,"").slice(0,13);
+    if(v.length>5) v = v.slice(0,5)+"-"+v.slice(5);
+    if(v.length>13) v = v.slice(0,13)+"-"+v.slice(13);
+    e.target.value = v;
 });
-
-// Format CNIC input
-document.getElementById('cnic').addEventListener('input', function(e) {
-    let value = e.target.value.replace(/\D/g, '');
-    
-    if (value.length > 13) {
-        value = value.substr(0, 13);
-    }
-    
-    let formatted = '';
-    if (value.length > 0) {
-        formatted = value.substr(0, 5);
-        if (value.length > 5) {
-            formatted += '-' + value.substr(5, 7);
-        }
-        if (value.length > 12) {
-            formatted += '-' + value.substr(12, 1);
-        }
-    }
-    
-    e.target.value = formatted;
-});
-
-// Update search count
-function updateSearchCount() {
-    document.getElementById('searchCount').textContent = searchCount;
-}
-
-// Enter key search
-document.getElementById('cnic').addEventListener('keypress', function(e) {
-    if (e.key === 'Enter') {
-        searchData();
-    }
-});
-
-// Format CNIC input
-document.getElementById('cnic').addEventListener('input', function(e) {
-    let value = e.target.value.replace(/\D/g, '');
-    
-    if (value.length > 13) {
-        value = value.substr(0, 13);
-    }
-    
-    let formatted = '';
-    if (value.length > 0) {
-        formatted = value.substr(0, 5);
-        if (value.length > 5) {
-            formatted += '-' + value.substr(5, 7);
-        }
-        if (value.length > 12) {
-            formatted += '-' + value.substr(12, 1);
-        }
-    }
-    
-    e.target.value = formatted;
-});
-
-// Animation keyframes
-const style = document.createElement('style');
-style.textContent = `
-    @keyframes fadeInUp {
-        from { opacity: 0; transform: translateY(20px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-`;
-document.head.appendChild(style);
 </script>
 
 </body>
