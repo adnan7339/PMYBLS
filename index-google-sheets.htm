@@ -1312,7 +1312,7 @@
             <table id="resultTable">
                 <tbody>
                     <tr>
-                        <td class="no-data">
+                        <td class="no-data" colspan="4">
                             <div class="no-data-icon">🎯</div>
                             <div style="font-size: 24px; font-weight: 700; margin-bottom: 15px;">
                                 Ready to Search
@@ -1492,6 +1492,9 @@ function performSearch(inputCNIC) {
     const table = document.getElementById("resultTable");
     const dataRows = excelData.slice(1);
     
+    // Debug: Show all column headers
+    console.log('Available columns in sheet:', headers);
+    
     const cnicColIndex = getColumnIndex('Applicant CNIC');
     
     if (cnicColIndex === -1) {
@@ -1517,7 +1520,7 @@ function performSearch(inputCNIC) {
         table.innerHTML = `
             <tbody>
                 <tr>
-                    <td class="no-data">
+                    <td class="no-data" colspan="4">
                         <div class="no-data-icon">❌</div>
                         <div style="font-size: 24px; font-weight: 700; margin-bottom: 15px;">
                             No Applicant Found
@@ -1540,6 +1543,7 @@ function performSearch(inputCNIC) {
     const columnIndices = {};
     for (const [key, displayName] of Object.entries(COLUMNS_TO_DISPLAY)) {
         const index = getColumnIndex(key);
+        console.log(`Looking for column "${key}": ${index !== -1 ? 'Found at index ' + index : 'Not found'}`);
         if (index !== -1) {
             columnIndices[displayName] = index;
         }
@@ -1580,7 +1584,7 @@ function clearResults() {
     document.getElementById('resultTable').innerHTML = `
         <tbody>
             <tr>
-                <td class="no-data">
+                <td class="no-data" colspan="4">
                     <div class="no-data-icon">🎯</div>
                     <div style="font-size: 24px; font-weight: 700; margin-bottom: 15px;">
                         Ready to Search
