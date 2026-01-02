@@ -1333,7 +1333,8 @@
 
 <script>
 // Google Sheets Configuration
-const SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTqI6zg6CFBZ_gFQF5_KXpvQeXkM-jHwrHSwRB7gINy1qRsQB6I3WR4a-eAU-dQDEQUmjQGVgJwY1No/pub?output=csv';
+const SHEET_ID = '1n2_6Oewp88igcRv5H7vKYpYH-jHmnTus';
+const SHEET_NAME = 'Sheet1'; // Update if your sheet name is different
 
 // Columns to display
 const COLUMNS_TO_DISPLAY = {
@@ -1377,7 +1378,9 @@ async function loadDataFromGoogleSheets() {
         showStatus('🔄 Loading data from Google Sheets...', 'info');
         document.getElementById('connectionText').textContent = 'Connecting...';
         
-        const response = await fetch(SHEET_URL);
+        const csvUrl = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${SHEET_NAME}`;
+        const response = await fetch(csvUrl);
+        
         if (!response.ok) {
             throw new Error('Failed to fetch data');
         }
