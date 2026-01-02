@@ -1171,12 +1171,35 @@ function performSearch(inputCNIC) {
     const table = document.getElementById("resultTable");
     const dataRows = excelData.slice(1);
     
+    // DETAILED DEBUG - Check data structure
+    console.log('=== COMPLETE DEBUG INFO ===');
+    console.log('Total rows in excelData:', excelData.length);
+    console.log('Headers row:', excelData[0]);
+    console.log('Headers length:', excelData[0] ? excelData[0].length : 0);
+    
+    if (excelData.length > 1) {
+        console.log('First data row:', excelData[1]);
+        console.log('First data row length:', excelData[1] ? excelData[1].length : 0);
+        console.log('First data row by index:');
+        if (excelData[1]) {
+            excelData[1].forEach((cell, idx) => {
+                console.log(`  Index ${idx}: "${cell}"`);
+            });
+        }
+    }
+    
     // Search in first column (index 0) for CNIC
     let results = [];
     for (let i = 0; i < dataRows.length; i++) {
         const row = dataRows[i];
-        if (row && row.length >= 4 && normalize(row[0]) === inputCNIC) {
-            results.push(row);
+        if (row && row.length >= 4) {
+            const normalizedRowCNIC = normalize(row[0]);
+            console.log(`Row ${i}: Checking "${row[0]}" (normalized: "${normalizedRowCNIC}") against "${inputCNIC}"`);
+            
+            if (normalizedRowCNIC === inputCNIC) {
+                results.push(row);
+                console.log('  ✓ MATCH FOUND!');
+            }
         }
     }
     
@@ -1209,6 +1232,16 @@ function performSearch(inputCNIC) {
         return;
     }
     
+    console.log('=== FOUND RESULTS ===');
+    console.log('Total results:', results.length);
+    results.forEach((row, idx) => {
+        console.log(`Result ${idx}:`, row);
+        console.log(`  [0] CNIC: "${row[0]}"`);
+        console.log(`  [1] Name: "${row[1]}"`);
+        console.log(`  [2] Sector: "${row[2]}"`);
+        console.log(`  [3] Bank: "${row[3]}"`);
+    });
+    
     // Build table with exact column names from Google Sheet
     let tableHTML = `
         <thead>
@@ -1228,6 +1261,8 @@ function performSearch(inputCNIC) {
         const name = row[1] || '-';
         const sector = row[2] || '-';
         const bank = row[3] || '-';
+        
+        console.log(`Building table row ${index}:`, { cnic, name, sector, bank });
         
         tableHTML += `
             <tr style="animation: fadeInUp 0.6s ease-out ${index * 0.1}s both;">
