@@ -1336,13 +1336,13 @@
 const SHEET_ID = '1n2_6Oewp88igcRv5H7vKYpYH-jHmnTus';
 const SHEET_NAME = 'Sheet1'; // Update if your sheet name is different
 
-// Columns to display
-const COLUMNS_TO_DISPLAY = {
-    'Applicant CNIC': 'Applicant CNIC',
-    'Applicant Name': 'Applicant Name',
-    'Business Sub Sector': 'Business Sub Sector',
-    'MFIBankName': 'MFIBankName'
-};
+// Columns to display - using direct indices
+const COLUMNS_TO_DISPLAY = [
+    { key: 'Applicant CNIC', display: 'APPLICANT CNIC', index: 0 },
+    { key: 'Applicant Name', display: 'APPLICANT NAME', index: 1 },
+    { key: 'Business Sub Sector', display: 'BUSINESS SUB SECTOR', index: 2 },
+    { key: 'MFIBankName', display: 'MFIBANKNAME', index: 3 }
+];
 
 // Global variables
 let excelData = [];
@@ -1492,19 +1492,8 @@ function performSearch(inputCNIC) {
     const table = document.getElementById("resultTable");
     const dataRows = excelData.slice(1);
     
-    // Debug: Show all column headers
-    console.log('=== DEBUGGING COLUMN HEADERS ===');
-    console.log('Total headers:', headers.length);
-    headers.forEach((header, idx) => {
-        console.log(`Column ${idx}: "${header}"`);
-    });
-    
-    const cnicColIndex = getColumnIndex('Applicant CNIC');
-    
-    if (cnicColIndex === -1) {
-        showStatus('❌ "Applicant CNIC" column not found in sheet', 'error');
-        return;
-    }
+    // Use first column (index 0) for CNIC search
+    const cnicColIndex = 0;
     
     let results = [];
     const batchSize = 1000;
@@ -1544,46 +1533,22 @@ function performSearch(inputCNIC) {
         return;
     }
     
-    // Get column indices
-    const columnIndices = {};
-    console.log('=== SEARCHING FOR COLUMNS ===');
-    for (const [key, displayName] of Object.entries(COLUMNS_TO_DISPLAY)) {
-        const index = getColumnIndex(key);
-        console.log(`Column "${key}" -> Index: ${index}`);
-        if (index !== -1) {
-            columnIndices[displayName] = index;
-        }
-    }
-    
-    console.log('=== FINAL COLUMN INDICES ===');
-    console.log(columnIndices);
-    
-    console.log('=== SAMPLE ROW DATA ===');
-    if (results.length > 0) {
-        console.log('First result row:', results[0]);
-    }
-    
-    // Build table header
+    // Build table header using direct indices
     let tableHTML = '<thead><tr>';
-    for (const displayName of Object.values(COLUMNS_TO_DISPLAY)) {
-        if (columnIndices[displayName] !== undefined) {
-            tableHTML += `<th>${displayName}</th>`;
-        }
-    }
+    COLUMNS_TO_DISPLAY.forEach(col => {
+        tableHTML += `<th>${col.display}</th>`;
+    });
     tableHTML += '</tr></thead><tbody>';
     
-    // Build table rows
-    results.forEach((row, index) => {
-        tableHTML += `<tr style="animation: fadeInUp 0.5s ease-out ${index * 0.1}s both;">`;
-        for (const displayName of Object.values(COLUMNS_TO_DISPLAY)) {
-            const colIndex = columnIndices[displayName];
-            if (colIndex !== undefined) {
-                const cellValue = row[colIndex] !== undefined && row[colIndex] !== null && row[colIndex] !== '' 
-                    ? row[colIndex] 
-                    : '-';
-                tableHTML += `<td>${cellValue}</td>`;
-            }
-        }
+    // Build table rows using direct indices
+    results.forEach((row, rowIndex) => {
+        tableHTML += `<tr style="animation: fadeInUp 0.5s ease-out ${rowIndex * 0.1}s both;">`;
+        COLUMNS_TO_DISPLAY.forEach(col => {
+            const cellValue = row[col.index] !== undefined && row[col.index] !== null && row[col.index] !== '' 
+                ? row[col.index] 
+                : '-';
+            tableHTML += `<td>${cellValue}</td>`;
+        });
         tableHTML += '</tr>';
     });
     
@@ -1627,25 +1592,15 @@ function exportToExcel() {
         return;
     }
     
-    const columnIndices = {};
-    for (const [key, displayName] of Object.entries(COLUMNS_TO_DISPLAY)) {
-        const index = getColumnIndex(key);
-        if (index !== -1) {
-            columnIndices[displayName] = index;
-        }
-    }
+    // Build CSV header
+    let csv = COLUMNS_TO_DISPLAY.map(col => col.display).join(',') + '\n';
     
-    let csv = Object.values(COLUMNS_TO_DISPLAY).filter(name => columnIndices[name] !== undefined).join(',') + '\n';
-    
+    // Build CSV rows using direct indices
     searchResults.forEach(row => {
-        const rowData = [];
-        for (const displayName of Object.values(COLUMNS_TO_DISPLAY)) {
-            const colIndex = columnIndices[displayName];
-            if (colIndex !== undefined) {
-                const cell = row[colIndex] || '';
-                rowData.push(`"${cell}"`);
-            }
-        }
+        const rowData = COLUMNS_TO_DISPLAY.map(col => {
+            const cell = row[col.index] || '';
+            return `"${cell}"`;
+        });
         csv += rowData.join(',') + '\n';
     });
     
