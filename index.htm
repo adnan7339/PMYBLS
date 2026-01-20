@@ -1300,13 +1300,21 @@ function copyResults(){
         return;
     }
     
-    let text = 'CNIC\tName\tBusiness Sector\tMFI Bank\n';
-    currentResults.forEach(r => {
-        text += `${r[0]}\t${r[1]}\t${r[2]}\t${r[3]}\n`;
+    // Transpose: Convert rows to columns
+    const headers = ['CNIC', 'Name', 'Business Sector', 'MFI Bank'];
+    let text = '';
+    
+    // For each header/field, create a row with all values from that field
+    headers.forEach((header, index) => {
+        text += header;
+        currentResults.forEach(r => {
+            text += '\t' + (r[index] || '-');
+        });
+        text += '\n';
     });
     
     navigator.clipboard.writeText(text).then(() => {
-        alert('✓ Results copied to clipboard');
+        alert('✓ Results copied to clipboard (transposed)');
     }).catch(() => {
         alert('Failed to copy');
     });
