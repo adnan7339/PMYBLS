@@ -3,11 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PMYBLS Search</title>
+<title>PM Youth Business & Agriculture Loan Scheme</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 
 <!-- Libraries -->
 <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
@@ -24,25 +24,27 @@
 }
 
 :root{
-    --bg-primary:#0a0e1a;
-    --bg-secondary:#141b2d;
-    --bg-card:#1a2332;
-    --accent-primary:#00d9ff;
-    --accent-secondary:#7c3aed;
-    --text-primary:#ffffff;
-    --text-secondary:#94a3b8;
-    --success:#10b981;
-    --error:#ef4444;
-    --border:#2d3748;
+    --pakistan-green:#01411C;
+    --pakistan-green-light:#0A6E3A;
+    --pakistan-white:#F4F4F4;
+    --gold:#D4AF37;
+    --bg-primary:#FAFAFA;
+    --bg-secondary:#FFFFFF;
+    --bg-card:#FFFFFF;
+    --text-primary:#1A1A1A;
+    --text-secondary:#666666;
+    --border:#E0E0E0;
+    --shadow:rgba(1,65,28,0.08);
+    --success:#0A6E3A;
+    --error:#DC2626;
 }
 
 body{
-    background:var(--bg-primary);
+    background:linear-gradient(135deg, #F0F9F4 0%, #FFFFFF 100%);
     color:var(--text-primary);
-    font-family:'Outfit', sans-serif;
+    font-family:'Inter', sans-serif;
     min-height:100vh;
     position:relative;
-    overflow-x:hidden;
 }
 
 body::before{
@@ -52,37 +54,38 @@ body::before{
     left:0;
     width:100%;
     height:100%;
-    background:
-        radial-gradient(circle at 20% 30%, rgba(0,217,255,0.08) 0%, transparent 50%),
-        radial-gradient(circle at 80% 70%, rgba(124,58,237,0.08) 0%, transparent 50%);
+    background-image:
+        linear-gradient(90deg, rgba(1,65,28,0.02) 1px, transparent 1px),
+        linear-gradient(rgba(1,65,28,0.02) 1px, transparent 1px);
+    background-size:50px 50px;
+    pointer-events:none;
     z-index:0;
-    animation:bgFloat 20s ease-in-out infinite;
-}
-
-@keyframes bgFloat{
-    0%, 100%{transform:translateY(0);}
-    50%{transform:translateY(-20px);}
 }
 
 .container{
-    max-width:1200px;
+    max-width:1400px;
     margin:0 auto;
     padding:40px 20px;
     position:relative;
     z-index:1;
 }
 
-/* Header */
-.header{
-    text-align:center;
-    margin-bottom:50px;
-    animation:fadeInDown 0.8s ease-out;
+/* Government Header */
+.gov-header{
+    background:linear-gradient(135deg, var(--pakistan-green) 0%, var(--pakistan-green-light) 100%);
+    padding:25px 40px;
+    border-radius:20px;
+    box-shadow:0 20px 60px var(--shadow);
+    margin-bottom:40px;
+    position:relative;
+    overflow:hidden;
+    animation:slideDown 0.8s ease-out;
 }
 
-@keyframes fadeInDown{
+@keyframes slideDown{
     from{
         opacity:0;
-        transform:translateY(-30px);
+        transform:translateY(-50px);
     }
     to{
         opacity:1;
@@ -90,35 +93,121 @@ body::before{
     }
 }
 
-.header h1{
-    font-size:3rem;
-    font-weight:700;
-    background:linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
-    -webkit-background-clip:text;
-    -webkit-text-fill-color:transparent;
-    background-clip:text;
-    margin-bottom:10px;
-    letter-spacing:-1px;
+.gov-header::before{
+    content:'';
+    position:absolute;
+    top:-50%;
+    right:-20%;
+    width:500px;
+    height:500px;
+    background:radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+    border-radius:50%;
+    animation:float 8s ease-in-out infinite;
 }
 
-.header p{
-    color:var(--text-secondary);
+@keyframes float{
+    0%, 100%{transform:translate(0,0) rotate(0deg);}
+    50%{transform:translate(20px,-20px) rotate(180deg);}
+}
+
+.gov-header-content{
+    position:relative;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:30px;
+}
+
+.gov-logo-section{
+    display:flex;
+    align-items:center;
+    gap:20px;
+}
+
+.pakistan-emblem{
+    width:80px;
+    height:80px;
+    background:var(--pakistan-white);
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    box-shadow:0 8px 20px rgba(0,0,0,0.15);
+    font-size:40px;
+    animation:glow 2s ease-in-out infinite;
+}
+
+@keyframes glow{
+    0%, 100%{box-shadow:0 8px 20px rgba(0,0,0,0.15);}
+    50%{box-shadow:0 8px 30px rgba(212,175,55,0.4);}
+}
+
+.gov-title-section{
+    flex:1;
+}
+
+.gov-dept{
+    color:rgba(255,255,255,0.9);
+    font-size:0.9rem;
+    font-weight:500;
+    letter-spacing:2px;
+    text-transform:uppercase;
+    margin-bottom:8px;
+}
+
+.gov-title{
+    color:var(--pakistan-white);
+    font-size:2.5rem;
+    font-weight:800;
+    line-height:1.2;
+    margin-bottom:8px;
+    text-shadow:0 2px 4px rgba(0,0,0,0.1);
+}
+
+.gov-subtitle{
+    color:rgba(255,255,255,0.85);
     font-size:1.1rem;
-    font-weight:300;
+    font-weight:400;
+}
+
+.flag-strip{
+    width:6px;
+    height:100%;
+    position:absolute;
+    left:0;
+    top:0;
+    background:linear-gradient(180deg, 
+        var(--pakistan-green) 0%, 
+        var(--pakistan-green) 75%, 
+        var(--pakistan-white) 75%, 
+        var(--pakistan-white) 100%
+    );
 }
 
 /* Data Status Card */
 .data-status{
     background:var(--bg-card);
-    border:1px solid var(--border);
+    border:2px solid var(--border);
     border-radius:16px;
-    padding:20px;
+    padding:25px 30px;
     margin-bottom:30px;
     display:flex;
     align-items:center;
     justify-content:space-between;
     animation:fadeInUp 0.8s ease-out 0.2s both;
-    box-shadow:0 10px 40px rgba(0,0,0,0.3);
+    box-shadow:0 4px 20px var(--shadow);
+    position:relative;
+    overflow:hidden;
+}
+
+.data-status::before{
+    content:'';
+    position:absolute;
+    left:0;
+    top:0;
+    height:100%;
+    width:4px;
+    background:linear-gradient(180deg, var(--pakistan-green), var(--gold));
 }
 
 @keyframes fadeInUp{
@@ -135,64 +224,69 @@ body::before{
 .data-info{
     display:flex;
     align-items:center;
-    gap:15px;
+    gap:20px;
 }
 
 .data-icon{
-    width:50px;
-    height:50px;
-    background:linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
-    border-radius:12px;
+    width:60px;
+    height:60px;
+    background:linear-gradient(135deg, var(--pakistan-green), var(--pakistan-green-light));
+    border-radius:14px;
     display:flex;
     align-items:center;
     justify-content:center;
-    font-size:24px;
+    font-size:28px;
+    box-shadow:0 8px 20px rgba(1,65,28,0.2);
     animation:pulse 2s ease-in-out infinite;
 }
 
 @keyframes pulse{
     0%, 100%{transform:scale(1);}
-    50%{transform:scale(1.05);}
+    50%{transform:scale(1.08);}
 }
 
 .data-details h3{
-    font-size:1.1rem;
-    font-weight:600;
-    margin-bottom:5px;
+    font-size:1.2rem;
+    font-weight:700;
+    margin-bottom:6px;
+    color:var(--text-primary);
 }
 
 .data-details p{
     color:var(--text-secondary);
-    font-size:0.9rem;
+    font-size:0.95rem;
     font-family:'Space Mono', monospace;
 }
 
 .data-badge{
-    padding:8px 16px;
-    background:rgba(16,185,129,0.15);
+    padding:10px 20px;
+    background:linear-gradient(135deg, rgba(10,110,58,0.1), rgba(10,110,58,0.05));
     color:var(--success);
-    border-radius:20px;
-    font-size:0.85rem;
+    border-radius:25px;
+    font-size:0.9rem;
     font-weight:600;
     display:flex;
     align-items:center;
-    gap:8px;
+    gap:10px;
+    border:2px solid rgba(10,110,58,0.2);
 }
 
 .data-badge.loading{
-    background:rgba(0,217,255,0.15);
-    color:var(--accent-primary);
+    background:linear-gradient(135deg, rgba(1,65,28,0.1), rgba(1,65,28,0.05));
+    color:var(--pakistan-green);
+    border-color:rgba(1,65,28,0.2);
 }
 
 .data-badge.error{
-    background:rgba(239,68,68,0.15);
+    background:linear-gradient(135deg, rgba(220,38,38,0.1), rgba(220,38,38,0.05));
     color:var(--error);
+    border-color:rgba(220,38,38,0.2);
 }
 
 .spinner{
-    width:16px;
-    height:16px;
-    border:2px solid transparent;
+    width:18px;
+    height:18px;
+    border:3px solid transparent;
     border-top-color:currentColor;
     border-radius:50%;
     animation:spin 0.8s linear infinite;
@@ -205,19 +299,19 @@ body::before{
 /* Search Card */
 .search-card{
     background:var(--bg-card);
-    border:1px solid var(--border);
+    border:2px solid var(--border);
     border-radius:20px;
-    padding:40px;
+    padding:50px 45px;
     margin-bottom:40px;
     animation:fadeInUp 0.8s ease-out 0.4s both;
-    box-shadow:0 10px 40px rgba(0,0,0,0.3);
+    box-shadow:0 8px 30px var(--shadow);
 }
 
 .search-form{
     display:flex;
-    gap:15px;
+    gap:20px;
     align-items:stretch;
-    margin-bottom:25px;
+    margin-bottom:30px;
 }
 
 .input-wrapper{
@@ -227,77 +321,97 @@ body::before{
 
 .input-wrapper input{
     width:100%;
-    padding:18px 24px;
-    font-size:1.1rem;
+    padding:20px 28px;
+    font-size:1.2rem;
     font-family:'Space Mono', monospace;
-    background:var(--bg-secondary);
+    background:var(--bg-primary);
     border:2px solid var(--border);
     border-radius:14px;
     color:var(--text-primary);
     transition:all 0.3s ease;
+    font-weight:500;
 }
 
 .input-wrapper input:focus{
     outline:none;
-    border-color:var(--accent-primary);
-    box-shadow:0 0 0 4px rgba(0,217,255,0.1);
+    border-color:var(--pakistan-green);
+    box-shadow:0 0 0 5px rgba(1,65,28,0.08);
+    background:var(--bg-secondary);
 }
 
 .input-wrapper input::placeholder{
     color:var(--text-secondary);
+    font-weight:400;
 }
 
 .search-btn{
-    padding:18px 40px;
-    font-size:1.1rem;
-    font-weight:600;
-    background:linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+    padding:20px 50px;
+    font-size:1.15rem;
+    font-weight:700;
+    background:linear-gradient(135deg, var(--pakistan-green), var(--pakistan-green-light));
     border:none;
     border-radius:14px;
-    color:var(--text-primary);
+    color:var(--pakistan-white);
     cursor:pointer;
     transition:all 0.3s ease;
     position:relative;
     overflow:hidden;
+    box-shadow:0 8px 20px rgba(1,65,28,0.25);
+    text-transform:uppercase;
+    letter-spacing:0.5px;
+}
+
+.search-btn::before{
+    content:'';
+    position:absolute;
+    top:50%;
+    left:50%;
+    width:0;
+    height:0;
+    border-radius:50%;
+    background:rgba(255,255,255,0.3);
+    transform:translate(-50%,-50%);
+    transition:width 0.6s, height 0.6s;
+}
+
+.search-btn:hover::before{
+    width:300px;
+    height:300px;
 }
 
 .search-btn:hover{
-    transform:translateY(-2px);
-    box-shadow:0 10px 30px rgba(0,217,255,0.3);
+    transform:translateY(-3px);
+    box-shadow:0 12px 30px rgba(1,65,28,0.35);
 }
 
 .search-btn:active{
-    transform:translateY(0);
+    transform:translateY(-1px);
 }
 
 .search-btn.searching{
     pointer-events:none;
-    opacity:0.7;
-}
-
-.search-btn.searching::before{
-    content:'';
-    position:absolute;
-    top:0;
-    left:-100%;
-    width:100%;
-    height:100%;
-    background:linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-    animation:shimmer 1.5s infinite;
-}
-
-@keyframes shimmer{
-    to{left:100%;}
+    opacity:0.8;
 }
 
 /* Tools Section */
 .tools-label{
-    font-size:1rem;
-    font-weight:600;
+    font-size:0.95rem;
+    font-weight:700;
     color:var(--text-secondary);
-    margin-bottom:15px;
+    margin-bottom:18px;
     text-transform:uppercase;
-    letter-spacing:1px;
+    letter-spacing:1.5px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+.tools-label::before{
+    content:'';
+    width:4px;
+    height:20px;
+    background:linear-gradient(180deg, var(--pakistan-green), var(--gold));
+    border-radius:2px;
 }
 
 .tools-grid{
@@ -307,36 +421,54 @@ body::before{
 }
 
 .tool-btn{
-    padding:16px 20px;
-    background:var(--bg-secondary);
-    border:1px solid var(--border);
+    padding:18px 24px;
+    background:var(--bg-primary);
+    border:2px solid var(--border);
     border-radius:12px;
-    color:var(--text-primary);
-    font-weight:600;
     cursor:pointer;
-    transition:all 0.3s;
+    transition:all 0.3s ease;
+    display:flex;
+    align-items:center;
+    gap:12px;
+    font-weight:600;
+    color:var(--text-primary);
+    font-size:0.95rem;
+}
+
+.tool-btn .icon{
+    font-size:24px;
     display:flex;
     align-items:center;
     justify-content:center;
-    gap:10px;
-    font-size:0.95rem;
+    width:40px;
+    height:40px;
+    background:linear-gradient(135deg, var(--pakistan-green), var(--pakistan-green-light));
+    border-radius:10px;
+    color:white;
+}
+
+.tool-btn .label{
+    flex:1;
+    text-align:left;
 }
 
 .tool-btn:hover{
     background:var(--bg-card);
-    border-color:var(--accent-primary);
+    border-color:var(--pakistan-green);
     transform:translateY(-2px);
+    box-shadow:0 6px 20px var(--shadow);
 }
 
-.tool-btn.voice-btn.listening{
-    background:linear-gradient(135deg, #8b5cf6, #a855f7);
-    border-color:#8b5cf6;
-    animation:pulseVoice 1s ease-in-out infinite;
+.tool-btn.active,
+.tool-btn.listening{
+    background:linear-gradient(135deg, var(--pakistan-green), var(--pakistan-green-light));
+    border-color:var(--pakistan-green);
+    color:white;
 }
 
-@keyframes pulseVoice{
-    0%, 100%{transform:scale(1);}
-    50%{transform:scale(1.05);}
+.tool-btn.active .icon,
+.tool-btn.listening .icon{
+    background:rgba(255,255,255,0.2);
 }
 
 /* Results Section */
@@ -345,144 +477,144 @@ body::before{
 }
 
 .results-header{
+    background:var(--bg-card);
+    border:2px solid var(--border);
+    border-radius:16px;
+    padding:25px 30px;
+    margin-bottom:25px;
     display:flex;
     justify-content:space-between;
     align-items:center;
-    margin-bottom:25px;
-    flex-wrap:wrap;
-    gap:15px;
-}
-
-.results-header h2{
-    font-size:1.8rem;
-    font-weight:600;
-}
-
-.results-actions{
-    display:flex;
-    gap:10px;
-    flex-wrap:wrap;
-}
-
-.action-btn{
-    padding:10px 20px;
-    background:var(--bg-card);
-    border:1px solid var(--border);
-    border-radius:10px;
-    color:var(--text-primary);
-    font-weight:600;
-    cursor:pointer;
-    transition:all 0.3s;
-    font-size:0.9rem;
-}
-
-.action-btn:hover{
-    border-color:var(--accent-primary);
-    transform:translateY(-2px);
+    box-shadow:0 4px 20px var(--shadow);
 }
 
 .results-count{
-    padding:8px 16px;
-    background:var(--bg-card);
-    border:1px solid var(--border);
-    border-radius:20px;
-    color:var(--text-secondary);
-    font-size:0.9rem;
+    font-size:1.3rem;
+    font-weight:700;
+    color:var(--pakistan-green);
+    display:flex;
+    align-items:center;
+    gap:12px;
 }
 
-/* Table */
-.results-table{
+.results-count .icon{
+    width:45px;
+    height:45px;
+    background:linear-gradient(135deg, var(--pakistan-green), var(--pakistan-green-light));
+    border-radius:12px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:white;
+    font-size:22px;
+}
+
+.export-actions{
+    display:flex;
+    gap:12px;
+}
+
+.export-btn{
+    padding:12px 20px;
+    background:var(--bg-primary);
+    border:2px solid var(--border);
+    border-radius:10px;
+    cursor:pointer;
+    font-size:0.9rem;
+    font-weight:600;
+    transition:all 0.3s ease;
+    display:flex;
+    align-items:center;
+    gap:8px;
+    color:var(--text-primary);
+}
+
+.export-btn:hover{
+    background:var(--pakistan-green);
+    border-color:var(--pakistan-green);
+    color:white;
+    transform:translateY(-2px);
+    box-shadow:0 6px 15px var(--shadow);
+}
+
+.results-table-wrapper{
     background:var(--bg-card);
-    border:1px solid var(--border);
+    border:2px solid var(--border);
     border-radius:16px;
     overflow:hidden;
-    box-shadow:0 10px 40px rgba(0,0,0,0.3);
+    box-shadow:0 4px 20px var(--shadow);
 }
 
-.table-wrapper{
-    overflow-x:auto;
-}
-
-table{
+.results-table{
     width:100%;
     border-collapse:collapse;
 }
 
-thead{
-    background:var(--bg-secondary);
+.results-table thead{
+    background:linear-gradient(135deg, var(--pakistan-green), var(--pakistan-green-light));
 }
 
-th{
-    padding:18px 20px;
+.results-table th{
+    padding:20px 24px;
     text-align:left;
-    font-weight:600;
-    font-size:0.9rem;
-    color:var(--text-secondary);
+    color:white;
+    font-weight:700;
+    font-size:0.95rem;
     text-transform:uppercase;
     letter-spacing:0.5px;
 }
 
-tbody tr{
+.results-table tbody tr{
     border-bottom:1px solid var(--border);
-    transition:all 0.3s;
-    animation:fadeInRow 0.5s ease backwards;
+    transition:background 0.2s ease;
 }
 
-@keyframes fadeInRow{
-    from{
-        opacity:0;
-        transform:translateX(-20px);
-    }
-    to{
-        opacity:1;
-        transform:translateX(0);
-    }
+.results-table tbody tr:hover{
+    background:var(--bg-primary);
 }
 
-tbody tr:hover{
-    background:var(--bg-secondary);
+.results-table tbody tr:last-child{
+    border-bottom:none;
 }
 
-td{
-    padding:18px 20px;
+.results-table td{
+    padding:20px 24px;
+    color:var(--text-primary);
     font-size:0.95rem;
 }
 
-td:first-child{
+.results-table td:first-child{
     font-family:'Space Mono', monospace;
-    color:var(--accent-primary);
     font-weight:600;
+    color:var(--pakistan-green);
 }
 
-/* States */
-.state{
-    padding:100px 40px;
+/* No Results */
+.no-results{
+    background:var(--bg-card);
+    border:2px solid var(--border);
+    border-radius:16px;
+    padding:80px 40px;
     text-align:center;
+    box-shadow:0 4px 20px var(--shadow);
 }
 
-.state-icon{
-    font-size:60px;
+.no-results .icon{
+    font-size:80px;
     margin-bottom:20px;
+    opacity:0.5;
 }
 
-.state h3{
-    font-size:1.5rem;
-    font-weight:600;
-    margin-bottom:10px;
+.no-results h3{
+    font-size:1.8rem;
+    font-weight:700;
+    margin-bottom:12px;
+    color:var(--text-primary);
 }
 
-.state p{
+.no-results p{
     color:var(--text-secondary);
-}
-
-.loading-spinner{
-    width:60px;
-    height:60px;
-    border:4px solid var(--border);
-    border-top-color:var(--accent-primary);
-    border-radius:50%;
-    margin:0 auto 20px;
-    animation:spin 1s linear infinite;
+    font-size:1.1rem;
 }
 
 /* Modal */
@@ -491,13 +623,13 @@ td:first-child{
     position:fixed;
     top:0;
     left:0;
-    right:0;
-    bottom:0;
-    background:rgba(0,0,0,0.9);
-    z-index:9999;
-    justify-content:center;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,0.6);
+    z-index:1000;
     align-items:center;
-    padding:20px;
+    justify-content:center;
+    backdrop-filter:blur(5px);
 }
 
 .modal.active{
@@ -506,20 +638,21 @@ td:first-child{
 
 .modal-content{
     background:var(--bg-card);
-    border:1px solid var(--border);
     border-radius:20px;
-    padding:30px;
+    padding:40px;
     max-width:600px;
-    width:100%;
-    max-height:90vh;
+    width:90%;
+    max-height:80vh;
     overflow-y:auto;
-    animation:slideUp 0.4s ease;
+    box-shadow:0 20px 60px rgba(0,0,0,0.3);
+    position:relative;
+    animation:modalSlide 0.3s ease-out;
 }
 
-@keyframes slideUp{
+@keyframes modalSlide{
     from{
         opacity:0;
-        transform:translateY(40px);
+        transform:translateY(-50px);
     }
     to{
         opacity:1;
@@ -531,273 +664,311 @@ td:first-child{
     display:flex;
     justify-content:space-between;
     align-items:center;
-    margin-bottom:25px;
+    margin-bottom:30px;
 }
 
-.modal-header h3{
-    font-size:1.5rem;
+.modal-header h2{
+    font-size:1.8rem;
     font-weight:700;
+    color:var(--pakistan-green);
 }
 
-.btn-close{
-    background:var(--error);
-    color:white;
-    border:none;
+.modal-close{
     width:40px;
     height:40px;
-    border-radius:50%;
-    font-size:1.3rem;
+    border:none;
+    background:var(--bg-primary);
+    border-radius:10px;
     cursor:pointer;
-    transition:all 0.3s;
+    font-size:24px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    transition:all 0.3s ease;
 }
 
-.btn-close:hover{
-    transform:scale(1.1);
+.modal-close:hover{
+    background:var(--pakistan-green);
+    color:white;
+    transform:rotate(90deg);
 }
 
-#reader{
+.modal-body textarea{
     width:100%;
+    min-height:200px;
+    padding:20px;
+    border:2px solid var(--border);
     border-radius:12px;
-    overflow:hidden;
+    font-family:'Space Mono', monospace;
+    font-size:0.95rem;
+    resize:vertical;
+    background:var(--bg-primary);
+    color:var(--text-primary);
 }
 
-.modal-info{
-    margin-top:20px;
-    padding:15px;
-    background:var(--bg-secondary);
-    border-radius:12px;
-    color:var(--text-secondary);
-    font-size:0.9rem;
-    text-align:center;
+.modal-body textarea:focus{
+    outline:none;
+    border-color:var(--pakistan-green);
 }
 
-/* OCR */
-#ocrPreview{
-    width:100%;
-    max-height:400px;
-    border-radius:12px;
-    margin-bottom:20px;
-    display:none;
+.modal-actions{
+    margin-top:25px;
+    display:flex;
+    gap:15px;
 }
 
-.ocr-input{
-    width:100%;
-    padding:40px 20px;
-    border:2px dashed var(--border);
+.modal-btn{
+    flex:1;
+    padding:16px;
+    border:none;
     border-radius:12px;
-    text-align:center;
+    font-weight:700;
+    font-size:1rem;
     cursor:pointer;
-    transition:all 0.3s;
-    background:var(--bg-secondary);
+    transition:all 0.3s ease;
 }
 
-.ocr-input:hover{
-    border-color:var(--accent-primary);
+.modal-btn.primary{
+    background:linear-gradient(135deg, var(--pakistan-green), var(--pakistan-green-light));
+    color:white;
 }
 
-.ocr-progress{
+.modal-btn.primary:hover{
+    transform:translateY(-2px);
+    box-shadow:0 8px 20px rgba(1,65,28,0.3);
+}
+
+.modal-btn.secondary{
+    background:var(--bg-primary);
+    color:var(--text-primary);
+    border:2px solid var(--border);
+}
+
+.modal-btn.secondary:hover{
+    border-color:var(--pakistan-green);
+}
+
+/* Progress Bar */
+.progress-container{
     margin-top:20px;
-    display:none;
 }
 
 .progress-bar{
     width:100%;
-    height:10px;
-    background:var(--bg-secondary);
-    border-radius:5px;
+    height:12px;
+    background:var(--bg-primary);
+    border-radius:6px;
     overflow:hidden;
+    border:1px solid var(--border);
 }
 
 .progress-fill{
     height:100%;
-    background:linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
-    transition:width 0.3s;
+    background:linear-gradient(90deg, var(--pakistan-green), var(--pakistan-green-light));
+    border-radius:6px;
+    transition:width 0.3s ease;
     width:0%;
 }
 
 .progress-text{
-    text-align:center;
     margin-top:12px;
+    text-align:center;
+    font-size:0.9rem;
+    font-weight:600;
     color:var(--text-secondary);
-    font-weight:600;
 }
 
-/* Bulk Search */
-.bulk-textarea{
-    width:100%;
-    min-height:200px;
-    padding:15px;
-    background:var(--bg-secondary);
+/* Camera Scanner */
+#qr-reader{
+    border-radius:12px;
+    overflow:hidden;
     border:2px solid var(--border);
-    border-radius:12px;
-    color:var(--text-primary);
-    font-family:'Space Mono', monospace;
-    resize:vertical;
-    margin-bottom:15px;
-}
-
-.bulk-textarea:focus{
-    outline:none;
-    border-color:var(--accent-primary);
-}
-
-.btn-bulk-search{
-    width:100%;
-    padding:14px;
-    background:linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
-    border:none;
-    border-radius:12px;
-    color:white;
-    font-weight:600;
-    cursor:pointer;
-    transition:all 0.3s;
-}
-
-.btn-bulk-search:hover{
-    transform:translateY(-2px);
 }
 
 /* Responsive */
-@media(max-width:768px){
-    .header h1{font-size:2rem;}
-    .search-form{flex-direction:column;}
-    .tools-grid{grid-template-columns:1fr;}
-    .results-header{flex-direction:column; align-items:flex-start;}
-    .results-actions{width:100%;}
-    .action-btn{flex:1;}
-    table{font-size:0.85rem;}
-    th, td{padding:12px 15px;}
+@media (max-width: 768px){
+    .gov-title{
+        font-size:1.8rem;
+    }
+    
+    .gov-header-content{
+        flex-direction:column;
+        text-align:center;
+    }
+    
+    .search-form{
+        flex-direction:column;
+    }
+    
+    .tools-grid{
+        grid-template-columns:1fr;
+    }
+    
+    .results-header{
+        flex-direction:column;
+        gap:20px;
+    }
+    
+    .export-actions{
+        flex-wrap:wrap;
+        justify-content:center;
+    }
+    
+    .results-table{
+        font-size:0.85rem;
+    }
+    
+    .results-table th,
+    .results-table td{
+        padding:12px 16px;
+    }
 }
 
-/* Custom Scrollbar */
-::-webkit-scrollbar{
-    width:10px;
-    height:10px;
-}
-
-::-webkit-scrollbar-track{
-    background:var(--bg-secondary);
-}
-
-::-webkit-scrollbar-thumb{
-    background:linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
-    border-radius:5px;
+.hidden{
+    display:none !important;
 }
 </style>
 </head>
-
 <body>
 
 <div class="container">
-
-<!-- Header -->
-<div class="header">
-    <h1>PMYBLS Advanced Search</h1>
-    <p></p>
-</div>
-
-<!-- Data Status -->
-<div class="data-status">
-    <div class="data-info">
-        <div class="data-icon">📊</div>
-        <div class="data-details">
-            <h3>Database Connection</h3>
-            <p id="sheetInfo">Initializing connection...</p>
+    
+    <!-- Government Header -->
+    <div class="gov-header">
+        <div class="flag-strip"></div>
+        <div class="gov-header-content">
+            <div class="gov-logo-section">
+                <div class="pakistan-emblem">Owndata</div>
+                <div class="gov-title-section">
+                    <div class="gov-dept"></div>
+                    <h1 class="gov-title">Prime Minister Youth Business & Agriculture Loan Scheme</h1>
+                    <p class="gov-subtitle">Beneficiary Information System</p>
+                </div>
+            </div>
         </div>
-    </div>
-    <div class="data-badge loading" id="statusBadge">
-        <span class="spinner"></span>
-        <span>Connecting...</span>
-    </div>
-</div>
-
-<!-- Search Card -->
-<div class="search-card">
-    <div class="search-form">
-        <div class="input-wrapper">
-            <input 
-                type="text" 
-                id="cnic" 
-                placeholder="Enter CNIC (e.g., 38302-2819440-5)"
-                maxlength="15"
-            >
-        </div>
-        <button class="search-btn" id="searchBtn" onclick="searchData()">
-            <span id="btnText">🔎 Search</span>
-        </button>
     </div>
     
-    <div class="tools-label">⚡ Advanced Search Tools</div>
-    <div class="tools-grid">
-        <button class="tool-btn" onclick="startScanner()">
-            📷 Scan Barcode/QR
-        </button>
-        <button class="tool-btn" onclick="startOCR()">
-            📸 Extract from Photo
-        </button>
-        <button class="tool-btn voice-btn" id="voiceBtn" onclick="startVoice()">
-            <span id="voiceIcon">🎤</span>
-            <span id="voiceText">Voice Search</span>
-        </button>
-        <button class="tool-btn" onclick="openBulkModal()">
-            📋 Bulk CNIC Search
-        </button>
-    </div>
-</div>
-
-<!-- Results Section -->
-<div class="results-section">
-    <div class="results-header">
-        <h2>Search Results</h2>
-        <div class="results-actions">
-            <button class="action-btn" onclick="copyResults()">
-                📋 Copy
-            </button>
-            <button class="action-btn" onclick="exportExcel()">
-                📊 Export Excel
-            </button>
-            <button class="action-btn" onclick="exportPDF()">
-                📄 Export PDF
-            </button>
-            <button class="action-btn" onclick="printResults()">
-                🖨️ Print
-            </button>
-            <button class="action-btn" onclick="shareResults()">
-                📤 Share
-            </button>
+    <!-- Data Status -->
+    <div class="data-status">
+        <div class="data-info">
+            <div class="data-icon">📊</div>
+            <div class="data-details">
+                <h3>Database Status</h3>
+                <p id="dataSource">Loading data source...</p>
+            </div>
         </div>
-        <div class="results-count" id="resultsCount">Ready to search</div>
+        <div class="data-badge loading" id="dataBadge">
+            <div class="spinner"></div>
+            <span>Loading...</span>
+        </div>
     </div>
     
-    <div class="results-table">
-        <div class="table-wrapper">
-            <table>
-                <tbody id="resultTable">
+    <!-- Search Card -->
+    <div class="search-card">
+        <form class="search-form" onsubmit="event.preventDefault(); searchData();">
+            <div class="input-wrapper">
+                <input 
+                    type="text" 
+                    id="cnic" 
+                    placeholder="Enter 13-digit CNIC (e.g., 12345-1234567-1)" 
+                    maxlength="15"
+                    autocomplete="off"
+                    required
+                />
+            </div>
+            <button type="submit" class="search-btn" id="searchBtn">
+                🔍 Search
+            </button>
+        </form>
+        
+        <div class="tools-label">🛠️ Quick Search Tools</div>
+        <div class="tools-grid">
+            <button class="tool-btn" onclick="startQRScanner()">
+                <div class="icon">📷</div>
+                <div class="label">
+                    <div style="font-size:0.85rem; color: var(--text-secondary); font-weight:400;">Scan</div>
+                    <div id="qrText">QR Code</div>
+                </div>
+            </button>
+            
+            <button class="tool-btn" onclick="startOCR()">
+                <div class="icon">🖼️</div>
+                <div class="label">
+                    <div style="font-size:0.85rem; color: var(--text-secondary); font-weight:400;">Scan</div>
+                    <div id="ocrText">CNIC Card</div>
+                </div>
+            </button>
+            
+            <button class="tool-btn" id="voiceBtn" onclick="startVoice()">
+                <div class="icon" id="voiceIcon">🎤</div>
+                <div class="label">
+                    <div style="font-size:0.85rem; color: var(--text-secondary); font-weight:400;">Speak</div>
+                    <div id="voiceText">Voice Input</div>
+                </div>
+            </button>
+            
+            <button class="tool-btn" onclick="openBulkModal()">
+                <div class="icon">📋</div>
+                <div class="label">
+                    <div style="font-size:0.85rem; color: var(--text-secondary); font-weight:400;">Multiple</div>
+                    <div>Bulk Search</div>
+                </div>
+            </button>
+        </div>
+    </div>
+    
+    <!-- Results Section -->
+    <div class="results-section hidden" id="resultsSection">
+        <div class="results-header">
+            <div class="results-count">
+                <div class="icon">✓</div>
+                <span id="resultsCount">0 Results Found</span>
+            </div>
+            <div class="export-actions">
+                <button class="export-btn" onclick="copyResults()">📋 Copy</button>
+                <button class="export-btn" onclick="exportExcel()">📊 Excel</button>
+                <button class="export-btn" onclick="exportPDF()">📄 PDF</button>
+                <button class="export-btn" onclick="printResults()">🖨️ Print</button>
+                <button class="export-btn" onclick="shareResults()">📤 Share</button>
+            </div>
+        </div>
+        
+        <div class="results-table-wrapper">
+            <table class="results-table">
+                <thead>
                     <tr>
-                        <td colspan="4" class="state">
-                            <div class="state-icon">🔍</div>
-                            <h3>Ready to Search</h3>
-                            <p>Enter CNIC or use advanced tools above</p>
-                        </td>
+                        <th>Applicant CNIC</th>
+                        <th>Applicant Name</th>
+                        <th>Business Sub Sector</th>
+                        <th>MFI Bank Name</th>
                     </tr>
-                </tbody>
+                </thead>
+                <tbody id="resultsBody"></tbody>
             </table>
         </div>
     </div>
+    
+    <!-- No Results -->
+    <div class="no-results hidden" id="noResults">
+        <div class="icon">🔍</div>
+        <h3>No Record Found</h3>
+        <p>The CNIC you searched for is not registered in the PMYBLS database.</p>
+    </div>
+    
 </div>
 
-</div>
-
-<!-- Scanner Modal -->
-<div class="modal" id="scannerModal">
+<!-- QR Scanner Modal -->
+<div class="modal" id="qrModal">
     <div class="modal-content">
         <div class="modal-header">
-            <h3>📷 Scan Barcode/QR</h3>
-            <button class="btn-close" onclick="stopScanner()">×</button>
+            <h2>📷 Scan QR Code</h2>
+            <button class="modal-close" onclick="stopQRScanner()">✕</button>
         </div>
-        <div id="reader"></div>
-        <div class="modal-info">
-            📱 Position barcode/QR code within the frame
+        <div class="modal-body">
+            <div id="qr-reader"></div>
+            <div class="progress-container">
+                <p class="progress-text" id="qrStatus">Initializing camera...</p>
+            </div>
         </div>
     </div>
 </div>
@@ -806,29 +977,20 @@ td:first-child{
 <div class="modal" id="ocrModal">
     <div class="modal-content">
         <div class="modal-header">
-            <h3>📸 Extract CNIC from Photo</h3>
-            <button class="btn-close" onclick="stopOCR()">×</button>
+            <h2>🖼️ Scan CNIC Card</h2>
+            <button class="modal-close" onclick="stopOCR()">✕</button>
         </div>
-        
-        <input type="file" id="imageInput" accept="image/*" capture="environment" style="display:none;" onchange="processImage(event)">
-        
-        <div class="ocr-input" onclick="document.getElementById('imageInput').click()">
-            <p style="font-size:3rem;margin-bottom:15px;">📸</p>
-            <p style="font-weight:600;font-size:1.1rem;margin-bottom:8px;">Take Photo or Upload Image</p>
-            <p style="font-size:0.9rem;color:var(--text-secondary);">Click to capture CNIC card</p>
-        </div>
-        
-        <img id="ocrPreview" alt="Preview">
-        
-        <div class="ocr-progress" id="ocrProgress">
-            <div class="progress-bar">
-                <div class="progress-fill" id="progressFill"></div>
+        <div class="modal-body">
+            <input type="file" id="ocrInput" accept="image/*" style="display:none" onchange="processImage(event)">
+            <button class="modal-btn primary" onclick="document.getElementById('ocrInput').click()">
+                📸 Select Image
+            </button>
+            <div class="progress-container" id="ocrProgress" style="display:none;">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="ocrProgressFill"></div>
+                </div>
+                <p class="progress-text" id="ocrProgressText">Processing...</p>
             </div>
-            <p class="progress-text" id="progressText">Processing...</p>
-        </div>
-        
-        <div class="modal-info">
-            💡 Ensure good lighting and clear CNIC visibility
         </div>
     </div>
 </div>
@@ -837,297 +999,191 @@ td:first-child{
 <div class="modal" id="bulkModal">
     <div class="modal-content">
         <div class="modal-header">
-            <h3>📋 Bulk CNIC Search</h3>
-            <button class="btn-close" onclick="closeBulkModal()">×</button>
+            <h2>📋 Bulk Search</h2>
+            <button class="modal-close" onclick="closeBulkModal()">✕</button>
         </div>
-        
-        <p style="color:var(--text-secondary);margin-bottom:15px;">
-            Enter multiple CNICs (one per line):
-        </p>
-        
-        <textarea id="bulkCNICs" class="bulk-textarea" placeholder="38302-2819440-5&#10;61101-1234567-8&#10;..."></textarea>
-        
-        <button class="btn-bulk-search" onclick="bulkSearch()">
-            🔍 Search All CNICs
-        </button>
-        
-        <div class="modal-info">
-            Enter one CNIC per line. Results will be displayed below.
+        <div class="modal-body">
+            <p style="color:var(--text-secondary); margin-bottom:15px;">Enter multiple CNICs (one per line):</p>
+            <textarea id="bulkCNICs" placeholder="12345-1234567-1&#10;54321-7654321-2&#10;..."></textarea>
+            <div class="modal-actions">
+                <button class="modal-btn secondary" onclick="closeBulkModal()">Cancel</button>
+                <button class="modal-btn primary" onclick="bulkSearch()">🔍 Search All</button>
+            </div>
         </div>
     </div>
 </div>
 
 <script>
-// ================== CONFIG ==================
-const SHEET_ID = "1n2_6Oewp88igcRv5H7vKYpYH-jHmnTus";
-const SHEET_NAME = "Sheet1";
+// ================== CONFIGURATION ==================
+const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRbxIuKj1c-DKqVNmxFcSSYMHNl-LrJ7f9VmVg0v0Pz0UL0xkzugjN6LSu61bCCuqB4vHxh5Z7lRmhI/pub?output=csv";
 
-// ================== GLOBAL STATE ==================
+// ================== GLOBAL VARIABLES ==================
 let excelData = [];
-let dataLoaded = false;
 let currentResults = [];
 let html5QrCode = null;
 let recognition = null;
 
 // ================== INITIALIZATION ==================
-window.onload = async function(){
-    await loadData();
-    document.getElementById("cnic").focus();
-};
+window.addEventListener('DOMContentLoaded', loadData);
 
-// ================== LOAD DATA FROM GOOGLE SHEETS ==================
 async function loadData(){
-    const statusBadge = document.getElementById("statusBadge");
-    const sheetInfo = document.getElementById("sheetInfo");
+    const badge = document.getElementById('dataBadge');
+    const source = document.getElementById('dataSource');
     
     try{
-        // Show connecting state
-        statusBadge.className = "data-badge loading";
-        statusBadge.innerHTML = '<span class="spinner"></span><span>Connecting...</span>';
-        sheetInfo.textContent = "Connecting to Google Sheets...";
+        const response = await fetch(SHEET_URL);
+        const csvText = await response.text();
         
-        const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${SHEET_NAME}`;
-        const startTime = Date.now();
-        
-        // Fast fetch with no-cache
-        const res = await fetch(url, {
-            cache: 'no-cache',
-            priority: 'high'
+        excelData = csvText.split('\n').map(row => {
+            return row.split(',').map(cell => cell.trim().replace(/^"|"$/g, ''));
         });
         
-        if(!res.ok) throw new Error("Connection failed");
-        
-        const text = await res.text();
-        const loadTime = Date.now() - startTime;
-        
-        excelData = parseCSV(text);
-        dataLoaded = true;
-        
-        // Show success state
         const recordCount = excelData.length - 1;
-        statusBadge.className = "data-badge";
-        statusBadge.innerHTML = '<span>✓</span><span>Connected</span>';
-        sheetInfo.innerHTML = `Sheet: <strong>${SHEET_NAME}</strong> • Records: <strong>${recordCount.toLocaleString()}</strong> • Load Time: <strong>${loadTime}ms</strong>`;
         
-    }catch(error){
-        console.error("Data load error:", error);
+        badge.classList.remove('loading');
+        badge.innerHTML = `✓ <span>${recordCount.toLocaleString()} Records Loaded</span>`;
+        source.textContent = `Google Sheets Database • Last Updated: ${new Date().toLocaleDateString()}`;
         
-        // Show error state
-        statusBadge.className = "data-badge error";
-        statusBadge.innerHTML = '<span>⚠</span><span>Connection Failed</span>';
-        sheetInfo.textContent = "Failed to connect to database. Please refresh the page.";
+    }catch(err){
+        console.error('Load Error:', err);
+        badge.classList.remove('loading');
+        badge.classList.add('error');
+        badge.innerHTML = `✕ <span>Load Failed</span>`;
+        source.textContent = 'Failed to connect to database';
     }
-}
-
-// ================== CSV PARSER ==================
-function parseCSV(csv){
-    const lines = csv.split("\n");
-    return lines.map(line =>
-        line.split(",").map(cell => cell.replace(/^"|"$/g,"").trim())
-    );
-}
-
-// ================== NORMALIZE CNIC ==================
-function normalize(val){
-    return String(val || "").replace(/\D/g,"");
 }
 
 // ================== SEARCH FUNCTION ==================
+function normalize(str){
+    return String(str).replace(/\D/g, '');
+}
+
 function searchData(){
-    if(!dataLoaded){
-        showError("Data not loaded yet. Please wait for connection...");
+    const cnicInput = document.getElementById('cnic').value;
+    const cnic = normalize(cnicInput);
+    
+    if(!cnic || cnic.length !== 13){
+        alert('Please enter a valid 13-digit CNIC');
         return;
     }
     
-    const input = normalize(document.getElementById("cnic").value);
-    const searchBtn = document.getElementById("searchBtn");
-    const btnText = document.getElementById("btnText");
-    const resultsCount = document.getElementById("resultsCount");
+    const btn = document.getElementById('searchBtn');
+    btn.classList.add('searching');
+    btn.textContent = '⏳ Searching...';
     
-    if(input.length !== 13){
-        showError("Please enter valid 13 digit CNIC");
-        return;
-    }
-    
-    // Show loading state
-    searchBtn.classList.add("searching");
-    btnText.textContent = "⏳ Searching...";
-    showLoading();
-    
-    // Simulate processing time for better UX
-    setTimeout(()=>{
-        const rows = excelData.slice(1); // skip header
-        const results = rows.filter(r => normalize(r[0]) === input);
+    setTimeout(() => {
+        const rows = excelData.slice(1);
+        const results = rows.filter(r => normalize(r[0]) === cnic);
         
-        searchBtn.classList.remove("searching");
-        btnText.textContent = "🔎 Search";
+        btn.classList.remove('searching');
+        btn.innerHTML = '🔍 Search';
         
         if(results.length === 0){
             showNoResults();
-            resultsCount.textContent = "No results found";
         }else{
             currentResults = results;
             displayResults(results);
-            resultsCount.textContent = `Found ${results.length} record${results.length > 1 ? 's' : ''}`;
         }
-    }, 400);
+    }, 500);
 }
 
-// ================== SHOW LOADING STATE ==================
-function showLoading(){
-    const table = document.getElementById("resultTable");
-    table.innerHTML = `
-        <tr>
-            <td colspan="4" class="state">
-                <div class="loading-spinner"></div>
-                <h3>Processing Search...</h3>
-                <p>Searching through records</p>
-            </td>
-        </tr>`;
-}
-
-// ================== SHOW NO RESULTS ==================
-function showNoResults(){
-    const table = document.getElementById("resultTable");
-    table.innerHTML = `
-        <tr>
-            <td colspan="4" class="state">
-                <div class="state-icon">❌</div>
-                <h3>No Record Found</h3>
-                <p>No matching CNIC found in the database</p>
-            </td>
-        </tr>`;
-}
-
-// ================== SHOW ERROR ==================
-function showError(message){
-    const table = document.getElementById("resultTable");
-    table.innerHTML = `
-        <tr>
-            <td colspan="4" class="state">
-                <div class="state-icon">⚠️</div>
-                <h3>Error</h3>
-                <p>${message}</p>
-            </td>
-        </tr>`;
-}
-
-// ================== DISPLAY RESULTS ==================
 function displayResults(results){
-    const table = document.getElementById("resultTable");
+    const section = document.getElementById('resultsSection');
+    const noResults = document.getElementById('noResults');
+    const tbody = document.getElementById('resultsBody');
+    const count = document.getElementById('resultsCount');
     
-    let html = `
-    <tr>
-        <th>Applicant CNIC</th>
-        <th>Applicant Name</th>
-        <th>Business Sub Sector</th>
-        <th>MFI Bank Name</th>
-    </tr>`;
+    tbody.innerHTML = '';
     
-    results.forEach((r, index)=>{
-        html += `
-        <tr style="animation-delay:${0.1 + (index * 0.1)}s">
-            <td>${r[0] || "-"}</td>
-            <td>${r[1] || "-"}</td>
-            <td>${r[2] || "-"}</td>
-            <td>${r[3] || "-"}</td>
-        </tr>`;
+    results.forEach(row => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td>${row[0] || '-'}</td>
+            <td>${row[1] || '-'}</td>
+            <td>${row[2] || '-'}</td>
+            <td>${row[3] || '-'}</td>
+        `;
+        tbody.appendChild(tr);
     });
     
-    table.innerHTML = html;
+    count.textContent = `${results.length} Record${results.length > 1 ? 's' : ''} Found`;
+    
+    section.classList.remove('hidden');
+    noResults.classList.add('hidden');
+    
+    section.scrollIntoView({behavior: 'smooth', block: 'nearest'});
 }
 
-// ================== BARCODE/QR SCANNER ==================
-function startScanner(){
-    document.getElementById('scannerModal').classList.add('active');
+function showNoResults(){
+    const section = document.getElementById('resultsSection');
+    const noResults = document.getElementById('noResults');
     
-    html5QrCode = new Html5Qrcode("reader");
+    section.classList.add('hidden');
+    noResults.classList.remove('hidden');
     
-    Html5Qrcode.getCameras().then(cameras => {
-        if(cameras && cameras.length){
-            html5QrCode.start(
-                { facingMode: "environment" },
-                { fps: 10, qrbox: { width: 250, height: 250 } },
-                onScanSuccess,
-                () => {}
-            ).catch(() => {
-                alert("Unable to start camera. Please check permissions.");
-                stopScanner();
-            });
-        }else{
-            alert("No camera found on this device.");
-            stopScanner();
+    noResults.scrollIntoView({behavior: 'smooth', block: 'nearest'});
+}
+
+// ================== QR SCANNER ==================
+function startQRScanner(){
+    document.getElementById('qrModal').classList.add('active');
+    document.getElementById('qrStatus').textContent = 'Initializing camera...';
+    
+    html5QrCode = new Html5Qrcode("qr-reader");
+    
+    html5QrCode.start(
+        {facingMode: "environment"},
+        {fps: 10, qrbox: 250},
+        (decodedText) => {
+            const cnic = normalize(decodedText);
+            if(cnic.length >= 13){
+                fillCNIC(cnic.slice(0, 13));
+                stopQRScanner();
+                setTimeout(() => searchData(), 500);
+            }
         }
-    }).catch(() => {
-        alert("Camera permission denied. Please enable camera access.");
-        stopScanner();
+    ).then(() => {
+        document.getElementById('qrStatus').textContent = '📷 Point camera at QR code';
+    }).catch(err => {
+        console.error('Camera Error:', err);
+        document.getElementById('qrStatus').textContent = '❌ Camera access denied or unavailable';
     });
 }
 
-function stopScanner(){
+function stopQRScanner(){
     if(html5QrCode){
         html5QrCode.stop().then(() => {
-            document.getElementById('scannerModal').classList.remove('active');
-        }).catch(() => {
-            document.getElementById('scannerModal').classList.remove('active');
-        });
-    }else{
-        document.getElementById('scannerModal').classList.remove('active');
+            html5QrCode = null;
+        }).catch(err => console.error('Stop Error:', err));
     }
+    document.getElementById('qrModal').classList.remove('active');
 }
 
-function onScanSuccess(decodedText){
-    const patterns = [
-        /\d{13}/,
-        /\d{5}[\s-]?\d{7}[\s-]?\d/,
-        /(\d{5}).*?(\d{7}).*?(\d)/
-    ];
-    
-    let cnicMatch = null;
-    for(let pattern of patterns){
-        cnicMatch = decodedText.match(pattern);
-        if(cnicMatch) break;
-    }
-    
-    if(cnicMatch){
-        const cnic = cnicMatch[0].replace(/\D/g, '');
-        if(cnic.length >= 13){
-            fillCNIC(cnic.slice(0, 13));
-            stopScanner();
-            setTimeout(() => searchData(), 500);
-        }
-    }
-}
-
-// ================== OCR TEXT EXTRACTION ==================
+// ================== OCR SCANNER ==================
 function startOCR(){
     document.getElementById('ocrModal').classList.add('active');
-    document.getElementById('ocrPreview').style.display = 'none';
-    document.getElementById('ocrProgress').style.display = 'none';
 }
 
 function stopOCR(){
     document.getElementById('ocrModal').classList.remove('active');
-    document.getElementById('imageInput').value = '';
+    document.getElementById('ocrProgress').style.display = 'none';
+    const fill = document.getElementById('ocrProgressFill');
+    fill.style.width = '0%';
 }
 
 async function processImage(event){
     const file = event.target.files[0];
     if(!file) return;
     
-    const preview = document.getElementById('ocrPreview');
-    const progress = document.getElementById('ocrProgress');
-    const fill = document.getElementById('progressFill');
-    const text = document.getElementById('progressText');
+    const progressDiv = document.getElementById('ocrProgress');
+    const fill = document.getElementById('ocrProgressFill');
+    const text = document.getElementById('ocrProgressText');
     
-    preview.src = URL.createObjectURL(file);
-    preview.style.display = 'block';
-    progress.style.display = 'block';
+    progressDiv.style.display = 'block';
+    fill.style.width = '10%';
+    text.textContent = 'Loading image...';
     
     try{
-        text.textContent = 'Processing image...';
-        fill.style.width = '10%';
-        
         const result = await Tesseract.recognize(
             file,
             'eng',
@@ -1232,13 +1288,13 @@ function startVoice(){
         
         voiceBtn.classList.remove('listening');
         voiceIcon.textContent = '🎤';
-        voiceText.textContent = 'Voice Search';
+        voiceText.textContent = 'Voice Input';
     };
     
     recognition.onerror = (event) => {
         voiceBtn.classList.remove('listening');
         voiceIcon.textContent = '🎤';
-        voiceText.textContent = 'Voice Search';
+        voiceText.textContent = 'Voice Input';
         
         let errorMsg = 'Voice recognition failed.';
         if(event.error === 'no-speech'){
@@ -1252,7 +1308,7 @@ function startVoice(){
     recognition.onend = () => {
         voiceBtn.classList.remove('listening');
         voiceIcon.textContent = '🎤';
-        voiceText.textContent = 'Voice Search';
+        voiceText.textContent = 'Voice Input';
     };
     
     recognition.start();
@@ -1300,11 +1356,9 @@ function copyResults(){
         return;
     }
     
-    // Transpose: Convert rows to columns
     const headers = ['CNIC', 'Name', 'Business Sector', 'MFI Bank'];
     let text = '';
     
-    // For each header/field, create a row with all values from that field
     headers.forEach((header, index) => {
         text += header;
         currentResults.forEach(r => {
@@ -1314,7 +1368,7 @@ function copyResults(){
     });
     
     navigator.clipboard.writeText(text).then(() => {
-        alert('✓ Results copied to clipboard (transposed)');
+        alert('✓ Results copied to clipboard');
     }).catch(() => {
         alert('Failed to copy');
     });
@@ -1346,12 +1400,14 @@ function exportPDF(){
     const doc = new jsPDF();
     
     doc.setFontSize(18);
-    doc.text('PMYBLS Search Results', 14, 20);
+    doc.text('PM Youth Business & Agriculture Loan Scheme', 14, 20);
+    doc.setFontSize(12);
+    doc.text('Search Results', 14, 28);
     
     doc.autoTable({
         head: [['CNIC', 'Name', 'Business Sector', 'MFI Bank']],
         body: currentResults,
-        startY: 30
+        startY: 35
     });
     
     doc.save(`PMYBLS_Results_${Date.now()}.pdf`);
@@ -1364,10 +1420,11 @@ function printResults(){
     }
     
     const printWindow = window.open('', '', 'height=600,width=800');
-    printWindow.document.write('<html><head><title>Print Results</title>');
-    printWindow.document.write('<style>body{font-family:Arial;padding:20px;}h2{margin-bottom:20px;}table{width:100%;border-collapse:collapse;}th,td{border:1px solid #ddd;padding:12px;text-align:left;}th{background:#f2f2f2;font-weight:600;}</style>');
+    printWindow.document.write('<html><head><title>PM Youth Business & Agriculture Loan Scheme - Results</title>');
+    printWindow.document.write('<style>body{font-family:Arial;padding:20px;}h2{color:#01411C;margin-bottom:10px;}h3{color:#666;font-weight:400;margin-bottom:20px;}table{width:100%;border-collapse:collapse;}th,td{border:1px solid #ddd;padding:12px;text-align:left;}th{background:#01411C;color:white;font-weight:600;}</style>');
     printWindow.document.write('</head><body>');
-    printWindow.document.write('<h2>PMYBLS Search Results</h2>');
+    printWindow.document.write('<h2>Prime Minister Youth Business & Agriculture Loan Scheme</h2>');
+    printWindow.document.write('<h3>Beneficiary Search Results</h3>');
     printWindow.document.write('<table><thead><tr><th>CNIC</th><th>Name</th><th>Business Sector</th><th>MFI Bank</th></tr></thead><tbody>');
     
     currentResults.forEach(r => {
@@ -1387,7 +1444,7 @@ function shareResults(){
     
     if(navigator.share){
         navigator.share({
-            title: 'PMYBLS Search Results',
+            title: 'PM Youth Business & Agriculture Loan Scheme Results',
             text: `Found ${currentResults.length} record${currentResults.length > 1 ? 's' : ''} in PMYBLS database`
         }).catch(() => {});
     }else{
