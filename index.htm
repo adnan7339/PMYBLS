@@ -1032,18 +1032,63 @@ body::after{
 </div>
 
 <script>
-// ================== GLOBAL VARIABLES ==================
-let excelData = [];
-let currentResults = [];
-let html5QrCode = null;
-let recognition = null;
+// ================== LOAD DATA FROM GOOGLE SHEETS ==================
+async function loadData(){
+    const statusBadge = document.getElementById("statusBadge");
+    const sheetInfo = document.getElementById("sheetInfo");
+    
+    try{
+        // Show connecting state
+        statusBadge.className = "data-badge loading";
+        statusBadge.innerHTML = '<span class="spinner"></span><span>Connecting...</span>';
+        sheetInfo.textContent = "Connecting to Google Sheets...";
+        
+        const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${SHEET_NAME}`;
+        const startTime = Date.now();
+        
+        // Fast fetch with no-cache
+        const res = await fetch(url, {
+            cache: 'no-cache',
+            priority: 'high'
+        });
+        
+        if(!res.ok) throw new Error("Connection failed");
+        
+        const text = await res.text();
+        const loadTime = Date.now() - startTime;
+        
+        excelData = parseCSV(text);
+        dataLoaded = true;
+        
+        // Show success state
+        const recordCount = excelData.length - 1;
+        statusBadge.className = "data-badge";
+        statusBadge.innerHTML = '<span>✓</span><span>Connected</span>';
+        sheetInfo.innerHTML = `Sheet: <strong>${SHEET_NAME}</strong> • Records: <strong>${recordCount.toLocaleString()}</strong> • Load Time: <strong>${loadTime}ms</strong>`;
+        
+    }catch(error){
+        console.error("Data load error:", error);
+        
+        // Show error state
+        statusBadge.className = "data-badge error";
+        statusBadge.innerHTML = '<span>⚠</span><span>Connection Failed</span>';
+        sheetInfo.textContent = "Failed to connect to database. Please refresh the page.";
+    }
+}
 
-const SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQpDmFBKdVW2qs0Jv9KE1eYUZ5KY5YChSDp99nGxKrNWHlEOKi7X3Cc0u6Ib-1rNjwZaZ0x1scNMI0_/pub?output=xlsx';
+// ================== CSV PARSER ==================
+function parseCSV(csv){
+    const lines = csv.split("\n");
+    return lines.map(line =>
+        line.split(",").map(cell => cell.replace(/^"|"$/g,"").trim())
+    );
+}
 
-// ================== INITIALIZATION ==================
-window.addEventListener('load', () => {
-    loadDataFromGoogleSheets();
-});
+// ================== NORMALIZE CNIC ==================
+function normalize(val){
+    return String(val || "").replace(/\D/g,"");
+}
+
 
 // ================== LOAD DATA WITH LOADING BAR ==================
 async function loadDataFromGoogleSheets(){
