@@ -852,7 +852,12 @@ async function loadData(){
         
         console.log('Loading data from:', SHEET_URL);
         
-        const response = await fetch(SHEET_URL);
+        // Add timeout to fetch request
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
+        
+        const response = await fetch(SHEET_URL, { signal: controller.signal });
+        clearTimeout(timeoutId);
         
         if(!response.ok){
             throw new Error(`HTTP error! status: ${response.status}`);
@@ -869,29 +874,46 @@ async function loadData(){
         badge.innerHTML = '<div class="spinner"></div><span>Processing...</span>';
         source.textContent = 'Processing data...';
         
-        // Parse CSV
-        excelData = csvText.split('\n').map(row => {
-            // Handle CSV with proper quote parsing
-            const cells = [];
-            let currentCell = '';
+        // Parse CSV in chunks to avoid UI freeze
+        await new Promise(resolve => setTimeout(resolve, 10)); // Let UI update
+        
+        // Simple and fast CSV parsing
+        const lines = csvText.split('\n');
+        excelData = [];
+        
+        for(let i = 0; i < lines.length; i++){
+            if(i % 10000 === 0 && i > 0){
+                // Update progress every 10k rows and yield to UI
+                const progress = Math.round((i / lines.length) * 100);
+                badge.innerHTML = `<div class="spinner"></div><span>Processing ${progress}%...</span>`;
+                await new Promise(resolve => setTimeout(resolve, 0));
+            }
+            
+            const line = lines[i].trim();
+            if(!line) continue;
+            
+            // Simple CSV parsing (handles quoted fields)
+            const row = [];
+            let current = '';
             let inQuotes = false;
             
-            for(let i = 0; i < row.length; i++){
-                const char = row[i];
-                
+            for(let j = 0; j < line.length; j++){
+                const char = line[j];
                 if(char === '"'){
                     inQuotes = !inQuotes;
                 }else if(char === ',' && !inQuotes){
-                    cells.push(currentCell.trim());
-                    currentCell = '';
+                    row.push(current.trim());
+                    current = '';
                 }else{
-                    currentCell += char;
+                    current += char;
                 }
             }
-            cells.push(currentCell.trim());
+            row.push(current.trim());
             
-            return cells;
-        }).filter(row => row.length > 1 && row[0]); // Remove empty rows
+            if(row.length > 1 && row[0]){
+                excelData.push(row);
+            }
+        }
         
         console.log('Parsed rows:', excelData.length);
         console.log('First row (headers):', excelData[0]);
@@ -918,10 +940,16 @@ async function loadData(){
         console.error('Load Error:', err);
         badge.classList.remove('loading');
         badge.classList.add('error');
-        badge.innerHTML = `✕ <span>Connection Failed</span>`;
-        source.textContent = 'Error: Could not connect to Google Sheets';
         
-        alert('❌ Failed to connect to database\n\nPlease check:\n1. Google Sheet is shared (Anyone with link can view)\n2. Internet connection is working\n3. Sheet ID is correct');
+        if(err.name === 'AbortError'){
+            badge.innerHTML = `✕ <span>Connection Timeout</span>`;
+            source.textContent = 'Connection timed out after 30 seconds';
+            alert('❌ Connection Timeout\n\nThe connection took too long. Please check:\n1. Your internet connection\n2. Google Sheets link is accessible\n3. Try again in a few moments');
+        }else{
+            badge.innerHTML = `✕ <span>Connection Failed</span>`;
+            source.textContent = 'Error: Could not connect to Google Sheets';
+            alert('❌ Failed to connect to database\n\nPlease check:\n1. Google Sheet is shared (Anyone with link can view)\n2. Internet connection is working\n3. Sheet ID is correct');
+        }
     }
 }
 
@@ -949,36 +977,43 @@ function searchData(){
     btn.textContent = '⏳ Searching...';
     btn.disabled = true;
     
-    setTimeout(() => {
-        try {
-            const rows = excelData.slice(1); // Skip header row
-            console.log('Searching for CNIC:', cnic);
-            console.log('Searching in', rows.length, 'rows');
-            
-            const results = rows.filter(r => {
-                const rowCnic = normalize(r[0]);
-                console.log('Comparing:', rowCnic, 'with', cnic);
-                return rowCnic === cnic;
-            });
-            
-            console.log('Found results:', results.length);
-            
-            if(results.length === 0){
-                alert('❌ NO DATA FOUND\n\nThe CNIC you entered is not in the database.');
-                showNoResults();
-            }else{
-                currentResults = results;
-                displayResults(results);
+    // Use requestAnimationFrame for smoother UI
+    requestAnimationFrame(() => {
+        setTimeout(() => {
+            try {
+                const rows = excelData.slice(1); // Skip header row
+                console.log('Searching for CNIC:', cnic, 'in', rows.length, 'rows');
+                
+                // Optimized search - stop on first match for single CNIC
+                const results = [];
+                for(let i = 0; i < rows.length; i++){
+                    const rowCnic = normalize(rows[i][0]);
+                    if(rowCnic === cnic){
+                        results.push(rows[i]);
+                        // For single CNIC search, we can break after finding first match
+                        // But keeping filter in case there are duplicates
+                    }
+                }
+                
+                console.log('Found results:', results.length);
+                
+                if(results.length === 0){
+                    alert('❌ NO DATA FOUND\n\nThe CNIC you entered is not in the database.');
+                    showNoResults();
+                }else{
+                    currentResults = results;
+                    displayResults(results);
+                }
+            } catch(err) {
+                console.error('Search Error:', err);
+                alert('❌ Search Error\n\nAn error occurred during search. Please try again.');
+            } finally {
+                btn.classList.remove('searching');
+                btn.innerHTML = '🔍 Search';
+                btn.disabled = false;
             }
-        } catch(err) {
-            console.error('Search Error:', err);
-            alert('An error occurred during search. Please try again.');
-        } finally {
-            btn.classList.remove('searching');
-            btn.innerHTML = '🔍 Search';
-            btn.disabled = false;
-        }
-    }, 300);
+        }, 50);
+    });
 }
 
 function displayResults(results){
