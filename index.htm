@@ -250,7 +250,7 @@ body{
     transform:translateY(0);
 }
 
-.search-btn:disabled{
+.search-btn.searching{
     pointer-events:none;
     opacity:0.7;
 }
@@ -299,73 +299,81 @@ body{
     font-size:0.75rem;
     color:var(--text-secondary);
     font-weight:400;
-    margin-top:2px;
 }
 
 .tool-btn:hover{
+    background:var(--bg-card);
     border-color:var(--primary);
-    background:var(--bg-secondary);
     transform:translateY(-2px);
-    box-shadow:0 4px 12px rgba(37,99,235,0.15);
+    box-shadow:0 4px 12px var(--shadow);
 }
 
+.tool-btn.active,
 .tool-btn.listening{
-    border-color:var(--error);
-    background:rgba(239,68,68,0.05);
+    background:linear-gradient(135deg, var(--primary), var(--primary-light));
+    border-color:var(--primary);
+    color:white;
+}
+
+.tool-btn.active .label-small,
+.tool-btn.listening .label-small{
+    color:rgba(255,255,255,0.8);
 }
 
 /* Results Section */
 .results-section{
-    margin-top:40px;
     animation:fadeInUp 0.6s ease-out 0.6s both;
 }
 
 .results-header{
+    background:var(--bg-card);
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:20px 25px;
+    margin-bottom:20px;
     display:flex;
     justify-content:space-between;
     align-items:center;
-    margin-bottom:25px;
+    box-shadow:0 2px 8px var(--shadow);
 }
 
 .results-count{
-    font-size:1.3rem;
+    font-size:1.2rem;
     font-weight:700;
-    color:var(--text-primary);
+    color:var(--primary);
 }
 
-.export-btns{
+.export-actions{
     display:flex;
-    gap:10px;
+    gap:8px;
+    flex-wrap:wrap;
 }
 
 .export-btn{
-    padding:10px 18px;
+    padding:10px 16px;
     background:var(--bg-primary);
-    border:2px solid var(--border);
-    border-radius:10px;
+    border:1px solid var(--border);
+    border-radius:8px;
     cursor:pointer;
+    font-size:0.85rem;
     font-weight:600;
-    font-size:0.9rem;
-    color:var(--text-primary);
     transition:all 0.3s ease;
-    display:flex;
-    align-items:center;
-    gap:8px;
+    color:var(--text-primary);
 }
 
 .export-btn:hover{
+    background:var(--primary);
     border-color:var(--primary);
-    background:var(--bg-secondary);
-    transform:translateY(-2px);
+    color:white;
+    transform:translateY(-1px);
 }
 
-/* Results Table */
-.results-table-container{
+.results-table-wrapper{
     background:var(--bg-card);
     border:1px solid var(--border);
-    border-radius:16px;
+    border-radius:12px;
     overflow:hidden;
-    box-shadow:0 4px 16px var(--shadow);
+    box-shadow:0 2px 8px var(--shadow);
 }
 
 .results-table{
@@ -378,18 +386,18 @@ body{
 }
 
 .results-table th{
-    padding:18px 20px;
+    padding:16px 20px;
     text-align:left;
     color:white;
     font-weight:600;
-    font-size:0.95rem;
+    font-size:0.9rem;
     text-transform:uppercase;
     letter-spacing:0.5px;
 }
 
 .results-table tbody tr{
     border-bottom:1px solid var(--border);
-    transition:all 0.2s ease;
+    transition:background 0.2s ease;
 }
 
 .results-table tbody tr:hover{
@@ -401,9 +409,9 @@ body{
 }
 
 .results-table td{
-    padding:18px 20px;
+    padding:16px 20px;
     color:var(--text-primary);
-    font-size:0.95rem;
+    font-size:0.9rem;
 }
 
 .results-table td:first-child{
@@ -414,31 +422,30 @@ body{
 
 /* No Results */
 .no-results{
-    text-align:center;
-    padding:80px 40px;
     background:var(--bg-card);
     border:1px solid var(--border);
-    border-radius:16px;
-    box-shadow:0 4px 16px var(--shadow);
+    border-radius:12px;
+    padding:60px 40px;
+    text-align:center;
+    box-shadow:0 2px 8px var(--shadow);
 }
 
-.no-results-icon{
-    font-size:80px;
-    margin-bottom:20px;
-    opacity:0.3;
+.no-results .icon{
+    font-size:60px;
+    margin-bottom:15px;
+    opacity:0.4;
 }
 
 .no-results h3{
     font-size:1.5rem;
     font-weight:700;
+    margin-bottom:8px;
     color:var(--text-primary);
-    margin-bottom:10px;
 }
 
 .no-results p{
     color:var(--text-secondary);
     font-size:1rem;
-    line-height:1.6;
 }
 
 /* Modal */
@@ -449,7 +456,7 @@ body{
     left:0;
     width:100%;
     height:100%;
-    background:rgba(0,0,0,0.6);
+    background:rgba(0,0,0,0.5);
     z-index:1000;
     align-items:center;
     justify-content:center;
@@ -462,15 +469,17 @@ body{
 
 .modal-content{
     background:var(--bg-card);
-    border-radius:20px;
-    padding:40px;
+    border-radius:16px;
+    padding:35px;
+    max-width:550px;
     width:90%;
-    max-width:600px;
-    box-shadow:0 20px 60px rgba(0,0,0,0.3);
-    animation:modalSlideIn 0.3s ease-out;
+    max-height:80vh;
+    overflow-y:auto;
+    box-shadow:0 20px 50px rgba(0,0,0,0.3);
+    animation:modalSlide 0.3s ease-out;
 }
 
-@keyframes modalSlideIn{
+@keyframes modalSlide{
     from{
         opacity:0;
         transform:translateY(-30px);
@@ -489,56 +498,61 @@ body{
 }
 
 .modal-header h2{
-    font-size:1.8rem;
+    font-size:1.5rem;
     font-weight:700;
-    color:var(--text-primary);
+    color:var(--primary);
 }
 
 .modal-close{
-    font-size:32px;
+    width:36px;
+    height:36px;
+    border:none;
+    background:var(--bg-primary);
+    border-radius:8px;
     cursor:pointer;
-    color:var(--text-secondary);
-    transition:all 0.2s ease;
-    line-height:1;
+    font-size:20px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    transition:all 0.3s ease;
 }
 
 .modal-close:hover{
-    color:var(--error);
-    transform:rotate(90deg);
+    background:var(--error);
+    color:white;
 }
 
 .modal-body textarea{
     width:100%;
-    min-height:200px;
+    min-height:180px;
     padding:16px;
-    font-family:'Space Mono', monospace;
-    font-size:0.95rem;
-    background:var(--bg-primary);
     border:2px solid var(--border);
     border-radius:12px;
-    color:var(--text-primary);
+    font-family:'Space Mono', monospace;
+    font-size:0.9rem;
     resize:vertical;
-    margin-bottom:20px;
+    background:var(--bg-primary);
+    color:var(--text-primary);
 }
 
 .modal-body textarea:focus{
     outline:none;
     border-color:var(--primary);
-    box-shadow:0 0 0 4px rgba(37,99,235,0.1);
 }
 
-.modal-footer{
+.modal-actions{
+    margin-top:20px;
     display:flex;
     gap:12px;
-    justify-content:flex-end;
 }
 
 .modal-btn{
-    padding:12px 28px;
-    font-size:1rem;
-    font-weight:600;
+    flex:1;
+    padding:14px;
     border:none;
     border-radius:10px;
+    font-weight:600;
+    font-size:0.95rem;
     cursor:pointer;
     transition:all 0.3s ease;
 }
@@ -546,12 +560,11 @@ body{
 .modal-btn.primary{
     background:linear-gradient(135deg, var(--primary), var(--primary-light));
     color:white;
-    box-shadow:0 4px 12px rgba(37,99,235,0.3);
 }
 
 .modal-btn.primary:hover{
     transform:translateY(-2px);
-    box-shadow:0 6px 20px rgba(37,99,235,0.4);
+    box-shadow:0 4px 12px rgba(37,99,235,0.3);
 }
 
 .modal-btn.secondary{
@@ -561,213 +574,50 @@ body{
 }
 
 .modal-btn.secondary:hover{
-    background:var(--bg-secondary);
     border-color:var(--primary);
 }
 
-/* Scanner Container */
-.scanner-container{
-    position:fixed;
-    top:0;
-    left:0;
+/* Progress Bar */
+.progress-container{
+    margin-top:20px;
+}
+
+.progress-bar{
     width:100%;
-    height:100%;
-    background:rgba(0,0,0,0.95);
-    z-index:2000;
-    display:none;
-    flex-direction:column;
-    align-items:center;
-    justify-content:center;
-    padding:20px;
-}
-
-.scanner-container.active{
-    display:flex;
-}
-
-.scanner-header{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    width:100%;
-    max-width:600px;
-    margin-bottom:20px;
-}
-
-.scanner-title{
-    color:white;
-    font-size:1.5rem;
-    font-weight:700;
-}
-
-.scanner-close{
-    background:rgba(255,255,255,0.1);
-    border:2px solid rgba(255,255,255,0.3);
-    color:white;
-    padding:10px 20px;
-    border-radius:10px;
-    cursor:pointer;
-    font-weight:600;
-    transition:all 0.3s ease;
-}
-
-.scanner-close:hover{
-    background:rgba(255,255,255,0.2);
-    border-color:rgba(255,255,255,0.5);
-}
-
-#qr-reader{
-    width:100%;
-    max-width:600px;
-    border-radius:16px;
+    height:10px;
+    background:var(--bg-primary);
+    border-radius:5px;
     overflow:hidden;
-    box-shadow:0 20px 60px rgba(0,0,0,0.5);
+    border:1px solid var(--border);
 }
 
-/* OCR Container */
-.ocr-container{
-    position:fixed;
-    top:0;
-    left:0;
-    width:100%;
+.progress-fill{
     height:100%;
-    background:rgba(0,0,0,0.95);
-    z-index:2000;
-    display:none;
-    flex-direction:column;
-    align-items:center;
-    justify-content:center;
-    padding:20px;
-}
-
-.ocr-container.active{
-    display:flex;
-}
-
-.ocr-content{
-    width:100%;
-    max-width:600px;
-}
-
-.ocr-header{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-bottom:30px;
-}
-
-.ocr-title{
-    color:white;
-    font-size:1.5rem;
-    font-weight:700;
-}
-
-.ocr-close{
-    background:rgba(255,255,255,0.1);
-    border:2px solid rgba(255,255,255,0.3);
-    color:white;
-    padding:10px 20px;
-    border-radius:10px;
-    cursor:pointer;
-    font-weight:600;
-    transition:all 0.3s ease;
-}
-
-.ocr-close:hover{
-    background:rgba(255,255,255,0.2);
-    border-color:rgba(255,255,255,0.5);
-}
-
-.ocr-upload{
-    background:rgba(255,255,255,0.05);
-    border:3px dashed rgba(255,255,255,0.3);
-    border-radius:16px;
-    padding:60px 40px;
-    text-align:center;
-    cursor:pointer;
-    transition:all 0.3s ease;
-    margin-bottom:30px;
-}
-
-.ocr-upload:hover{
-    background:rgba(255,255,255,0.1);
-    border-color:rgba(255,255,255,0.5);
-}
-
-.ocr-upload-icon{
-    font-size:64px;
-    margin-bottom:20px;
-}
-
-.ocr-upload-text{
-    color:white;
-    font-size:1.2rem;
-    font-weight:600;
-    margin-bottom:8px;
-}
-
-.ocr-upload-hint{
-    color:rgba(255,255,255,0.6);
-    font-size:0.95rem;
-}
-
-#ocrFileInput{
-    display:none;
-}
-
-.ocr-preview{
-    display:none;
-    margin-bottom:30px;
-}
-
-.ocr-preview.active{
-    display:block;
-}
-
-.ocr-preview img{
-    width:100%;
-    border-radius:16px;
-    box-shadow:0 20px 60px rgba(0,0,0,0.5);
-}
-
-.ocr-progress{
-    background:rgba(255,255,255,0.1);
-    border-radius:12px;
-    padding:20px;
-    display:none;
-}
-
-.ocr-progress.active{
-    display:block;
-}
-
-.ocr-progress-text{
-    color:white;
-    font-size:1rem;
-    font-weight:600;
-    margin-bottom:12px;
-    text-align:center;
-}
-
-.ocr-progress-bar{
-    background:rgba(255,255,255,0.2);
-    border-radius:20px;
-    height:12px;
-    overflow:hidden;
-}
-
-.ocr-progress-fill{
     background:linear-gradient(90deg, var(--primary), var(--primary-light));
-    height:100%;
-    width:0%;
+    border-radius:5px;
     transition:width 0.3s ease;
-    border-radius:20px;
+    width:0%;
+}
+
+.progress-text{
+    margin-top:10px;
+    text-align:center;
+    font-size:0.85rem;
+    font-weight:600;
+    color:var(--text-secondary);
+}
+
+/* Camera Scanner */
+#qr-reader{
+    border-radius:12px;
+    overflow:hidden;
+    border:2px solid var(--border);
 }
 
 /* Responsive */
-@media(max-width:768px){
+@media (max-width: 768px){
     .header h1{
-        font-size:1.8rem;
+        font-size:2rem;
     }
     
     .search-form{
@@ -781,38 +631,36 @@ body{
     .results-header{
         flex-direction:column;
         gap:15px;
-        align-items:flex-start;
     }
     
-    .export-btns{
+    .export-actions{
         width:100%;
-        flex-wrap:wrap;
-    }
-    
-    .export-btn{
-        flex:1;
-        min-width:120px;
         justify-content:center;
     }
     
     .results-table{
-        font-size:0.85rem;
+        font-size:0.8rem;
     }
     
     .results-table th,
     .results-table td{
-        padding:12px;
+        padding:12px 14px;
     }
+}
+
+.hidden{
+    display:none !important;
 }
 </style>
 </head>
 <body>
 
 <div class="container">
+    
     <!-- Header -->
     <div class="header">
         <h1>Prime Minister Youth Business & Agriculture</h1>
-        <p>CNIC Search System</p>
+        <p>CNIC Search Database</p>
     </div>
     
     <!-- Data Status -->
@@ -821,7 +669,7 @@ body{
             <div class="data-icon">📊</div>
             <div class="data-details">
                 <h3>Database Status</h3>
-                <p id="dataCount">Loading database...</p>
+                <p id="dataSource">Connecting to Google Sheets...</p>
             </div>
         </div>
         <div class="data-badge loading" id="dataBadge">
@@ -837,76 +685,125 @@ body{
                 <input 
                     type="text" 
                     id="cnic" 
-                    placeholder="Enter CNIC (e.g., 12345-1234567-1)" 
+                    placeholder="Enter 13-digit CNIC (e.g., 12345-1234567-1)" 
                     maxlength="15"
                     autocomplete="off"
-                >
+                    required
+                />
             </div>
             <button type="submit" class="search-btn" id="searchBtn">
                 🔍 Search
             </button>
         </form>
         
-        <div class="tools-label">Advanced Search Tools</div>
+        <div class="tools-label">Quick Search Tools</div>
         <div class="tools-grid">
-            <button class="tool-btn" onclick="startQRScan()">
-                <span class="icon">📷</span>
+            <button class="tool-btn" onclick="startQRScanner()">
+                <div class="icon">📷</div>
                 <div class="label">
-                    QR Scanner
-                    <div class="label-small">Scan CNIC QR Code</div>
+                    <div class="label-small">Scan</div>
+                    <div id="qrText">QR Code</div>
                 </div>
             </button>
             
             <button class="tool-btn" onclick="startOCR()">
-                <span class="icon">🖼️</span>
+                <div class="icon">🖼️</div>
                 <div class="label">
-                    OCR Scanner
-                    <div class="label-small">Extract from Image</div>
+                    <div class="label-small">Scan</div>
+                    <div id="ocrText">CNIC Card</div>
                 </div>
             </button>
             
             <button class="tool-btn" id="voiceBtn" onclick="startVoice()">
-                <span class="icon" id="voiceIcon">🎤</span>
+                <div class="icon" id="voiceIcon">🎤</div>
                 <div class="label">
-                    <span id="voiceText">Voice Input</span>
-                    <div class="label-small">Speak CNIC Number</div>
+                    <div class="label-small">Speak</div>
+                    <div id="voiceText">Voice Input</div>
                 </div>
             </button>
             
             <button class="tool-btn" onclick="openBulkModal()">
-                <span class="icon">📋</span>
+                <div class="icon">📋</div>
                 <div class="label">
-                    Bulk Search
-                    <div class="label-small">Search Multiple CNICs</div>
+                    <div class="label-small">Multiple</div>
+                    <div>Bulk Search</div>
                 </div>
             </button>
         </div>
     </div>
     
     <!-- Results Section -->
-    <div class="results-section" id="resultsSection" style="display:none;">
+    <div class="results-section hidden" id="resultsSection">
         <div class="results-header">
-            <div class="results-count" id="resultsCount">Search results will appear here</div>
-            <div class="export-btns">
-                <button class="export-btn" onclick="copyResults()" title="Copy to Clipboard">
-                    📋 Copy
-                </button>
-                <button class="export-btn" onclick="exportExcel()" title="Export to Excel">
-                    📊 Excel
-                </button>
-                <button class="export-btn" onclick="exportPDF()" title="Export to PDF">
-                    📄 PDF
-                </button>
-                <button class="export-btn" onclick="printResults()" title="Print Results">
-                    🖨️ Print
-                </button>
-                <button class="export-btn" onclick="shareResults()" title="Share Results">
-                    📤 Share
-                </button>
+            <div class="results-count" id="resultsCount">0 Results Found</div>
+            <div class="export-actions">
+                <button class="export-btn" onclick="copyResults()">📋 Copy</button>
+                <button class="export-btn" onclick="exportExcel()">📊 Excel</button>
+                <button class="export-btn" onclick="exportPDF()">📄 PDF</button>
+                <button class="export-btn" onclick="printResults()">🖨️ Print</button>
+                <button class="export-btn" onclick="shareResults()">📤 Share</button>
             </div>
         </div>
         
-        <div class="results-table-container" id="resultsContainer"></div>
+        <div class="results-table-wrapper">
+            <table class="results-table">
+                <thead>
+                    <tr>
+                        <th>Applicant CNIC</th>
+                        <th>Applicant Name</th>
+                        <th>Business Sub Sector</th>
+                        <th>MFI Bank Name</th>
+                    </tr>
+                </thead>
+                <tbody id="resultsBody"></tbody>
+            </table>
+        </div>
+    </div>
+    
+    <!-- No Results -->
+    <div class="no-results hidden" id="noResults">
+        <div class="icon">🔍</div>
+        <h3>No Record Found</h3>
+        <p>The CNIC you searched for is not in the database.</p>
+    </div>
+    
+</div>
+
+<!-- QR Scanner Modal -->
+<div class="modal" id="qrModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>📷 Scan QR Code</h2>
+            <button class="modal-close" onclick="stopQRScanner()">✕</button>
+        </div>
+        <div class="modal-body">
+            <div id="qr-reader"></div>
+            <div class="progress-container">
+                <p class="progress-text" id="qrStatus">Initializing camera...</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- OCR Modal -->
+<div class="modal" id="ocrModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>🖼️ Scan CNIC Card</h2>
+            <button class="modal-close" onclick="stopOCR()">✕</button>
+        </div>
+        <div class="modal-body">
+            <input type="file" id="ocrInput" accept="image/*" style="display:none" onchange="processImage(event)">
+            <button class="modal-btn primary" onclick="document.getElementById('ocrInput').click()">
+                📸 Select Image
+            </button>
+            <div class="progress-container" id="ocrProgress" style="display:none;">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="ocrProgressFill"></div>
+                </div>
+                <p class="progress-text" id="ocrProgressText">Processing...</p>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -915,277 +812,270 @@ body{
     <div class="modal-content">
         <div class="modal-header">
             <h2>📋 Bulk Search</h2>
-            <div class="modal-close" onclick="closeBulkModal()">×</div>
+            <button class="modal-close" onclick="closeBulkModal()">✕</button>
         </div>
         <div class="modal-body">
-            <textarea 
-                id="bulkCNICs" 
-                placeholder="Enter CNICs (one per line):&#10;12345-1234567-1&#10;54321-7654321-3&#10;..."
-            ></textarea>
-        </div>
-        <div class="modal-footer">
-            <button class="modal-btn secondary" onclick="closeBulkModal()">Cancel</button>
-            <button class="modal-btn primary" onclick="bulkSearch()">🔍 Search All</button>
-        </div>
-    </div>
-</div>
-
-<!-- QR Scanner Container -->
-<div class="scanner-container" id="scannerContainer">
-    <div class="scanner-header">
-        <div class="scanner-title">📷 QR Code Scanner</div>
-        <button class="scanner-close" onclick="stopQRScan()">Close</button>
-    </div>
-    <div id="qr-reader"></div>
-</div>
-
-<!-- OCR Container -->
-<div class="ocr-container" id="ocrContainer">
-    <div class="ocr-content">
-        <div class="ocr-header">
-            <div class="ocr-title">🖼️ OCR Scanner</div>
-            <button class="ocr-close" onclick="stopOCR()">Close</button>
-        </div>
-        
-        <div class="ocr-upload" onclick="document.getElementById('ocrFileInput').click()">
-            <div class="ocr-upload-icon">📸</div>
-            <div class="ocr-upload-text">Upload CNIC Image</div>
-            <div class="ocr-upload-hint">Click to select image (JPG, PNG)</div>
-        </div>
-        <input type="file" id="ocrFileInput" accept="image/*" onchange="processOCR(event)">
-        
-        <div class="ocr-preview" id="ocrPreview">
-            <img id="ocrImage" alt="CNIC Preview">
-        </div>
-        
-        <div class="ocr-progress" id="ocrProgress">
-            <div class="ocr-progress-text" id="ocrProgressText">Initializing...</div>
-            <div class="ocr-progress-bar">
-                <div class="ocr-progress-fill" id="ocrProgressFill"></div>
+            <p style="color:var(--text-secondary); margin-bottom:12px; font-size:0.9rem;">Enter multiple CNICs (one per line):</p>
+            <textarea id="bulkCNICs" placeholder="12345-1234567-1&#10;54321-7654321-2&#10;..."></textarea>
+            <div class="modal-actions">
+                <button class="modal-btn secondary" onclick="closeBulkModal()">Cancel</button>
+                <button class="modal-btn primary" onclick="bulkSearch()">🔍 Search All</button>
             </div>
         </div>
     </div>
 </div>
 
 <script>
-// ================== GLOBAL STATE ==================
+// ================== CONFIGURATION ==================
+// Your Google Sheet link - converting to CSV export format
+const SHEET_ID = "1n2_6Oewp88igcRv5H7vKYpYH-jHmnTus";
+const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv`;
+
+// ================== GLOBAL VARIABLES ==================
 let excelData = [];
 let currentResults = [];
 let html5QrCode = null;
 let recognition = null;
 
-// ================== INITIALIZE ==================
-window.addEventListener('load', () => {
-    loadExcelData();
-});
+// ================== INITIALIZATION ==================
+window.addEventListener('DOMContentLoaded', loadData);
 
-// ================== LOAD EXCEL DATA ==================
-function loadExcelData(){
+async function loadData(){
     const badge = document.getElementById('dataBadge');
-    const count = document.getElementById('dataCount');
+    const source = document.getElementById('dataSource');
     
-    badge.className = 'data-badge loading';
-    badge.innerHTML = '<div class="spinner"></div><span>Loading...</span>';
-    count.textContent = 'Fetching database...';
-    
-    fetch('https://docs.google.com/spreadsheets/d/e/2PACX-1vQ3K6b6NIfFh0GbhDdGYCz9u7tD1W_hK_P6c5uMUKIuZUxz_8eMLM3VQ8kOxg9TZoWtN-5HtMO6Wk7c/pub?output=xlsx')
-    .then(res => {
-        if(!res.ok) throw new Error('Network error');
-        return res.arrayBuffer();
-    })
-    .then(data => {
-        const workbook = XLSX.read(data, {type:'array'});
-        const sheet = workbook.Sheets[workbook.SheetNames[0]];
-        excelData = XLSX.utils.sheet_to_json(sheet, {header:1});
+    try{
+        // Step 1: Connecting
+        badge.className = 'data-badge loading';
+        badge.innerHTML = '<div class="spinner"></div><span>Connecting...</span>';
+        source.textContent = 'Connecting to Google Sheets...';
         
-        const recordCount = (excelData.length - 1).toLocaleString();
+        console.log('Loading data from:', SHEET_URL);
         
-        badge.className = 'data-badge';
-        badge.innerHTML = '<span>✓ Ready</span>';
-        count.textContent = `${recordCount} records loaded`;
-    })
-    .catch(err => {
+        const response = await fetch(SHEET_URL);
+        
+        if(!response.ok){
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        // Step 2: Loading
+        badge.innerHTML = '<div class="spinner"></div><span>Loading...</span>';
+        source.textContent = 'Downloading data from Google Sheets...';
+        
+        const csvText = await response.text();
+        console.log('CSV loaded, length:', csvText.length);
+        
+        // Step 3: Processing
+        badge.innerHTML = '<div class="spinner"></div><span>Processing...</span>';
+        source.textContent = 'Processing data...';
+        
+        // Parse CSV
+        excelData = csvText.split('\n').map(row => {
+            // Handle CSV with proper quote parsing
+            const cells = [];
+            let currentCell = '';
+            let inQuotes = false;
+            
+            for(let i = 0; i < row.length; i++){
+                const char = row[i];
+                
+                if(char === '"'){
+                    inQuotes = !inQuotes;
+                }else if(char === ',' && !inQuotes){
+                    cells.push(currentCell.trim());
+                    currentCell = '';
+                }else{
+                    currentCell += char;
+                }
+            }
+            cells.push(currentCell.trim());
+            
+            return cells;
+        }).filter(row => row.length > 1 && row[0]); // Remove empty rows
+        
+        console.log('Parsed rows:', excelData.length);
+        console.log('First row (headers):', excelData[0]);
+        console.log('Sample data row:', excelData[1]);
+        
+        const recordCount = excelData.length - 1;
+        
+        if(recordCount > 0){
+            // Step 4: Connected!
+            badge.classList.remove('loading');
+            badge.className = 'data-badge';
+            badge.innerHTML = '✓ <span>Connected</span>';
+            source.textContent = `Google Sheets • ${recordCount.toLocaleString()} records loaded`;
+            
+            // Show success message briefly
+            setTimeout(() => {
+                badge.innerHTML = `✓ <span>${recordCount.toLocaleString()} Records</span>`;
+            }, 2000);
+        }else{
+            throw new Error('No data found in sheet');
+        }
+        
+    }catch(err){
         console.error('Load Error:', err);
-        badge.className = 'data-badge error';
-        badge.innerHTML = '<span>✗ Failed</span>';
-        count.textContent = 'Failed to load database';
-    });
+        badge.classList.remove('loading');
+        badge.classList.add('error');
+        badge.innerHTML = `✕ <span>Connection Failed</span>`;
+        source.textContent = 'Error: Could not connect to Google Sheets';
+        
+        alert('❌ Failed to connect to database\n\nPlease check:\n1. Google Sheet is shared (Anyone with link can view)\n2. Internet connection is working\n3. Sheet ID is correct');
+    }
 }
 
 // ================== SEARCH FUNCTION ==================
+function normalize(str){
+    return String(str).replace(/\D/g, '');
+}
+
 function searchData(){
-    const input = document.getElementById('cnic').value.trim();
+    const cnicInput = document.getElementById('cnic').value;
+    const cnic = normalize(cnicInput);
+    
+    if(!cnic || cnic.length !== 13){
+        alert('Please enter a valid 13-digit CNIC');
+        return;
+    }
+    
+    if(excelData.length <= 1){
+        alert('Database not loaded yet. Please wait...');
+        return;
+    }
+    
     const btn = document.getElementById('searchBtn');
-    
-    if(!input){
-        alert('Please enter a CNIC number');
-        return;
-    }
-    
-    if(excelData.length === 0){
-        alert('Database is still loading. Please wait...');
-        return;
-    }
-    
-    // Disable button during search
+    btn.classList.add('searching');
+    btn.textContent = '⏳ Searching...';
     btn.disabled = true;
-    btn.textContent = '🔍 Searching...';
     
-    const normalized = normalize(input);
-    
-    // Use setTimeout to prevent UI freezing
     setTimeout(() => {
         try {
-            const rows = excelData.slice(1);
-            const results = rows.filter(row => normalize(row[0]) === normalized);
+            const rows = excelData.slice(1); // Skip header row
+            console.log('Searching for CNIC:', cnic);
+            console.log('Searching in', rows.length, 'rows');
+            
+            const results = rows.filter(r => {
+                const rowCnic = normalize(r[0]);
+                console.log('Comparing:', rowCnic, 'with', cnic);
+                return rowCnic === cnic;
+            });
+            
+            console.log('Found results:', results.length);
             
             if(results.length === 0){
+                alert('❌ NO DATA FOUND\n\nThe CNIC you entered is not in the database.');
                 showNoResults();
-                document.getElementById('resultsCount').textContent = "No record found for CNIC: " + input;
             }else{
                 currentResults = results;
                 displayResults(results);
-                document.getElementById('resultsCount').textContent = `Found ${results.length} record${results.length > 1 ? 's' : ''}`;
             }
         } catch(err) {
             console.error('Search Error:', err);
             alert('An error occurred during search. Please try again.');
         } finally {
-            // Re-enable button
+            btn.classList.remove('searching');
+            btn.innerHTML = '🔍 Search';
             btn.disabled = false;
-            btn.textContent = '🔍 Search';
         }
-    }, 100);
-}
-
-function normalize(cnic){
-    return (cnic || '').toString().replace(/\D/g, '');
+    }, 300);
 }
 
 function displayResults(results){
     const section = document.getElementById('resultsSection');
-    const container = document.getElementById('resultsContainer');
+    const noResults = document.getElementById('noResults');
+    const tbody = document.getElementById('resultsBody');
+    const count = document.getElementById('resultsCount');
     
-    let html = '<table class="results-table"><thead><tr>';
-    html += '<th>CNIC</th><th>Name</th><th>Business Sector</th><th>MFI Bank</th>';
-    html += '</tr></thead><tbody>';
+    tbody.innerHTML = '';
     
     results.forEach(row => {
-        html += '<tr>';
-        html += `<td>${row[0] || '-'}</td>`;
-        html += `<td>${row[1] || '-'}</td>`;
-        html += `<td>${row[2] || '-'}</td>`;
-        html += `<td>${row[3] || '-'}</td>`;
-        html += '</tr>';
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td>${row[0] || '-'}</td>
+            <td>${row[1] || '-'}</td>
+            <td>${row[2] || '-'}</td>
+            <td>${row[3] || '-'}</td>
+        `;
+        tbody.appendChild(tr);
     });
     
-    html += '</tbody></table>';
+    count.textContent = `${results.length} Record${results.length > 1 ? 's' : ''} Found`;
     
-    container.innerHTML = html;
-    section.style.display = 'block';
+    section.classList.remove('hidden');
+    noResults.classList.add('hidden');
     
-    container.scrollIntoView({behavior:'smooth', block:'nearest'});
+    section.scrollIntoView({behavior: 'smooth', block: 'nearest'});
 }
 
 function showNoResults(){
     const section = document.getElementById('resultsSection');
-    const container = document.getElementById('resultsContainer');
+    const noResults = document.getElementById('noResults');
     
-    container.innerHTML = `
-        <div class="no-results">
-            <div class="no-results-icon">🔍</div>
-            <h3>No Record Found</h3>
-            <p>The CNIC you entered is not in the database.<br>Please verify the number and try again.</p>
-        </div>
-    `;
+    section.classList.add('hidden');
+    noResults.classList.remove('hidden');
     
-    section.style.display = 'block';
-    currentResults = [];
-    
-    container.scrollIntoView({behavior:'smooth', block:'nearest'});
+    noResults.scrollIntoView({behavior: 'smooth', block: 'nearest'});
 }
 
 // ================== QR SCANNER ==================
-function startQRScan(){
-    const container = document.getElementById('scannerContainer');
-    container.classList.add('active');
+function startQRScanner(){
+    document.getElementById('qrModal').classList.add('active');
+    document.getElementById('qrStatus').textContent = 'Initializing camera...';
     
     html5QrCode = new Html5Qrcode("qr-reader");
     
-    Html5Qrcode.getCameras().then(cameras => {
-        if(cameras && cameras.length > 0){
-            const cameraId = cameras[cameras.length > 1 ? 1 : 0].id;
-            
-            html5QrCode.start(
-                cameraId,
-                {fps:10, qrbox:{width:250, height:250}},
-                (decoded) => {
-                    const cnic = decoded.replace(/\D/g, '');
-                    if(cnic.length >= 13){
-                        fillCNIC(cnic.slice(0, 13));
-                        stopQRScan();
-                        setTimeout(() => searchData(), 500);
-                    }
-                },
-                () => {}
-            ).catch(err => {
-                console.error('QR Start Error:', err);
-                alert('Failed to start camera. Please check permissions.');
-                stopQRScan();
-            });
-        }else{
-            alert('No camera found');
-            stopQRScan();
+    html5QrCode.start(
+        {facingMode: "environment"},
+        {fps: 10, qrbox: 250},
+        (decodedText) => {
+            const cnic = normalize(decodedText);
+            if(cnic.length >= 13){
+                fillCNIC(cnic.slice(0, 13));
+                stopQRScanner();
+                setTimeout(() => searchData(), 500);
+            }
         }
+    ).then(() => {
+        document.getElementById('qrStatus').textContent = '📷 Point camera at QR code';
     }).catch(err => {
         console.error('Camera Error:', err);
-        alert('Camera access denied or unavailable');
-        stopQRScan();
+        document.getElementById('qrStatus').textContent = '❌ Camera access denied or unavailable';
     });
 }
 
-function stopQRScan(){
+function stopQRScanner(){
     if(html5QrCode){
-        html5QrCode.stop().catch(() => {});
-        html5QrCode = null;
+        html5QrCode.stop().then(() => {
+            html5QrCode = null;
+        }).catch(err => console.error('Stop Error:', err));
     }
-    document.getElementById('scannerContainer').classList.remove('active');
+    document.getElementById('qrModal').classList.remove('active');
 }
 
 // ================== OCR SCANNER ==================
 function startOCR(){
-    document.getElementById('ocrContainer').classList.add('active');
-    document.getElementById('ocrPreview').classList.remove('active');
-    document.getElementById('ocrProgress').classList.remove('active');
+    document.getElementById('ocrModal').classList.add('active');
 }
 
 function stopOCR(){
-    document.getElementById('ocrContainer').classList.remove('active');
-    document.getElementById('ocrFileInput').value = '';
-    document.getElementById('ocrPreview').classList.remove('active');
-    document.getElementById('ocrProgress').classList.remove('active');
+    document.getElementById('ocrModal').classList.remove('active');
+    document.getElementById('ocrProgress').style.display = 'none';
+    const fill = document.getElementById('ocrProgressFill');
+    fill.style.width = '0%';
 }
 
-async function processOCR(event){
+async function processImage(event){
     const file = event.target.files[0];
     if(!file) return;
     
-    const preview = document.getElementById('ocrPreview');
-    const image = document.getElementById('ocrImage');
-    const progress = document.getElementById('ocrProgress');
+    const progressDiv = document.getElementById('ocrProgress');
     const fill = document.getElementById('ocrProgressFill');
     const text = document.getElementById('ocrProgressText');
     
-    const reader = new FileReader();
-    reader.onload = (e) => {
-        image.src = e.target.result;
-        preview.classList.add('active');
-    };
-    reader.readAsDataURL(file);
-    
-    progress.classList.add('active');
-    fill.style.width = '0%';
-    text.textContent = 'Initializing OCR...';
+    progressDiv.style.display = 'block';
+    fill.style.width = '10%';
+    text.textContent = 'Loading image...';
     
     try{
         const result = await Tesseract.recognize(
