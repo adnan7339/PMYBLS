@@ -827,9 +827,13 @@ body{
 
 <script>
 // ================== CONFIGURATION ==================
-// Your Google Sheet link - converting to CSV export format
+// Your Google Sheet link - converting to CSV export format (UNCHANGED)
 const SHEET_ID = "1n2_6Oewp88igcRv5H7vKYpYH-jHmnTus";
 const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv`;
+
+// ================== CACHE CONFIGURATION ==================
+const CACHE_KEY = 'pmyba_sheet_data_v1';       // localStorage key for saved rows
+const CACHE_TIME_KEY = 'pmyba_sheet_time_v1';  // localStorage key for last-updated timestamp
 
 // ================== GLOBAL VARIABLES ==================
 let excelData = [];
@@ -840,107 +844,180 @@ let recognition = null;
 // ================== INITIALIZATION ==================
 window.addEventListener('DOMContentLoaded', loadData);
 
+// ---- Helpers to read/write the local cache ----
+function readCache(){
+    try{
+        const raw = localStorage.getItem(CACHE_KEY);
+        const time = localStorage.getItem(CACHE_TIME_KEY);
+        if(!raw) return null;
+        const data = JSON.parse(raw);
+        if(!Array.isArray(data) || data.length < 2) return null;
+        return { data, time: time ? parseInt(time, 10) : 0 };
+    }catch(err){
+        console.warn('Cache read failed:', err);
+        return null;
+    }
+}
+
+function writeCache(data){
+    try{
+        localStorage.setItem(CACHE_KEY, JSON.stringify(data));
+        localStorage.setItem(CACHE_TIME_KEY, String(Date.now()));
+    }catch(err){
+        // Quota exceeded or storage disabled - app still works, just won't cache
+        console.warn('Cache write failed (data still loaded in memory):', err);
+    }
+}
+
+function formatCacheAge(ms){
+    const mins = Math.round(ms / 60000);
+    if(mins < 1) return 'just now';
+    if(mins < 60) return `${mins} min ago`;
+    const hrs = Math.round(mins / 60);
+    if(hrs < 24) return `${hrs} hr ago`;
+    const days = Math.round(hrs / 24);
+    return `${days} day${days > 1 ? 's' : ''} ago`;
+}
+
+// Parses raw CSV text into the row array format used by the app
+function parseCSV(csvText){
+    const lines = csvText.split('\n');
+    const result = [];
+    for(let i = 0; i < lines.length; i++){
+        const line = lines[i].trim();
+        if(!line) continue;
+        const row = [];
+        let current = '';
+        let inQuotes = false;
+        for(let j = 0; j < line.length; j++){
+            const char = line[j];
+            if(char === '"'){
+                inQuotes = !inQuotes;
+            }else if(char === ',' && !inQuotes){
+                row.push(current.trim());
+                current = '';
+            }else{
+                current += char;
+            }
+        }
+        row.push(current.trim());
+        if(row.length > 1 && row[0]){
+            result.push(row);
+        }
+    }
+    return result;
+}
+
 async function loadData(){
     const badge = document.getElementById('dataBadge');
     const source = document.getElementById('dataSource');
-    
+
+    // ---- STEP 1: Try to use cached data instantly, so the user never has to wait / reconnect ----
+    const cached = readCache();
+    if(cached){
+        excelData = cached.data;
+        const recordCount = excelData.length - 1;
+        badge.className = 'data-badge';
+        badge.innerHTML = `✓ <span>${recordCount.toLocaleString()} Records</span>`;
+        source.textContent = `Google Sheets • Loaded from cache (${formatCacheAge(Date.now() - cached.time)}) • Search is ready`;
+        console.log('Loaded', recordCount, 'records instantly from local cache');
+
+        // Refresh in the background without blocking the UI or forcing a reconnect wait
+        refreshDataInBackground();
+        return;
+    }
+
+    // ---- No cache available yet: do a normal full load (first time only) ----
+    await fetchAndStoreData({ isBackground: false });
+}
+
+// Silently re-fetches the sheet in the background and updates the cache + in-memory data.
+// The search UI stays usable the whole time since excelData already has the cached rows.
+async function refreshDataInBackground(){
     try{
-        // Step 1: Connecting
-        badge.className = 'data-badge loading';
-        badge.innerHTML = '<div class="spinner"></div><span>Connecting...</span>';
-        source.textContent = 'Connecting to Google Sheets...';
-        
+        await fetchAndStoreData({ isBackground: true });
+    }catch(err){
+        // Background refresh failing is not critical - cached data is still usable
+        console.warn('Background refresh failed, continuing with cached data:', err);
+    }
+}
+
+async function fetchAndStoreData({ isBackground }){
+    const badge = document.getElementById('dataBadge');
+    const source = document.getElementById('dataSource');
+
+    try{
+        if(!isBackground){
+            badge.className = 'data-badge loading';
+            badge.innerHTML = '<div class="spinner"></div><span>Connecting...</span>';
+            source.textContent = 'Connecting to Google Sheets...';
+        }else{
+            source.textContent = source.textContent + ' • Updating in background...';
+        }
+
         console.log('Loading data from:', SHEET_URL);
-        
-        // Add timeout to fetch request
+
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
-        
-        const response = await fetch(SHEET_URL, { signal: controller.signal });
+
+        const response = await fetch(SHEET_URL, { signal: controller.signal, cache: 'no-store' });
         clearTimeout(timeoutId);
-        
+
         if(!response.ok){
             throw new Error(`HTTP error! status: ${response.status}`);
         }
-        
-        // Step 2: Loading
-        badge.innerHTML = '<div class="spinner"></div><span>Loading...</span>';
-        source.textContent = 'Downloading data from Google Sheets...';
-        
+
+        if(!isBackground){
+            badge.innerHTML = '<div class="spinner"></div><span>Loading...</span>';
+            source.textContent = 'Downloading data from Google Sheets...';
+        }
+
         const csvText = await response.text();
         console.log('CSV loaded, length:', csvText.length);
-        
-        // Step 3: Processing
-        badge.innerHTML = '<div class="spinner"></div><span>Processing...</span>';
-        source.textContent = 'Processing data...';
-        
-        // Parse CSV in chunks to avoid UI freeze
-        await new Promise(resolve => setTimeout(resolve, 10)); // Let UI update
-        
-        // Simple and fast CSV parsing
-        const lines = csvText.split('\n');
-        excelData = [];
-        
-        for(let i = 0; i < lines.length; i++){
-            if(i % 10000 === 0 && i > 0){
-                // Update progress every 10k rows and yield to UI
-                const progress = Math.round((i / lines.length) * 100);
-                badge.innerHTML = `<div class="spinner"></div><span>Processing ${progress}%...</span>`;
-                await new Promise(resolve => setTimeout(resolve, 0));
-            }
-            
-            const line = lines[i].trim();
-            if(!line) continue;
-            
-            // Simple CSV parsing (handles quoted fields)
-            const row = [];
-            let current = '';
-            let inQuotes = false;
-            
-            for(let j = 0; j < line.length; j++){
-                const char = line[j];
-                if(char === '"'){
-                    inQuotes = !inQuotes;
-                }else if(char === ',' && !inQuotes){
-                    row.push(current.trim());
-                    current = '';
-                }else{
-                    current += char;
-                }
-            }
-            row.push(current.trim());
-            
-            if(row.length > 1 && row[0]){
-                excelData.push(row);
-            }
+
+        if(!isBackground){
+            badge.innerHTML = '<div class="spinner"></div><span>Processing...</span>';
+            source.textContent = 'Processing data...';
+            await new Promise(resolve => setTimeout(resolve, 10)); // let UI paint
         }
-        
+
+        const parsed = parseCSV(csvText);
+        excelData = parsed;
+
         console.log('Parsed rows:', excelData.length);
         console.log('First row (headers):', excelData[0]);
         console.log('Sample data row:', excelData[1]);
-        
+
         const recordCount = excelData.length - 1;
-        
+
         if(recordCount > 0){
-            // Step 4: Connected!
+            // Save to local cache so next visit loads instantly with no reconnect
+            writeCache(excelData);
+
             badge.classList.remove('loading');
             badge.className = 'data-badge';
             badge.innerHTML = '✓ <span>Connected</span>';
             source.textContent = `Google Sheets • ${recordCount.toLocaleString()} records loaded`;
-            
-            // Show success message briefly
+
             setTimeout(() => {
                 badge.innerHTML = `✓ <span>${recordCount.toLocaleString()} Records</span>`;
+                source.textContent = `Google Sheets • ${recordCount.toLocaleString()} records • Up to date`;
             }, 2000);
         }else{
             throw new Error('No data found in sheet');
         }
-        
+
     }catch(err){
         console.error('Load Error:', err);
+
+        if(isBackground){
+            // Don't disturb the user with an alert - they already have working cached data
+            return;
+        }
+
         badge.classList.remove('loading');
         badge.classList.add('error');
-        
+
         if(err.name === 'AbortError'){
             badge.innerHTML = `✕ <span>Connection Timeout</span>`;
             source.textContent = 'Connection timed out after 30 seconds';
