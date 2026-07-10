@@ -831,73 +831,41 @@ body{
 const SHEET_ID = "1n2_6Oewp88igcRv5H7vKYpYH-jHmnTus";
 const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv`;
 
-// ================== CACHE CONFIGURATION (IndexedDB) ==================
-// IndexedDB is used instead of localStorage because localStorage has a small
-// ~5-10MB limit per site — large sheets silently fail to save there.
-// IndexedDB comfortably handles much larger datasets.
-const DB_NAME = 'pmyba_db';
-const DB_VERSION = 1;
-const STORE_NAME = 'sheetCache';
-const RECORD_ID = 'main';
+// ================== CACHE CONFIGURATION ==================
+const CACHE_KEY = 'pmyba_sheet_data_v1';       // localStorage key for saved rows
+const CACHE_TIME_KEY = 'pmyba_sheet_time_v1';  // localStorage key for last-updated timestamp
 
-function openDB(){
-    return new Promise((resolve, reject) => {
-        if(!('indexedDB' in window)){
-            reject(new Error('IndexedDB not supported in this browser'));
-            return;
-        }
-        const req = indexedDB.open(DB_NAME, DB_VERSION);
-        req.onupgradeneeded = (e) => {
-            const db = e.target.result;
-            if(!db.objectStoreNames.contains(STORE_NAME)){
-                db.createObjectStore(STORE_NAME, { keyPath: 'id' });
-            }
-        };
-        req.onsuccess = (e) => resolve(e.target.result);
-        req.onerror = (e) => reject(e.target.error);
-    });
-}
+// ================== GLOBAL VARIABLES ==================
+let excelData = [];
+let currentResults = [];
+let html5QrCode = null;
+let recognition = null;
+
+// ================== INITIALIZATION ==================
+window.addEventListener('DOMContentLoaded', loadData);
 
 // ---- Helpers to read/write the local cache ----
-async function readCache(){
+function readCache(){
     try{
-        const db = await openDB();
-        return await new Promise((resolve, reject) => {
-            const tx = db.transaction(STORE_NAME, 'readonly');
-            const store = tx.objectStore(STORE_NAME);
-            const req = store.get(RECORD_ID);
-            req.onsuccess = () => {
-                const record = req.result;
-                if(!record || !Array.isArray(record.data) || record.data.length < 2){
-                    resolve(null);
-                }else{
-                    resolve({ data: record.data, time: record.time || 0 });
-                }
-            };
-            req.onerror = () => reject(req.error);
-        });
+        const raw = localStorage.getItem(CACHE_KEY);
+        const time = localStorage.getItem(CACHE_TIME_KEY);
+        if(!raw) return null;
+        const data = JSON.parse(raw);
+        if(!Array.isArray(data) || data.length < 2) return null;
+        return { data, time: time ? parseInt(time, 10) : 0 };
     }catch(err){
         console.warn('Cache read failed:', err);
         return null;
     }
 }
 
-async function writeCache(data){
+function writeCache(data){
     try{
-        const db = await openDB();
-        await new Promise((resolve, reject) => {
-            const tx = db.transaction(STORE_NAME, 'readwrite');
-            const store = tx.objectStore(STORE_NAME);
-            store.put({ id: RECORD_ID, data: data, time: Date.now() });
-            tx.oncomplete = () => resolve();
-            tx.onerror = () => reject(tx.error);
-        });
-        console.log('✓ Cache saved successfully:', data.length, 'rows');
-        return true;
+        localStorage.setItem(CACHE_KEY, JSON.stringify(data));
+        localStorage.setItem(CACHE_TIME_KEY, String(Date.now()));
     }catch(err){
-        // Storage disabled/blocked (e.g. private browsing) - app still works, just won't cache
+        // Quota exceeded or storage disabled - app still works, just won't cache
         console.warn('Cache write failed (data still loaded in memory):', err);
-        return false;
     }
 }
 
@@ -945,7 +913,7 @@ async function loadData(){
     const source = document.getElementById('dataSource');
 
     // ---- STEP 1: Try to use cached data instantly, so the user never has to wait / reconnect ----
-    const cached = await readCache();
+    const cached = readCache();
     if(cached){
         excelData = cached.data;
         const recordCount = excelData.length - 1;
@@ -1024,7 +992,7 @@ async function fetchAndStoreData({ isBackground }){
 
         if(recordCount > 0){
             // Save to local cache so next visit loads instantly with no reconnect
-            const saved = await writeCache(excelData);
+            writeCache(excelData);
 
             badge.classList.remove('loading');
             badge.className = 'data-badge';
@@ -1033,9 +1001,7 @@ async function fetchAndStoreData({ isBackground }){
 
             setTimeout(() => {
                 badge.innerHTML = `✓ <span>${recordCount.toLocaleString()} Records</span>`;
-                source.textContent = saved
-                    ? `Google Sheets • ${recordCount.toLocaleString()} records • Saved for offline/instant reload`
-                    : `Google Sheets • ${recordCount.toLocaleString()} records • ⚠️ Could not save cache (private/incognito mode?)`;
+                source.textContent = `Google Sheets • ${recordCount.toLocaleString()} records • Up to date`;
             }, 2000);
         }else{
             throw new Error('No data found in sheet');
