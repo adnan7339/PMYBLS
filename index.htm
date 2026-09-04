@@ -651,9 +651,190 @@ body{
 .hidden{
     display:none !important;
 }
+
+/* Site Nav */
+.site-nav{
+    background:var(--bg-secondary);
+    border-bottom:1px solid var(--border);
+    box-shadow:0 2px 8px var(--shadow);
+    position:sticky;
+    top:0;
+    z-index:500;
+}
+
+.site-nav-inner{
+    max-width:1300px;
+    margin:0 auto;
+    padding:14px 20px;
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+}
+
+.site-nav-inner a{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    padding:10px 16px;
+    border-radius:10px;
+    color:var(--text-secondary);
+    text-decoration:none;
+    font-size:0.9rem;
+    font-weight:600;
+    transition:all 0.2s ease;
+}
+
+.site-nav-inner a:hover{
+    background:var(--bg-primary);
+    color:var(--text-primary);
+}
+
+.site-nav-inner a.active{
+    background:linear-gradient(135deg, var(--primary), var(--primary-light));
+    color:#fff;
+    box-shadow:0 4px 12px rgba(37,99,235,0.3);
+}
+
+.nav-dot{
+    width:6px;
+    height:6px;
+    border-radius:50%;
+    background:currentColor;
+    flex-shrink:0;
+}
+
+/* Result Modal */
+.result-modal{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(15,23,42,0.55);
+    align-items:center;
+    justify-content:center;
+    z-index:1000;
+    padding:20px;
+}
+
+.result-modal.active{
+    display:flex;
+}
+
+.result-modal-box{
+    background:var(--bg-card);
+    border-radius:16px;
+    max-width:600px;
+    width:100%;
+    max-height:85vh;
+    display:flex;
+    flex-direction:column;
+    overflow:hidden;
+    box-shadow:0 20px 60px rgba(0,0,0,0.25);
+    animation:modalSlide 0.3s ease-out;
+}
+
+.result-modal-header{
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:12px;
+    padding:22px 24px;
+    border-bottom:1px solid var(--border);
+}
+
+.result-modal-header h3{
+    font-size:1.15rem;
+    font-weight:700;
+    margin-bottom:4px;
+}
+
+.result-modal-header p{
+    color:var(--text-secondary);
+    font-size:0.85rem;
+}
+
+.result-modal .btn-close{
+    background:var(--bg-primary);
+    border:1px solid var(--border);
+    border-radius:8px;
+    width:32px;
+    height:32px;
+    font-size:0.9rem;
+    cursor:pointer;
+    color:var(--text-secondary);
+    flex-shrink:0;
+}
+
+.result-modal .btn-close:hover{
+    color:var(--text-primary);
+    background:var(--border);
+}
+
+.result-modal-body{
+    padding:20px 24px;
+    overflow-y:auto;
+}
+
+.result-modal-body .table-wrapper table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+.result-modal-body th,
+.result-modal-body td{
+    text-align:left;
+    padding:12px 14px;
+    border-bottom:1px solid var(--border);
+    font-size:0.9rem;
+}
+
+.result-modal-body th{
+    color:var(--text-secondary);
+    font-weight:600;
+    width:35%;
+}
+
+.result-modal-body td{
+    font-weight:600;
+    font-family:'Space Mono', monospace;
+}
+
+.result-modal-footer{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    padding:18px 24px;
+    border-top:1px solid var(--border);
+}
+
+.result-modal-footer .action-btn{
+    flex:1;
+    min-width:110px;
+    padding:10px 14px;
+    border-radius:10px;
+    border:1px solid var(--border);
+    background:var(--bg-primary);
+    color:var(--text-primary);
+    font-weight:600;
+    font-size:0.85rem;
+    cursor:pointer;
+    transition:all 0.2s ease;
+}
+
+.result-modal-footer .action-btn:hover{
+    background:var(--border);
+}
 </style>
 </head>
 <body>
+
+<nav class="site-nav" aria-label="Site navigation">
+    <div class="site-nav-inner">
+      <a href="https://acag.punjab.gov.pk/Layouts/Registration.aspx?LoanCategoryID=0"><span class="nav-dot"></span>ACAG Registration</a>
+      <a href="https://acag.punjab.gov.pk/Layouts/LoanCategory.aspx">ACMC Registration</a>
+      <a href="https://pmybls-black.vercel.app/index.htm" class="active" aria-current="page">PM Youth List</a>
+      <a href="https://live-owndata.vercel.app/">ACAG List</a>
+    </div>
+  </nav>
 
 <div class="container">
     
@@ -823,6 +1004,32 @@ body{
             </div>
         </div>
     </div>
+</div>
+
+<div class="result-modal" id="resultModal">
+  <div class="result-modal-box">
+    <div class="result-modal-header">
+      <div>
+        <h3>🔍 Search Results</h3>
+        <p id="resultModalSubtitle">0 record(s) found</p>
+      </div>
+      <button class="btn-close" onclick="closeResultPopup()">✕</button>
+    </div>
+    <div class="result-modal-body">
+      <div class="table-wrapper">
+        <table>
+          <tbody id="resultModalTable"></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="result-modal-footer">
+      <button class="action-btn" onclick="copyResults()">📋 Copy</button>
+      <button class="action-btn" onclick="exportExcel()">📊 Excel</button>
+      <button class="action-btn" onclick="exportPDF()">📄 PDF</button>
+      <button class="action-btn" onclick="printResults()">🖨️ Print</button>
+      <button class="action-btn" onclick="closeResultPopup()">✅ Close</button>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -1055,6 +1262,7 @@ function searchData(){
     btn.disabled = true;
     
     // Use requestAnimationFrame for smoother UI
+    const searchStart = performance.now();
     requestAnimationFrame(() => {
         setTimeout(() => {
             try {
@@ -1080,6 +1288,7 @@ function searchData(){
                 }else{
                     currentResults = results;
                     displayResults(results);
+                    openResultModal(results, Math.round(performance.now() - searchStart));
                 }
             } catch(err) {
                 console.error('Search Error:', err);
@@ -1118,6 +1327,31 @@ function displayResults(results){
     noResults.classList.add('hidden');
     
     section.scrollIntoView({behavior: 'smooth', block: 'nearest'});
+}
+
+function openResultModal(results, elapsedMs){
+    const subtitle = document.getElementById('resultModalSubtitle');
+    const tbody = document.getElementById('resultModalTable');
+
+    subtitle.textContent = `${results.length} record(s) found${typeof elapsedMs === 'number' ? ` in ${elapsedMs}ms` : ''}`;
+
+    const fields = ['CNIC', 'Name', 'Business Sector', 'MFI Bank'];
+    let html = '<tr><th>Field</th>' + results.map((_, i) => `<th>Result ${i + 1}</th>`).join('') + '</tr>';
+
+    fields.forEach((label, colIndex) => {
+        html += `<tr><td><strong>${label}</strong></td>`;
+        results.forEach(row => {
+            html += `<td>${row[colIndex] || '-'}</td>`;
+        });
+        html += '</tr>';
+    });
+
+    tbody.innerHTML = html;
+    document.getElementById('resultModal').classList.add('active');
+}
+
+function closeResultPopup(){
+    document.getElementById('resultModal').classList.remove('active');
 }
 
 function showNoResults(){
@@ -1352,6 +1586,7 @@ function bulkSearch(){
         currentResults = results;
         displayResults(results);
         document.getElementById('resultsCount').textContent = `Found ${results.length} of ${cnics.length} CNICs`;
+        openResultModal(results);
     }
 }
 
