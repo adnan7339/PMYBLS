@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Apni Chhat Mehfooz Chhat Member Search - Admin Edition</title>
+<title>Prime Minister Youth Business & Agriculture Member Search - Admin Edition</title>
 <link rel="icon" type="image/x-icon" href="https://acag.punjab.gov.pk/images/ACMCLogo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1449,7 +1449,7 @@ td:nth-child(2){
   <div class="login-box">
     <div class="login-header">
       <div class="login-logo">🔐</div>
-      <h2 class="login-title">Apni Chhat Mehfooz Chhat Login</h2>
+      <h2 class="login-title">Prime Minister Youth Business & Agriculture Login</h2>
       <p class="login-subtitle">Secure Member Search System</p>
     </div>
     <div class="login-body">
@@ -2761,13 +2761,13 @@ function exportExcel(){
   if(currentResults.length===0){alert('No results to export');return;}
   const ws=XLSX.utils.aoa_to_sheet([['Sr No','CNIC','Applicant Name','Contact No','Branch Name','Branch Code','Batch No'],...currentResults]);
   const wb=XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb,ws,'Apni Chhat Mehfooz Chhat Results');
+  XLSX.utils.book_append_sheet(wb,ws,'Prime Minister Youth Business & Agriculture Results');
   XLSX.writeFile(wb,`Apni_Chhat_Mehfooz_Chhat_Search_Results_${Date.now()}.xlsx`);
 }
 function exportPDF(){
   if(currentResults.length===0){alert('No results to export');return;}
   const{jsPDF}=window.jspdf;const doc=new jsPDF();
-  doc.setFontSize(18);doc.text('Apni Chhat Mehfooz Chhat Member Search Results',14,20);
+  doc.setFontSize(18);doc.text('Prime Minister Youth Business & Agriculture Member Search Results',14,20);
   doc.setFontSize(10);doc.text(`Generated: ${new Date().toLocaleString()}`,14,28);
   doc.autoTable({head:[['Sr No','CNIC','Name','Contact','Branch','Code','Batch']],body:currentResults.map(r=>[r[0],r[1],r[2],r[3],r[4],r[5],r[6]]),startY:35,styles:{fontSize:9}});
   doc.save(`Apni_Chhat_Mehfooz_Chhat_Results_${Date.now()}.pdf`);
@@ -2775,9 +2775,9 @@ function exportPDF(){
 function printResults(){
   if(currentResults.length===0){alert('No results to print');return;}
   const w=window.open('','','height=600,width=800');
-  w.document.write('<html><head><title>Apni Chhat Mehfooz Chhat Search Results</title>');
+  w.document.write('<html><head><title>Prime Minister Youth Business & Agriculture Search Results</title>');
   w.document.write('<style>body{font-family:Arial;padding:20px;}h2{margin-bottom:10px;color:#003d82;}table{width:100%;border-collapse:collapse;}th,td{border:1px solid #ddd;padding:12px;}th{background:#003d82;color:#c59d5f;}</style>');
-  w.document.write('</head><body><h2>Apni Chhat Mehfooz Chhat Member Search Results</h2>');
+  w.document.write('</head><body><h2>Prime Minister Youth Business & Agriculture Member Search Results</h2>');
   w.document.write(`<p>Generated: ${new Date().toLocaleString()}</p>`);
   w.document.write('<table><thead><tr><th>Sr No</th><th>CNIC</th><th>Name</th><th>Contact</th><th>Branch Name</th><th>Branch Code</th><th>Batch</th></tr></thead><tbody>');
   currentResults.forEach(r=>{w.document.write(`<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td><td>${r[4]}</td><td>${r[5]}</td><td>${r[6]}</td></tr>`);});
@@ -2786,7 +2786,7 @@ function printResults(){
 }
 function shareResults(){
   if(currentResults.length===0){alert('No results to share');return;}
-  if(navigator.share){navigator.share({title:'Apni Chhat Mehfooz Chhat Search Results',text:`Found ${currentResults.length} record(s) in Apni Chhat Mehfooz Chhat database`}).catch(()=>{});}
+  if(navigator.share){navigator.share({title:'Prime Minister Youth Business & Agriculture Search Results',text:`Found ${currentResults.length} record(s) in Prime Minister Youth Business & Agriculture database`}).catch(()=>{});}
   else{alert('Share feature not supported in this browser');}
 }
 
