@@ -8,6 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
 <!-- Export Libraries -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -279,78 +280,6 @@ h1{color:#ffffff;font-size:2.8rem;font-weight:800;margin-bottom:10px;text-shadow
   .toll-free{justify-content:center;}
 }
 
-/* ===== HOUSING STATS FOOTER (ACAG live figures) ===== */
-.housing-stats{margin-top:10px;}
-.housing-stats .cards-wrapper{
-  background:var(--crystal-glass-strong);
-  -webkit-backdrop-filter:blur(30px) saturate(180%);backdrop-filter:blur(30px) saturate(180%);
-  border:1px solid var(--crystal-border);border-radius:24px;
-  box-shadow:0 15px 50px rgba(0,0,0,0.25);
-}
-.stats-grid{
-  display:grid;grid-template-columns:repeat(4,1fr);gap:20px;
-}
-@media(max-width:900px){.stats-grid{grid-template-columns:repeat(2,1fr);}}
-@media(max-width:520px){.stats-grid{grid-template-columns:1fr;}}
-
-/* Mobile: footer stats become round; desktop stays as-is */
-@media(max-width:520px){
-  .stats-grid{
-    grid-template-columns:repeat(2,1fr);
-    gap:14px;
-    justify-items:center;
-  }
-  .stats-card{
-    width:100%;
-    max-width:150px;
-    aspect-ratio:1/1;
-    min-height:0;
-    border-radius:50%;
-    padding:16px;
-    align-items:center;
-    justify-content:center;
-    text-align:center;
-    gap:6px;
-  }
-  .stats-card .card-header{
-    justify-content:center;
-    width:100%;
-  }
-  .stats-card .bottomIcon{display:none;}
-  .stats-card .icon-wrap{width:36px;height:36px;}
-  .stats-card .card-body{width:100%;}
-  .stats-card .card-sub-details{display:flex;flex-direction:column;align-items:center;}
-  .stats-card .card-sub-details .value{font-size:1.05rem;}
-  .stats-card .money-value{justify-content:center;}
-  .stats-card .card-title{font-size:0.62rem;margin-top:2px;}
-}
-
-.stats-card{
-  position:relative;overflow:hidden;border-radius:18px;padding:22px;
-  color:#fff;min-height:140px;display:flex;flex-direction:column;justify-content:space-between;
-  box-shadow:0 10px 30px rgba(0,0,0,0.18);
-}
-.stats-card.loan-card{background:linear-gradient(135deg,#3B82F6,#1d4ed8);}
-.stats-card.amount-card{background:linear-gradient(135deg,#F5B51F,#c9890a);}
-.stats-card.house-card{background:linear-gradient(135deg,#4DB066,#2f7d43);}
-.stats-card.house-card-uc{background:linear-gradient(135deg,#FE902C,#c66916);}
-
-.stats-card .card-header{display:flex;align-items:flex-start;justify-content:space-between;position:relative;z-index:1;}
-.stats-card .icon-wrap{
-  width:48px;height:48px;border-radius:12px;
-  background:rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;
-}
-.stats-card .bottomIcon{position:absolute;right:-6px;bottom:-14px;opacity:0.9;pointer-events:none;}
-.stats-card .card-body{position:relative;z-index:1;}
-.stats-card .card-sub-details .value{
-  display:block;font-size:1.7rem;font-weight:800;line-height:1.2;
-}
-.stats-card .card-sub-details .value small{font-size:0.9rem;font-weight:600;opacity:0.85;}
-.stats-card .money-value{display:flex;align-items:baseline;gap:6px;flex-wrap:wrap;}
-.stats-card .currency-text{font-size:0.85rem;font-weight:700;opacity:0.85;}
-.stats-card .card-title{
-  margin-top:6px;font-size:0.85rem;font-weight:600;opacity:0.9;text-transform:uppercase;letter-spacing:0.4px;
-}
 .card:nth-child(3){animation-delay:0.1s;}
 .card:nth-child(4){animation-delay:0.2s;}
 .card:nth-child(5){animation-delay:0.3s;}
@@ -982,6 +911,46 @@ button.search-btn::before{
 @media(max-width:600px){
   .site-nav-inner{width:100%;justify-content:center;}
   .site-nav-inner a{padding:9px 16px;font-size:0.85rem;}
+}
+
+/* ===== LOAN LINKS SECTION ===== */
+.loan_links{margin-top:10px;}
+.loan_links .container{max-width:1200px;padding:0;}
+.loan_links .link_card{
+  background:var(--crystal-glass-strong);
+  -webkit-backdrop-filter:blur(30px) saturate(180%);backdrop-filter:blur(30px) saturate(180%);
+  border:1px solid var(--crystal-border) !important;
+  border-radius:20px;
+  box-shadow:0 15px 40px rgba(0,0,0,0.2);
+  transition:transform 0.3s ease,box-shadow 0.3s ease;
+}
+.loan_links .link_card:hover{
+  transform:translateY(-5px);
+  box-shadow:0 20px 50px rgba(0,0,0,0.28);
+}
+.loan_links .link_card img{
+  max-width:70px;height:auto;margin-bottom:10px;
+}
+.loan_links .link_card a{
+  display:block;text-decoration:none;color:inherit;
+}
+.loan_links .link_card h1,
+.loan_links .link_card h2,
+.loan_links .link_card h3{
+  color:var(--navy);
+  font-weight:800;
+  font-size:1.15rem;
+  margin-top:16px !important;
+  margin-bottom:0;
+}
+.loan_links .link_card .line1{
+  color:var(--text-light);
+  font-size:0.9rem;
+  margin-top:6px !important;
+}
+@media(max-width:768px){
+  .loan_links .link_card{margin-bottom:20px;}
+  .loan_links .link_card.border-end{border-right:none !important;}
 }
 </style>
 
@@ -1739,148 +1708,56 @@ td:nth-child(2){
     </div>
   </div>
 
-  <!-- ===== HOUSING STATS FOOTER (ACAG live figures) ===== -->
-  <section class="housing-stats">
-    <div class="cards-wrapper p-3 p-md-4">
-      <div class="stats-grid">
-
-        <!-- Loans Disbursed -->
-        <div class="stats-card loan-card">
-          <div class="card-header">
-            <div class="icon-wrap">
-              <svg width="35" height="35" viewBox="0 0 35 35" fill="none">
-                <g clip-path="url(#clip0_638_2446)">
-                  <path d="M23.1637 2.89453C19.1683 2.89453 15.9256 6.13723 15.9256 10.1327C15.9256 14.1282 19.1683 17.3709 23.1637 17.3709C27.1592 17.3709 30.4019 14.1282 30.4019 10.1327C30.4019 6.13723 27.1592 2.89453 23.1637 2.89453ZM23.1637 14.4756C20.7607 14.4756 18.8208 12.5358 18.8208 10.1327C18.8208 7.72963 20.7607 5.7898 23.1637 5.7898C25.5668 5.7898 27.5066 7.72963 27.5066 10.1327C27.5066 12.5358 25.5668 14.4756 23.1637 14.4756ZM27.5066 23.1614H24.6114C24.6114 21.4243 23.5256 19.8608 21.9043 19.2528L12.9869 15.9232H1.44922V31.8472H10.135V29.7626L20.2685 32.571L31.8495 28.952V27.5043C31.8495 25.1012 29.9097 23.1614 27.5066 23.1614ZM7.23976 28.952H4.34449V18.8185H7.23976V28.952ZM20.225 29.5455L10.135 26.7805V18.8185H12.4657L20.891 21.9599C21.3831 22.1481 21.7161 22.6258 21.7161 23.1614C21.7161 23.1614 18.8208 23.089 18.3865 22.9443L14.9412 21.8006L14.0292 24.5511L17.4745 25.6948C18.2128 25.9409 18.9801 26.0567 19.7618 26.0567H27.5066C28.0712 26.0567 28.5779 26.4041 28.8095 26.8818L20.225 29.5455Z" fill="white"></path>
-                </g>
-                <defs>
-                  <clipPath id="clip0_638_2446"><rect width="34.7432" height="34.7432" fill="white"></rect></clipPath>
-                </defs>
-              </svg>
+  <!-- ===== LOAN LINKS ===== -->
+  <section id="" class="loan_links">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-4 col-md-6">
+                <div class="link_card border-end">
+                    <div class=" p-4 text-center">
+                        <img src="/assets/ydh/img/loanAssets/ApplyLoan.png">
+                        <a target="_blank" href="/BankForm/newApplicantForm">
+                            <h1 class="mt-5">Apply for Loan</h1>
+                            <p class="line1 mt-3">Fill online loan application </p>
+                        </a>
+                        <a target="_blank" href="/Laptop/Register">
+                            <h2 class="mt-5">Apply for Laptop For All </h2>
+                        </a>
+                        <a target="_blank" href="/POWF/Index">
+                            <h2 class="mt-5"> Apply for Prospective Overseas Workers</h2>
+                        </a>
+                    </div>
+                </div>
             </div>
-            <span class="bottomIcon">
-              <svg width="126" height="62" viewBox="0 0 126 62" fill="none">
-                <path d="M1.25407 58.1864L2.38419e-07 59.0094L1.64597 61.5175L2.90004 60.6946L2.07706 59.4405L1.25407 58.1864ZM29.1937 41.6452L29.7204 40.2407L29.0074 39.9733L28.3707 40.3911L29.1937 41.6452ZM49.5312 49.2717L49.0045 50.6762L49.9089 51.0154L50.5919 50.3324L49.5312 49.2717ZM72.4109 26.392L73.2995 25.1836L72.2614 24.4203L71.3503 25.3314L72.4109 26.392ZM86.8166 36.9845L85.9281 38.193L86.9417 38.9383L87.8521 38.0698L86.8166 36.9845ZM125.178 1.85285C125.197 1.02465 124.542 0.337468 123.714 0.317981L110.217 0.000421762C109.389 -0.0190653 108.702 0.636525 108.683 1.46472C108.663 2.29292 109.319 2.9801 110.147 2.99959L122.143 3.28187L121.861 15.2785C121.842 16.1067 122.497 16.7939 123.326 16.8134C124.154 16.8329 124.841 16.1773 124.86 15.3491L125.178 1.85285ZM2.07706 59.4405L2.90004 60.6946L30.0167 42.8992L29.1937 41.6452L28.3707 40.3911L1.25407 58.1864L2.07706 59.4405ZM29.1937 41.6452L28.667 43.0497L49.0045 50.6762L49.5312 49.2717L50.0579 47.8672L29.7204 40.2407L29.1937 41.6452ZM49.5312 49.2717L50.5919 50.3324L73.4716 27.4527L72.4109 26.392L71.3503 25.3314L48.4706 48.2111L49.5312 49.2717ZM72.4109 26.392L71.5223 27.6005L85.9281 38.193L86.8166 36.9845L87.7052 35.776L73.2995 25.1836L72.4109 26.392ZM86.8166 36.9845L87.8521 38.0698L124.714 2.90288L123.678 1.81757L122.643 0.732249L85.7812 35.8992L86.8166 36.9845Z" fill="url(#paint0_linear_638_2442)"></path>
-                <defs>
-                  <linearGradient id="paint0_linear_638_2442" x1="125.797" y1="4.78345" x2="7.16144" y2="57.322" gradientUnits="userSpaceOnUse">
-                    <stop stop-color="#3B82F6"></stop>
-                    <stop offset="0.817308" stop-color="#CFE5FE"></stop>
-                    <stop offset="1" stop-color="#F4F9FD"></stop>
-                  </linearGradient>
-                </defs>
-              </svg>
-            </span>
-          </div>
-          <div class="card-body">
-            <div class="stat-row">
-              <div class="card-sub-details">
-                <span class="value">192,160 <small>No.</small></span>
-                <h6 class="card-title">Loans Disbursed</h6>
-              </div>
+            <div class="col-lg-4 col-md-6">
+                <div class="link_card border-end h-100">
+                    <div class=" p-4 text-center">
+                        <img src="/assets/ydh/img/loanAssets/Track.png">
+                        <a target="_blank" href="/pmyphome/TraceApplication">
+                            <h3 class="mt-5">Track</h3>
+                            <p class="line1 mt-3">Check status of your loan application </p>
+                        </a>
+                        <a target="_blank" href="/PMYPHome/Dashboarddetails">
+                            <h3 class="mt-5">Analytics</h3>
+                            <p class="line1 mt-3">Click here for Dashboard </p>
+                        </a>
+                    </div>
+                </div>
             </div>
-          </div>
+            <div class="col-lg-4 col-md-6">
+                <div class="link_card border-end h-100">
+                    <div class=" p-4 text-center">
+                        <img src="/assets/ydh/img/loanAssets/Calculator.png">
+                        <a target="_blank" class="p-3" href="/pmyphome/Calculator">
+                            <h3 class="mt-5">Calculator</h3>
+                            <p class="line1 mt-3">Calculate loan repayment schedule </p>
+                        </a>
+                    </div>
+                </div>
+            </div>
         </div>
-
-        <!-- Amount Disbursed -->
-        <div class="stats-card amount-card">
-          <div class="card-header">
-            <div class="icon-wrap">
-              <svg width="31" height="31" viewBox="0 0 31 31" fill="none">
-                <path d="M28.9062 13.8691H20.8125C18.2757 13.8691 16.1875 15.9573 16.1875 18.4941C16.1875 21.031 18.2757 23.1191 20.8125 23.1191H25.4375V26.5879C25.4375 27.2227 24.916 27.7441 24.2812 27.7441H5.78125C3.87806 27.7441 2.3125 26.1786 2.3125 24.2754V6.93164C2.3125 5.02845 3.87806 3.46289 5.78125 3.46289H8.09375C8.72853 3.46289 9.25 2.94142 9.25 2.30664C9.25 1.67186 8.72853 1.15039 8.09375 1.15039H5.78125C2.60966 1.15039 0 3.76005 0 6.93164V24.2754C0 27.447 2.60966 30.0566 5.78125 30.0566H24.2812C26.1844 30.0566 27.75 28.4911 27.75 26.5879V23.1191H28.9062C29.541 23.1191 30.0625 22.5977 30.0625 21.9629V15.0254C30.0625 14.3906 29.541 13.8691 28.9062 13.8691ZM27.75 20.8066H20.8125C19.5441 20.8066 18.5 19.7625 18.5 18.4941C18.5 17.2257 19.5441 16.1816 20.8125 16.1816H27.75V20.8066Z" fill="white"></path>
-                <path d="M5.3652 5.85795C4.07482 6.42104 4.50148 8.08951 5.78145 8.08951H24.2814C24.9162 8.08951 25.4377 8.61098 25.4377 9.24576V10.402C25.4377 11.0368 25.9592 11.5583 26.5939 11.5583C27.2287 11.5583 27.7502 11.0368 27.7502 10.402V9.24576C27.7502 8.32579 27.3847 7.4435 26.7342 6.79298C26.0837 6.14247 25.2014 5.77701 24.2814 5.77701H23.9114L21.888 0.724198C21.7735 0.442629 21.5532 0.217148 21.2743 0.0961048C20.9955 -0.0249382 20.6804 -0.0319054 20.3964 0.0766975L5.3652 5.85795ZM21.4139 5.77701H12.0136L20.1652 2.64357L21.4139 5.77701Z" fill="white"></path>
-              </svg>
-            </div>
-            <span class="bottomIcon">
-              <svg width="126" height="62" viewBox="0 0 126 62" fill="none">
-                <path d="M1.25404 58.1864L-3.02792e-05 59.0094L1.64594 61.5175L2.90001 60.6946L2.07703 59.4405L1.25404 58.1864ZM29.1937 41.6452L29.7204 40.2407L29.0074 39.9733L28.3707 40.3911L29.1937 41.6452ZM49.5312 49.2717L49.0045 50.6762L49.9089 51.0154L50.5919 50.3324L49.5312 49.2717ZM72.4109 26.392L73.2995 25.1836L72.2614 24.4203L71.3502 25.3314L72.4109 26.392ZM86.8166 36.9845L85.928 38.193L86.9417 38.9383L87.852 38.0698L86.8166 36.9845ZM125.178 1.85285C125.197 1.02465 124.542 0.337468 123.714 0.317981L110.217 0.000421762C109.389 -0.0190653 108.702 0.636525 108.682 1.46472C108.663 2.29292 109.319 2.9801 110.147 2.99959L122.143 3.28187L121.861 15.2785C121.842 16.1067 122.497 16.7939 123.325 16.8134C124.154 16.8329 124.841 16.1773 124.86 15.3491L125.178 1.85285ZM2.07703 59.4405L2.90001 60.6946L30.0167 42.8992L29.1937 41.6452L28.3707 40.3911L1.25404 58.1864L2.07703 59.4405ZM29.1937 41.6452L28.667 43.0497L49.0045 50.6762L49.5312 49.2717L50.0579 47.8672L29.7204 40.2407L29.1937 41.6452ZM49.5312 49.2717L50.5919 50.3324L73.4715 27.4527L72.4109 26.392L71.3502 25.3314L48.4705 48.2111L49.5312 49.2717ZM72.4109 26.392L71.5223 27.6005L85.928 38.193L86.8166 36.9845L87.7052 35.776L73.2995 25.1836L72.4109 26.392ZM86.8166 36.9845L87.852 38.0698L124.714 2.90288L123.678 1.81757L122.643 0.732249L85.7812 35.8992L86.8166 36.9845Z" fill="url(#paint0_linear_638_2452)"></path>
-                <defs>
-                  <linearGradient id="paint0_linear_638_2452" x1="125.797" y1="4.78345" x2="7.16141" y2="57.322" gradientUnits="userSpaceOnUse">
-                    <stop stop-color="#F5B51F"></stop>
-                    <stop offset="0.817308" stop-color="#F5B51F" stop-opacity="0.42"></stop>
-                    <stop offset="1" stop-color="#F5B51F" stop-opacity="0"></stop>
-                  </linearGradient>
-                </defs>
-              </svg>
-            </span>
-          </div>
-          <div class="card-body">
-            <div class="stat-row">
-              <div class="card-sub-details">
-                <span class="value money-value">
-                  <span class="currency-text">PKR</span>
-                  <span class="value">241,472.0</span>
-                  <small>M</small>
-                </span>
-                <h6 class="card-title">Amount Disbursed</h6>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Houses Completed -->
-        <div class="stats-card house-card">
-          <div class="card-header">
-            <div class="icon-wrap">
-              <svg width="32" height="35" viewBox="0 0 32 35" fill="none">
-                <path d="M24.4531 32.6162C25.864 32.6161 27.0635 32.1215 28.04 31.1357C29.0165 30.1499 29.5058 28.9394 29.5059 27.5166V27.5146L29.4082 14.4834C29.4082 13.2114 29.1264 12.0354 28.5605 10.96C27.9926 9.88072 27.1727 9.03632 26.1045 8.42969L18.3477 3.53516L18.3428 3.53125C17.5343 3.05509 16.6413 2.81838 15.6689 2.81836C14.6966 2.81836 13.8036 3.0551 12.9951 3.53125L12.9902 3.53516L5.22559 8.43457C4.16327 9.1049 3.34567 9.96238 2.77832 11.0068C2.21118 12.051 1.92871 13.2114 1.92871 14.4834V14.4844L2.02637 27.5176C2.02665 28.9399 2.51502 30.1501 3.49121 31.1357C4.46563 32.1195 5.63235 32.6161 6.98145 32.6162H24.4531ZM6.98145 30.2559C6.26238 30.2557 5.63332 29.9862 5.08594 29.4336C4.53845 28.8808 4.27057 28.2446 4.27051 27.5166V14.4834C4.27051 13.6659 4.45657 12.8966 4.83008 12.1738C5.20164 11.4549 5.72654 10.8775 6.40723 10.4395H6.4082L14.2705 5.54004C14.6883 5.30045 15.169 5.17773 15.7178 5.17773C16.1976 5.17781 16.6463 5.29835 17.0674 5.54004L24.9297 10.4395C25.6142 10.8798 26.1576 11.4447 26.5615 12.1348C26.9623 12.8197 27.165 13.6009 27.165 14.4834V27.5166C27.165 28.2482 26.9098 28.8856 26.3936 29.4375C25.8833 29.983 25.2416 30.2558 24.4531 30.2559H6.98145ZM19.5947 26.7363C19.8127 26.7684 20.0197 26.7453 20.208 26.6553C20.4031 26.5619 20.5631 26.4058 20.6914 26.2021C20.821 25.9965 20.8916 25.7803 20.8916 25.5566C20.8916 25.333 20.8209 25.1167 20.6914 24.9111C20.563 24.7074 20.4032 24.5504 20.208 24.457C20.0172 24.3658 19.8071 24.343 19.5859 24.377H11.835C11.5177 24.377 11.2504 24.5002 11.0498 24.7432C10.8576 24.9761 10.7617 25.2503 10.7617 25.5566C10.7618 25.8629 10.8576 26.1373 11.0498 26.3701C11.2504 26.613 11.5178 26.7363 11.835 26.7363H19.5947Z" fill="white" stroke="white" stroke-width="0.4"></path>
-              </svg>
-            </div>
-            <span class="bottomIcon">
-              <svg width="126" height="62" viewBox="0 0 126 62" fill="none">
-                <path d="M1.25404 58.1864L-3.02792e-05 59.0094L1.64594 61.5175L2.90001 60.6946L2.07703 59.4405L1.25404 58.1864ZM29.1937 41.6452L29.7204 40.2407L29.0074 39.9733L28.3707 40.3911L29.1937 41.6452ZM49.5312 49.2717L49.0045 50.6762L49.9089 51.0154L50.5919 50.3324L49.5312 49.2717ZM72.4109 26.392L73.2995 25.1836L72.2614 24.4203L71.3502 25.3314L72.4109 26.392ZM86.8166 36.9845L85.928 38.193L86.9417 38.9383L87.852 38.0698L86.8166 36.9845ZM125.178 1.85285C125.197 1.02465 124.542 0.337468 123.714 0.317981L110.217 0.000421762C109.389 -0.0190653 108.702 0.636525 108.682 1.46472C108.663 2.29292 109.319 2.9801 110.147 2.99959L122.143 3.28187L121.861 15.2785C121.842 16.1067 122.497 16.7939 123.325 16.8134C124.154 16.8329 124.841 16.1773 124.86 15.3491L125.178 1.85285ZM2.07703 59.4405L2.90001 60.6946L30.0167 42.8992L29.1937 41.6452L28.3707 40.3911L1.25404 58.1864L2.07703 59.4405ZM29.1937 41.6452L28.667 43.0497L49.0045 50.6762L49.5312 49.2717L50.0579 47.8672L29.7204 40.2407L29.1937 41.6452ZM49.5312 49.2717L50.5919 50.3324L73.4715 27.4527L72.4109 26.392L71.3502 25.3314L48.4705 48.2111L49.5312 49.2717ZM72.4109 26.392L71.5223 27.6005L85.928 38.193L86.8166 36.9845L87.7052 35.776L73.2995 25.1836L72.4109 26.392ZM86.8166 36.9845L87.852 38.0698L124.714 2.90288L123.678 1.81757L122.643 0.732249L85.7812 35.8992L86.8166 36.9845Z" fill="url(#paint0_linear_638_2462)"></path>
-                <defs>
-                  <linearGradient id="paint0_linear_638_2462" x1="125.797" y1="4.78345" x2="7.16141" y2="57.322" gradientUnits="userSpaceOnUse">
-                    <stop stop-color="#4DB066"></stop>
-                    <stop offset="0.817308" stop-color="#4DB066" stop-opacity="0.4"></stop>
-                    <stop offset="1" stop-color="#4DB066" stop-opacity="0"></stop>
-                  </linearGradient>
-                </defs>
-              </svg>
-            </span>
-          </div>
-          <div class="card-body">
-            <div class="stat-row">
-              <div class="card-sub-details">
-                <span class="value">112,914 <small>No.</small></span>
-                <h6 class="card-title">Houses Completed</h6>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Under Construction -->
-        <div class="stats-card house-card-uc">
-          <div class="card-header">
-            <div class="icon-wrap">
-              <svg width="34" height="29" viewBox="0 0 34 29" fill="none">
-                <path d="M30.1483 12.8883C30.3731 12.8883 30.5853 12.9786 30.7499 13.1464L32.7703 15.1668C32.8512 15.2463 32.9154 15.3412 32.9593 15.4459C33.0031 15.5505 33.0257 15.6629 33.0257 15.7763C33.0257 15.8898 33.0031 16.0022 32.9593 16.1068C32.9154 16.2115 32.8512 16.3063 32.7703 16.3859L31.1869 17.9692L27.9474 14.7298L29.5307 13.1464C29.6959 12.9844 29.9169 12.892 30.1483 12.8883ZM27.0164 15.6433L30.2559 18.8923L20.6831 28.5H17.4167V25.2336L27.0164 15.6433ZM15.8333 4.256L7.91667 11.381V23.75H14.25V26.9167H4.75V14.25H0L15.8333 0L27.6434 10.6289L23.75 14.5223V11.381L15.8333 4.256Z" fill="white"></path>
-              </svg>
-            </div>
-            <span class="bottomIcon">
-              <svg width="126" height="62" viewBox="0 0 126 62" fill="none">
-                <path d="M1.25404 58.1864L-3.02792e-05 59.0094L1.64594 61.5175L2.90001 60.6946L2.07703 59.4405L1.25404 58.1864ZM29.1937 41.6452L29.7204 40.2407L29.0074 39.9733L28.3707 40.3911L29.1937 41.6452ZM49.5312 49.2717L49.0045 50.6762L49.9089 51.0154L50.5919 50.3324L49.5312 49.2717ZM72.4109 26.392L73.2995 25.1836L72.2614 24.4203L71.3502 25.3314L72.4109 26.392ZM86.8166 36.9845L85.928 38.193L86.9417 38.9383L87.852 38.0698L86.8166 36.9845ZM125.178 1.85285C125.197 1.02465 124.542 0.337468 123.714 0.317981L110.217 0.000421762C109.389 -0.0190653 108.702 0.636525 108.682 1.46472C108.663 2.29292 109.319 2.9801 110.147 2.99959L122.143 3.28187L121.861 15.2785C121.842 16.1067 122.497 16.7939 123.325 16.8134C124.154 16.8329 124.841 16.1773 124.86 15.3491L125.178 1.85285ZM2.07703 59.4405L2.90001 60.6946L30.0167 42.8992L29.1937 41.6452L28.3707 40.3911L1.25404 58.1864L2.07703 59.4405ZM29.1937 41.6452L28.667 43.0497L49.0045 50.6762L49.5312 49.2717L50.0579 47.8672L29.7204 40.2407L29.1937 41.6452ZM49.5312 49.2717L50.5919 50.3324L73.4715 27.4527L72.4109 26.392L71.3502 25.3314L48.4705 48.2111L49.5312 49.2717ZM72.4109 26.392L71.5223 27.6005L85.928 38.193L86.8166 36.9845L87.7052 35.776L73.2995 25.1836L72.4109 26.392ZM86.8166 36.9845L87.852 38.0698L124.714 2.90288L123.678 1.81757L122.643 0.732249L85.7812 35.8992L86.8166 36.9845Z" fill="url(#paint0_linear_638_2472)"></path>
-                <defs>
-                  <linearGradient id="paint0_linear_638_2472" x1="125.797" y1="4.78345" x2="7.16141" y2="57.322" gradientUnits="userSpaceOnUse">
-                    <stop stop-color="#FE902C"></stop>
-                    <stop offset="0.817308" stop-color="#FE902C" stop-opacity="0.2"></stop>
-                    <stop offset="1" stop-color="#FE902C" stop-opacity="0"></stop>
-                  </linearGradient>
-                </defs>
-              </svg>
-            </span>
-          </div>
-          <div class="card-body">
-            <div class="stat-row">
-              <div class="card-sub-details">
-                <span class="value">46,290 <small>No.</small></span>
-                <h6 class="card-title">Under Construction</h6>
-              </div>
-            </div>
-          </div>
-        </div>
-
-      </div>
     </div>
-  </section>
+</section>
 
 </div><!-- /mainApp -->
 
