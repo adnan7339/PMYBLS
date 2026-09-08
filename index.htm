@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Prime Minister Youth Business & Agriculture Member Search - Admin Edition</title>
-<link rel="icon" type="image/x-icon" href="https://images.seeklogo.com/logo-png/37/1/prime-minister-youth-program-logo-png_seeklogo-371711.png">
+<link rel="icon" type="image/x-icon" href="https://acag.punjab.gov.pk/images/ACMCLogo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -1697,7 +1697,7 @@ td:nth-child(2){
       <table>
         <tbody id="results">
           <tr>
-            <td colspan="7" class="state">
+            <td colspan="4" class="state">
               <div class="state-icon">🔍</div>
               <h3>Ready to Search</h3>
               <p>Use any search method above</p>
@@ -2541,7 +2541,7 @@ function search(){
         const results=[];
         const rows=sheetData.slice(1);
         for(let i=0;i<rows.length;i++){
-          const rowCnic=rows[i][1].replace(/\D/g,"");
+          const rowCnic=rows[i][0].replace(/\D/g,"");
           if(rowCnic===cnic) results.push(rows[i]);
         }
         const time=Math.round(performance.now()-start);
@@ -2569,19 +2569,19 @@ function search(){
 // DISPLAY
 // =============================================
 function showLoading(){
-  document.getElementById("results").innerHTML=`<tr><td colspan="7" class="state"><div class="loading-icon"></div><h3>Searching Database...</h3><p>Please wait</p></td></tr>`;
+  document.getElementById("results").innerHTML=`<tr><td colspan="4" class="state"><div class="loading-icon"></div><h3>Searching Database...</h3><p>Please wait</p></td></tr>`;
 }
 function showNoResults(){
-  document.getElementById("results").innerHTML=`<tr><td colspan="7" class="state"><div class="state-icon">❌</div><h3>No Results Found</h3><p>No matching CNIC found</p></td></tr>`;
+  document.getElementById("results").innerHTML=`<tr><td colspan="4" class="state"><div class="state-icon">❌</div><h3>No Results Found</h3><p>No matching CNIC found</p></td></tr>`;
 }
 function showError(msg){
-  document.getElementById("results").innerHTML=`<tr><td colspan="7" class="state"><div class="state-icon">⚠️</div><h3>Error</h3><p>${msg}</p></td></tr>`;
+  document.getElementById("results").innerHTML=`<tr><td colspan="4" class="state"><div class="state-icon">⚠️</div><h3>Error</h3><p>${msg}</p></td></tr>`;
   document.getElementById("resultCount").textContent="Error";
 }
 function showResults(results){
-  let html=`<tr><th>Sr No</th><th>CNIC</th><th>Name</th><th>Contact</th><th>Branch Name</th><th>Branch Code</th><th>Batch</th></tr>`;
+  let html=`<tr><th>CNIC</th><th>Applicant Name</th><th>Business Sub Sector</th><th>MFI Bank Name</th></tr>`;
   results.forEach((r,i)=>{
-    html+=`<tr style="animation-delay:${i*0.05}s"><td>${r[0]||"-"}</td><td>${r[1]||"-"}</td><td>${r[2]||"-"}</td><td>${r[3]||"-"}</td><td>${r[4]||"-"}</td><td>${r[5]||"-"}</td><td>${r[6]||"-"}</td></tr>`;
+    html+=`<tr style="animation-delay:${i*0.05}s"><td>${r[0]||"-"}</td><td>${r[1]||"-"}</td><td>${r[2]||"-"}</td><td>${r[3]||"-"}</td></tr>`;
   });
   document.getElementById("results").innerHTML=html;
 }
@@ -2594,7 +2594,7 @@ function openResultPopup(results,time){
   const table=document.getElementById("resultModalTable");
   const subtitle=document.getElementById("resultModalSubtitle");
 
-  const labels=['Sr No','CNIC','Name','Contact','Branch Name','Branch Code','Batch'];
+  const labels=['CNIC','Applicant Name','Business Sub Sector','MFI Bank Name'];
 
   // Header Row — first cell blank, then one column per result
   let html='<tr><th>Field</th>';
@@ -2625,7 +2625,7 @@ function closeResultPopup(){
 // =============================================
 function copyResults(){
   if(currentResults.length===0){alert('No results to copy');return;}
-  const headers=['Sr No','CNIC','Name','Contact','Branch Name','Branch Code','Batch'];
+  const headers=['CNIC','Applicant Name','Business Sub Sector','MFI Bank Name'];
   let text='';
   headers.forEach((header,index)=>{
     text+=header;
@@ -2636,7 +2636,7 @@ function copyResults(){
 }
 function exportExcel(){
   if(currentResults.length===0){alert('No results to export');return;}
-  const ws=XLSX.utils.aoa_to_sheet([['Sr No','CNIC','Applicant Name','Contact No','Branch Name','Branch Code','Batch No'],...currentResults]);
+  const ws=XLSX.utils.aoa_to_sheet([['CNIC','Applicant Name','Business Sub Sector','MFI Bank Name'],...currentResults]);
   const wb=XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb,ws,'Prime Minister Youth Business & Agriculture Results');
   XLSX.writeFile(wb,`Apni_Chhat_Mehfooz_Chhat_Search_Results_${Date.now()}.xlsx`);
@@ -2646,7 +2646,7 @@ function exportPDF(){
   const{jsPDF}=window.jspdf;const doc=new jsPDF();
   doc.setFontSize(18);doc.text('Prime Minister Youth Business & Agriculture Member Search Results',14,20);
   doc.setFontSize(10);doc.text(`Generated: ${new Date().toLocaleString()}`,14,28);
-  doc.autoTable({head:[['Sr No','CNIC','Name','Contact','Branch','Code','Batch']],body:currentResults.map(r=>[r[0],r[1],r[2],r[3],r[4],r[5],r[6]]),startY:35,styles:{fontSize:9}});
+  doc.autoTable({head:[['CNIC','Applicant Name','Business Sub Sector','MFI Bank Name']],body:currentResults.map(r=>[r[0],r[1],r[2],r[3]]),startY:35,styles:{fontSize:9}});
   doc.save(`Apni_Chhat_Mehfooz_Chhat_Results_${Date.now()}.pdf`);
 }
 function printResults(){
@@ -2656,8 +2656,8 @@ function printResults(){
   w.document.write('<style>body{font-family:Arial;padding:20px;}h2{margin-bottom:10px;color:#003d82;}table{width:100%;border-collapse:collapse;}th,td{border:1px solid #ddd;padding:12px;}th{background:#003d82;color:#c59d5f;}</style>');
   w.document.write('</head><body><h2>Prime Minister Youth Business & Agriculture Member Search Results</h2>');
   w.document.write(`<p>Generated: ${new Date().toLocaleString()}</p>`);
-  w.document.write('<table><thead><tr><th>Sr No</th><th>CNIC</th><th>Name</th><th>Contact</th><th>Branch Name</th><th>Branch Code</th><th>Batch</th></tr></thead><tbody>');
-  currentResults.forEach(r=>{w.document.write(`<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td><td>${r[4]}</td><td>${r[5]}</td><td>${r[6]}</td></tr>`);});
+  w.document.write('<table><thead><tr><th>CNIC</th><th>Applicant Name</th><th>Business Sub Sector</th><th>MFI Bank Name</th></tr></thead><tbody>');
+  currentResults.forEach(r=>{w.document.write(`<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td></tr>`);});
   w.document.write('</tbody></table></body></html>');
   w.document.close();w.print();
 }
@@ -2691,7 +2691,7 @@ document.getElementById("cnicInput").addEventListener("keydown",e=>{
       closeResultPopup();return;
     }
     e.target.value="";e.target.focus();
-    document.getElementById("results").innerHTML=`<tr><td colspan="7" class="state"><div class="state-icon">🔍</div><h3>Ready to Search</h3><p>Use any search method above</p></td></tr>`;
+    document.getElementById("results").innerHTML=`<tr><td colspan="4" class="state"><div class="state-icon">🔍</div><h3>Ready to Search</h3><p>Use any search method above</p></td></tr>`;
     document.getElementById("resultCount").textContent="Ready to search";
   }
 });
